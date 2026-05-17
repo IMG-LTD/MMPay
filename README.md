@@ -15,8 +15,10 @@ This repository has the MP-0 through MP-7 scaffold in place:
 - Provider adapter: Huifu reconciliation mapping MVP.
 - Outbound webhook: MMMail-compatible HMAC signature contract.
 - License boundary: relay-only delivery; no license signing module exists here.
-- Admin frontend: soybean-admin stack baseline using Vue 3, Vite, Pinia, and
-  Naive UI. Credential fields display only secret handles.
+- Admin surface: read-only dashboard API plus soybean-admin stack frontend using
+  Vue 3, Vite, Pinia, and Naive UI. Merchant, channel, order, refund, webhook,
+  and reconciliation views are present; runtime tables remain empty until a real
+  provider connection exists. Credential fields display only secret handles.
 
 Disabled Pig modules for this phase: code generation, full auth center,
 standalone gateway cluster, distributed job scheduler, and unrelated sample
