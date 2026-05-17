@@ -1,6 +1,6 @@
 import { credentialFieldLabels } from './i18n.js';
 
-const VISIBLE_SUFFIX_LENGTH = 7;
+const VISIBLE_SUFFIX_LENGTH = 4;
 
 /**
  * @param {string} handle

@@ -4,7 +4,7 @@ import { maskSecretHandle, providerCredentialFields } from '../src/secretDisplay
 
 describe('provider credential display', () => {
   it('renders only masked secret handles', () => {
-    assert.equal(maskSecretHandle('kms://huifu/sandbox/api-key'), 'kms://************api-key');
+    assert.equal(maskSecretHandle('kms://huifu/sandbox/api-key'), 'kms://************-key');
   });
 
   it('does not expose plaintext credential fields', () => {
