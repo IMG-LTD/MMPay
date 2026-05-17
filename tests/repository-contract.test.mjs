@@ -40,6 +40,7 @@ describe('MP-1 repository scaffold contract', () => {
 
     assert.match(validateLocal, /mvn -f "\$ROOT_DIR\/backend\/pom\.xml" -DskipTests compile/);
     assert.match(validateLocal, /AdminDashboardControllerTest/);
+    assert.match(validateLocal, /e2e-evidence-contract\.test\.mjs/);
     assert.match(validateLocal, /check-migration-naming\.sh/);
     assert.match(validateLocal, /security-secret-scan\.sh/);
   });

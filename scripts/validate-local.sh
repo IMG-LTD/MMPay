@@ -8,12 +8,14 @@ bash "$ROOT_DIR/scripts/check-migration-naming.sh"
 mvn -f "$ROOT_DIR/backend/pom.xml" -DskipTests compile
 timeout 60s mvn -f "$ROOT_DIR/backend/pom.xml" -pl mmpay-admin-api -am -Dtest=AdminDashboardControllerTest test
 node --test "$ROOT_DIR/tests/repository-contract.test.mjs"
+node --test "$ROOT_DIR/tests/e2e-evidence-contract.test.mjs"
 pnpm --dir "$ROOT_DIR/frontend-admin" install --frozen-lockfile
 pnpm --dir "$ROOT_DIR/frontend-admin" typecheck
 pnpm --dir "$ROOT_DIR/frontend-admin" lint
 pnpm --dir "$ROOT_DIR/frontend-admin" test
 bash -n "$ROOT_DIR/scripts/security-secret-scan.sh"
 bash -n "$ROOT_DIR/scripts/check-migration-naming.sh"
+bash -n "$ROOT_DIR/scripts/validate-e2e-evidence.sh"
 bash -n "$ROOT_DIR/scripts/validate-local.sh"
 
 echo "mmpay local validation passed"

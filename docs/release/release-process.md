@@ -33,3 +33,10 @@ definition alone is not release evidence.
 Huifu sandbox credentials, provider private keys, and license signing keys stay
 outside this repository. A release cannot be called end-to-end complete until the
 external sandbox run and redacted evidence package exist.
+
+Use `docs/release/e2e-evidence-template.md` for the redacted MP-8 evidence file,
+then verify it with:
+
+```bash
+bash scripts/validate-e2e-evidence.sh <redacted-e2e-evidence.md>
+```
