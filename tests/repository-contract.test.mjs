@@ -38,11 +38,20 @@ describe('MP-1 repository scaffold contract', () => {
     await fileExists('scripts/check-migration-naming.sh');
     await fileExists('scripts/validate-ci.sh');
     await fileExists('scripts/release-gate.sh');
+    await fileExists('.github/workflows/release.yml');
+    await fileExists('.github/workflows/dependabot-mirror.yml');
+    await fileExists('.github/dependabot.yml');
 
     const validateLocal = await readFile(path.join(root, 'scripts/validate-local.sh'), 'utf8');
     const validateCi = await readFile(path.join(root, 'scripts/validate-ci.sh'), 'utf8');
     const releaseGate = await readFile(path.join(root, 'scripts/release-gate.sh'), 'utf8');
     const ciWorkflow = await readFile(path.join(root, '.github/workflows/ci.yml'), 'utf8');
+    const releaseWorkflow = await readFile(path.join(root, '.github/workflows/release.yml'), 'utf8');
+    const dependabotMirrorWorkflow = await readFile(
+      path.join(root, '.github/workflows/dependabot-mirror.yml'),
+      'utf8',
+    );
+    const dependabotConfig = await readFile(path.join(root, '.github/dependabot.yml'), 'utf8');
 
     assert.match(validateLocal, /mvn -f "\$ROOT_DIR\/backend\/pom\.xml" -DskipTests compile/);
     assert.match(validateLocal, /PaymentIntentTest,RefundTest,ReconciliationTest/);
@@ -60,6 +69,19 @@ describe('MP-1 repository scaffold contract', () => {
     assert.match(releaseGate, /git -C "\$ROOT_DIR" status --short/);
     assert.match(releaseGate, /validate-ci\.sh/);
     assert.match(ciWorkflow, /bash scripts\/validate-ci\.sh/);
+    assert.match(releaseWorkflow, /name: MMPay Release/);
+    assert.match(releaseWorkflow, /tags:\n      - 'v\*'/);
+    assert.match(releaseWorkflow, /bash scripts\/release-gate\.sh/);
+    assert.match(releaseWorkflow, /gh release create "\$\{RELEASE_TAG\}"/);
+    assert.match(releaseWorkflow, /--verify-tag/);
+    assert.match(dependabotMirrorWorkflow, /name: MMPay Dependabot Mirror/);
+    assert.match(dependabotMirrorWorkflow, /repository-contract\.test\.mjs/);
+    assert.match(dependabotMirrorWorkflow, /security-secret-scan\.sh/);
+    assert.match(dependabotConfig, /package-ecosystem: "github-actions"/);
+    assert.match(dependabotConfig, /package-ecosystem: "maven"/);
+    assert.match(dependabotConfig, /directory: "\/backend"/);
+    assert.match(dependabotConfig, /package-ecosystem: "npm"/);
+    assert.match(dependabotConfig, /directory: "\/frontend-admin"/);
   });
 });
 
@@ -155,7 +177,11 @@ describe('MMPay open-source framework contract', () => {
     assert.match(workflow, /ghcr\.io\/img-ltd\/mmpay-app/);
     assert.match(imageDocs, /ghcr\.io\/img-ltd\/mmpay-app/);
     assert.match(releaseProcess, /MMPay Images/);
+    assert.match(releaseProcess, /MMPay Release/);
+    assert.match(releaseProcess, /MMPay Dependabot Mirror/);
     assert.match(releaseProcess, /bash scripts\/validate-local\.sh/);
+    assert.match(releaseProcess, /bash scripts\/release-gate\.sh/);
+    assert.match(releaseProcess, /gh release create --verify-tag/);
   });
 
   it('keeps operational docs aligned with the runnable baseline', async () => {

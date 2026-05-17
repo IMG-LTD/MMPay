@@ -1,0 +1,64 @@
+name: MMPay Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      release_tag:
+        description: Existing git tag to publish as a GitHub Release
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+jobs:
+  publish-release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10.32.1
+
+      - name: Run release gate
+        run: bash scripts/release-gate.sh
+
+      - name: Resolve release tag
+        id: release-tag
+        env:
+          INPUT_RELEASE_TAG: ${{ inputs.release_tag }}
+        run: |
+          if [[ "${GITHUB_EVENT_NAME}" == "workflow_dispatch" ]]; then
+            printf 'tag=%s\n' "${INPUT_RELEASE_TAG}" >> "$GITHUB_OUTPUT"
+          else
+            printf 'tag=%s\n' "${GITHUB_REF_NAME}" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Publish GitHub Release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          RELEASE_TAG: ${{ steps.release-tag.outputs.tag }}
+        run: |
+          gh release create "${RELEASE_TAG}" \
+            --verify-tag \
+            --title "MMPay ${RELEASE_TAG}" \
+            --notes "MMPay release ${RELEASE_TAG}. External Huifu sandbox evidence remains separate and must be attached before any end-to-end completion claim."

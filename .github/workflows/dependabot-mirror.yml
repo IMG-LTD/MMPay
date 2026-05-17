@@ -1,0 +1,34 @@
+name: MMPay Dependabot Mirror
+
+on:
+  pull_request:
+    paths:
+      - '.github/dependabot.yml'
+      - '.github/workflows/*.yml'
+      - 'backend/pom.xml'
+      - 'backend/**/pom.xml'
+      - 'frontend-admin/package.json'
+      - 'frontend-admin/pnpm-lock.yaml'
+      - 'tests/repository-contract.test.mjs'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  dependency-surface:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Verify repository dependency contracts
+        run: node --test tests/repository-contract.test.mjs
+
+      - name: Verify no secrets entered dependency surfaces
+        run: bash scripts/security-secret-scan.sh
