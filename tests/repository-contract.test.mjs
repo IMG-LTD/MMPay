@@ -118,11 +118,14 @@ describe('MMPay open-source framework contract', () => {
   it('defines an image publishing workflow for the Docker build path', async () => {
     const workflow = await readFile(path.join(root, '.github/workflows/images.yml'), 'utf8');
     const imageDocs = await readFile(path.join(root, 'docs/release/image-publishing.md'), 'utf8');
+    const releaseProcess = await readFile(path.join(root, 'docs/release/release-process.md'), 'utf8');
 
     assert.match(workflow, /name: MMPay Images/);
     assert.match(workflow, /docker\/build-push-action@v6/);
     assert.match(workflow, /file: Dockerfile/);
     assert.match(workflow, /ghcr\.io\/img-ltd\/mmpay-app/);
     assert.match(imageDocs, /ghcr\.io\/img-ltd\/mmpay-app/);
+    assert.match(releaseProcess, /MMPay Images/);
+    assert.match(releaseProcess, /bash scripts\/validate-local\.sh/);
   });
 });
