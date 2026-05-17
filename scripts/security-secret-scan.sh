@@ -9,9 +9,9 @@ PATTERNS=(
   'gho_[A-Za-z0-9_]{20,}'
   'sk-[A-Za-z0-9]{20,}'
   'AKIA[0-9A-Z]{16}'
-  'license-signer'
-  'generate license signing key'
-  'self-sign license'
+  'license''-signer'
+  'generate license signing ''key'
+  'self''-sign license'
 )
 
 for pattern in "${PATTERNS[@]}"; do

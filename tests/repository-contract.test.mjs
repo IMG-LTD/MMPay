@@ -13,6 +13,7 @@ const requiredBackendModules = [
   'mmpay-adapter-spi',
   'mmpay-adapter-huifu',
   'mmpay-webhook-out',
+  'mmpay-license-relay',
   'mmpay-admin-api',
   'mmpay-app',
 ];
