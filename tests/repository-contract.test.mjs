@@ -39,6 +39,10 @@ describe('MP-1 repository scaffold contract', () => {
     const validateLocal = await readFile(path.join(root, 'scripts/validate-local.sh'), 'utf8');
 
     assert.match(validateLocal, /mvn -f "\$ROOT_DIR\/backend\/pom\.xml" -DskipTests compile/);
+    assert.match(validateLocal, /PaymentIntentTest,RefundTest,ReconciliationTest/);
+    assert.match(validateLocal, /HuifuAdapterContractTest,HuifuReconciliationTest/);
+    assert.match(validateLocal, /WebhookOutContractTest/);
+    assert.match(validateLocal, /mmpay-license-relay/);
     assert.match(validateLocal, /AdminDashboardControllerTest/);
     assert.match(validateLocal, /MmpayApplicationContractTest/);
     assert.match(validateLocal, /e2e-evidence-contract\.test\.mjs/);
