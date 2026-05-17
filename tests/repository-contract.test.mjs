@@ -32,6 +32,7 @@ describe('MP-1 repository scaffold contract', () => {
 
   it('provides runnable local gates for compile, migration naming, and secret scan', async () => {
     await fileExists('deploy/docker-compose.minimal.yml');
+    await fileExists('backend/mmpay-gateway-core/src/main/resources/db/migration/V001__create_payment_core.sql');
     await fileExists('scripts/check-migration-naming.sh');
 
     const validateLocal = await readFile(path.join(root, 'scripts/validate-local.sh'), 'utf8');
