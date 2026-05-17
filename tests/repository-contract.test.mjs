@@ -135,4 +135,19 @@ describe('MMPay open-source framework contract', () => {
     assert.match(releaseProcess, /MMPay Images/);
     assert.match(releaseProcess, /bash scripts\/validate-local\.sh/);
   });
+
+  it('keeps operational docs aligned with the runnable baseline', async () => {
+    const overview = await readFile(path.join(root, 'docs/architecture/overview.md'), 'utf8');
+    const runbook = await readFile(path.join(root, 'docs/ops/runbook.md'), 'utf8');
+    const upgrade = await readFile(path.join(root, 'docs/ops/upgrade.md'), 'utf8');
+    const backupRestore = await readFile(path.join(root, 'docs/ops/backup-restore.md'), 'utf8');
+
+    assert.doesNotMatch(overview, /MP-0 repository contains only governance/);
+    assert.match(overview, /mmpay-admin-api/);
+    assert.match(runbook, /\/actuator\/health/);
+    assert.match(runbook, /credentials-required/);
+    assert.match(upgrade, /bash scripts\/check-migration-naming\.sh/);
+    assert.match(backupRestore, /pg_dump/);
+    assert.match(backupRestore, /pg_restore/);
+  });
 });
