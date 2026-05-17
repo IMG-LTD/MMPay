@@ -1,0 +1,41 @@
+services:
+  postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: mmpay
+      POSTGRES_USER: mmpay
+      POSTGRES_PASSWORD: replace-with-local-password
+    ports:
+      - "5432:5432"
+    volumes:
+      - mmpay-postgres-data:/var/lib/postgresql/data
+
+  redis:
+    image: redis:7
+    ports:
+      - "6379:6379"
+    volumes:
+      - mmpay-redis-data:/data
+
+  mmpay-app:
+    build:
+      context: ..
+      dockerfile: Dockerfile
+    image: mmpay-app:local
+    depends_on:
+      - postgres
+      - redis
+    ports:
+      - "8080:8080"
+    environment:
+      MMPAY_DATASOURCE_URL: jdbc:postgresql://postgres:5432/mmpay
+      MMPAY_DATASOURCE_USERNAME: mmpay
+      MMPAY_DATASOURCE_PASSWORD: replace-with-local-password
+      MMPAY_REDIS_URL: redis://redis:6379
+      MMPAY_HUIFU_MERCHANT_ID_FILE: /run/secrets/replace-with-huifu-merchant-id
+      MMPAY_HUIFU_API_KEY_FILE: /run/secrets/replace-with-huifu-api-key
+      MMPAY_HUIFU_WEBHOOK_SECRET_FILE: /run/secrets/replace-with-huifu-webhook-secret
+
+volumes:
+  mmpay-postgres-data:
+  mmpay-redis-data:

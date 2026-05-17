@@ -7,8 +7,11 @@ evidence collection.
 
 ```bash
 docker build -t mmpay-app:local .
-docker compose -f deploy/docker-compose.minimal.yml up
+docker compose -f deploy/docker-compose.yml up --build
 ```
+
+For the minimal prebuilt-image path, use
+`docker compose -f deploy/docker-compose.minimal.yml up`.
 
 ## Health Check
 

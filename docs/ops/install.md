@@ -23,7 +23,17 @@ bash scripts/validate-local.sh
 docker build -t mmpay-app:local .
 ```
 
-## Start Minimal Services
+## Start Services
+
+Use the standard local compose profile when you want Docker Compose to build the
+app image and keep database/cache data in named volumes:
+
+```bash
+docker compose -f deploy/docker-compose.yml up --build
+```
+
+Use the minimal profile when the `mmpay-app:local` image already exists and you
+want the smallest runtime stack:
 
 ```bash
 docker compose -f deploy/docker-compose.minimal.yml up
