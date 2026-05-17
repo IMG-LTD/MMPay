@@ -7,6 +7,7 @@ bash "$ROOT_DIR/scripts/security-secret-scan.sh"
 bash "$ROOT_DIR/scripts/check-migration-naming.sh"
 mvn -f "$ROOT_DIR/backend/pom.xml" -DskipTests compile
 timeout 60s mvn -f "$ROOT_DIR/backend/pom.xml" -pl mmpay-admin-api -am -Dtest=AdminDashboardControllerTest test
+timeout 60s mvn -f "$ROOT_DIR/backend/pom.xml" -pl mmpay-app -am -Dtest=MmpayApplicationContractTest test
 node --test "$ROOT_DIR/tests/repository-contract.test.mjs"
 node --test "$ROOT_DIR/tests/e2e-evidence-contract.test.mjs"
 pnpm --dir "$ROOT_DIR/frontend-admin" install --frozen-lockfile
