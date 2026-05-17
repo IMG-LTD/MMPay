@@ -29,4 +29,12 @@ public record Transaction(
     return new Transaction(
         id, paymentIntentId, amountMinor, currency, createdAt, TransactionStatus.SUCCEEDED);
   }
+
+  public Transaction markFailed() {
+    if (status != TransactionStatus.PENDING) {
+      throw new IllegalStateException("Expected PENDING but was " + status);
+    }
+    return new Transaction(
+        id, paymentIntentId, amountMinor, currency, createdAt, TransactionStatus.FAILED);
+  }
 }
