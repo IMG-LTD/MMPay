@@ -19,5 +19,15 @@ jobs:
           distribution: temurin
           java-version: '21'
 
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10.32.1
+
       - name: Run local validation
         run: bash scripts/validate-local.sh

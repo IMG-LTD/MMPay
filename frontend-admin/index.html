@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MMPay Admin</title>
+  </head>
+  <body>
+    <main id="app" aria-label="MMPay admin credential handles"></main>
+    <script type="module">
+      import { renderProviderCredentialRows } from './src/app.js';
+
+      const app = document.querySelector('#app');
+      const rows = renderProviderCredentialRows()
+        .map((row) => `<p><strong>${row.label}</strong>: ${row.displayValue}</p>`)
+        .join('');
+
+      app.innerHTML = `<h1>MMPay Admin</h1>${rows}`;
+    </script>
+  </body>
+</html>
