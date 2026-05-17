@@ -1,4 +1,14 @@
 # Image Publishing
 
-Container image publishing is not configured yet. Image workflows will be added
-after the first runnable service exists.
+MMPay publishes the runnable app image through `.github/workflows/images.yml`.
+
+The workflow runs on version tags and manual dispatch, builds the repository
+root `Dockerfile`, and publishes:
+
+- `ghcr.io/img-ltd/mmpay-app:<tag-or-ref>`
+- `ghcr.io/img-ltd/mmpay-app:<commit-sha>`
+
+The image contains the Spring Boot `mmpay-app` backend only. Merchant
+credentials, provider keys, webhook secrets, and license signing keys must be
+provided at runtime through environment variables, secret files, or an external
+secret manager.
