@@ -106,11 +106,17 @@ describe('MMPay open-source framework contract', () => {
   it('provides a root Docker build path for the MMPay app image', async () => {
     const dockerfile = await readFile(path.join(root, 'Dockerfile'), 'utf8');
     const appPom = await readFile(path.join(root, 'backend/mmpay-app/pom.xml'), 'utf8');
+    const compose = await readFile(path.join(root, 'deploy/docker-compose.minimal.yml'), 'utf8');
+    const installDoc = await readFile(path.join(root, 'docs/ops/install.md'), 'utf8');
 
     assert.match(dockerfile, /FROM maven:3\.9\.9-eclipse-temurin-21 AS backend-build/);
     assert.match(dockerfile, /FROM eclipse-temurin:21-jre/);
     assert.match(dockerfile, /mvn -f backend\/pom\.xml -pl mmpay-app -am -DskipTests package/);
     assert.match(dockerfile, /USER mmpay/);
+    assert.match(compose, /"8080:8080"/);
+    assert.match(installDoc, /docker build -t mmpay-app:local \./);
+    assert.match(installDoc, /docker compose -f deploy\/docker-compose\.minimal\.yml up/);
+    assert.doesNotMatch(installDoc, /not installable yet/);
     assert.match(appPom, /spring-boot-maven-plugin/);
     assert.match(appPom, /<version>\$\{spring\.boot\.version\}<\/version>/);
     assert.match(appPom, /<goal>repackage<\/goal>/);
