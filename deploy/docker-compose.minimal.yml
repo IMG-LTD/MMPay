@@ -1,0 +1,25 @@
+services:
+  postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: mmpay
+      POSTGRES_USER: mmpay
+      POSTGRES_PASSWORD: replace-with-local-password
+    ports:
+      - "5432:5432"
+
+  redis:
+    image: redis:7
+    ports:
+      - "6379:6379"
+
+  mmpay-app:
+    image: mmpay-app:local
+    depends_on:
+      - postgres
+      - redis
+    environment:
+      MMPAY_DATASOURCE_URL: jdbc:postgresql://postgres:5432/mmpay
+      MMPAY_DATASOURCE_USERNAME: mmpay
+      MMPAY_DATASOURCE_PASSWORD: replace-with-local-password
+      MMPAY_REDIS_URL: redis://redis:6379

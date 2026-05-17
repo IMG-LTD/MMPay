@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>com.imgltd.mmpay</groupId>
+    <artifactId>mmpay-backend</artifactId>
+    <version>0.1.0-SNAPSHOT</version>
+  </parent>
+
+  <artifactId>mmpay-app</artifactId>
+  <name>MMPay App</name>
+
+  <dependencies>
+    <dependency>
+      <groupId>com.imgltd.mmpay</groupId>
+      <artifactId>mmpay-admin-api</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.imgltd.mmpay</groupId>
+      <artifactId>mmpay-adapter-huifu</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.imgltd.mmpay</groupId>
+      <artifactId>mmpay-webhook-out</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+  </dependencies>
+</project>

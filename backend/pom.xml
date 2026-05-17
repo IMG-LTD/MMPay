@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>com.imgltd.mmpay</groupId>
+  <artifactId>mmpay-backend</artifactId>
+  <version>0.1.0-SNAPSHOT</version>
+  <packaging>pom</packaging>
+
+  <name>MMPay Backend</name>
+
+  <modules>
+    <module>mmpay-bom</module>
+    <module>mmpay-common</module>
+    <module>mmpay-gateway-core</module>
+    <module>mmpay-adapter-spi</module>
+    <module>mmpay-adapter-huifu</module>
+    <module>mmpay-webhook-out</module>
+    <module>mmpay-admin-api</module>
+    <module>mmpay-app</module>
+  </modules>
+
+  <properties>
+    <java.version>21</java.version>
+    <maven.compiler.release>${java.version}</maven.compiler.release>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  </properties>
+</project>
