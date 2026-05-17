@@ -6,8 +6,22 @@ source tree and must remain in its own repository.
 
 ## Status
 
-This repository is at MP-0 bootstrap status. Payment provider adapters, core
-state machines, admin APIs, and frontend UI are not implemented yet.
+This repository has the MP-0 through MP-7 scaffold in place:
+
+- Backend foundation: Pig (Spring Cloud Alibaba) compatible Spring Boot app
+  baseline, with payment domain modules split under `backend/`.
+- Payment domain: payment intent, transaction, refund, reconciliation, and
+  Flyway migration contracts.
+- Provider adapter: Huifu reconciliation mapping MVP.
+- Outbound webhook: MMMail-compatible HMAC signature contract.
+- License boundary: relay-only delivery; no license signing module exists here.
+- Admin frontend: soybean-admin stack baseline using Vue 3, Vite, Pinia, and
+  Naive UI. Credential fields display only secret handles.
+
+Disabled Pig modules for this phase: code generation, full auth center,
+standalone gateway cluster, distributed job scheduler, and unrelated sample
+business modules. MMPay keeps the Pig-style Spring Cloud Alibaba foundation but
+only enables the minimal app surface required by the payment gateway.
 
 ## Security Boundary
 

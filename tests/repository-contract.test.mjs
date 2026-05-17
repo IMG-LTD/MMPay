@@ -43,3 +43,49 @@ describe('MP-1 repository scaffold contract', () => {
     assert.match(validateLocal, /security-secret-scan\.sh/);
   });
 });
+
+describe('MMPay open-source framework contract', () => {
+  it('anchors the backend on the Pig Spring Cloud Alibaba foundation', async () => {
+    const backendPom = await readFile(path.join(root, 'backend/pom.xml'), 'utf8');
+    const appPom = await readFile(path.join(root, 'backend/mmpay-app/pom.xml'), 'utf8');
+    const appClass = await readFile(
+      path.join(root, 'backend/mmpay-app/src/main/java/com/imgltd/mmpay/app/MmpayApplication.java'),
+      'utf8',
+    );
+    const appConfig = await readFile(
+      path.join(root, 'backend/mmpay-app/src/main/resources/application.yml'),
+      'utf8',
+    );
+    const readme = await readFile(path.join(root, 'README.md'), 'utf8');
+
+    assert.match(backendPom, /spring-boot-dependencies/);
+    assert.match(backendPom, /spring-cloud-dependencies/);
+    assert.match(backendPom, /spring-cloud-alibaba-dependencies/);
+    assert.match(appPom, /spring-boot-starter-web/);
+    assert.match(appPom, /spring-boot-starter-actuator/);
+    assert.match(appPom, /spring-cloud-starter-alibaba-nacos-discovery/);
+    assert.match(appClass, /@SpringBootApplication/);
+    assert.match(appConfig, /spring:\n  application:\n    name: mmpay-app/);
+    assert.match(readme, /Pig \(Spring Cloud Alibaba\)/);
+    assert.match(readme, /Disabled Pig modules/);
+  });
+
+  it('anchors the admin frontend on the soybean-admin stack', async () => {
+    const packageJson = JSON.parse(await readFile(path.join(root, 'frontend-admin/package.json'), 'utf8'));
+    const mainTs = await readFile(path.join(root, 'frontend-admin/src/main.ts'), 'utf8');
+    const notice = await readFile(path.join(root, 'NOTICE'), 'utf8');
+
+    assert.equal(packageJson.dependencies.vue, '^3.5.13');
+    assert.equal(packageJson.dependencies.pinia, '^2.3.1');
+    assert.equal(packageJson.dependencies['naive-ui'], '^2.44.1');
+    assert.equal(packageJson.dependencies['@vueuse/core'], '^12.8.2');
+    assert.equal(packageJson.devDependencies.vite, '^7.3.2');
+    assert.equal(packageJson.devDependencies['@vitejs/plugin-vue'], '^6.0.7');
+    assert.match(mainTs, /from 'vue'/);
+    assert.match(mainTs, /from 'pinia'/);
+    assert.match(mainTs, /from 'naive-ui'/);
+    assert.match(mainTs, /soybean-admin/);
+    assert.match(notice, /Pig/);
+    assert.match(notice, /soybean-admin/);
+  });
+});

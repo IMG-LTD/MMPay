@@ -7,15 +7,6 @@
   </head>
   <body>
     <main id="app" aria-label="MMPay admin credential handles"></main>
-    <script type="module">
-      import { renderProviderCredentialRows } from './src/app.js';
-
-      const app = document.querySelector('#app');
-      const rows = renderProviderCredentialRows()
-        .map((row) => `<p><strong>${row.label}</strong>: ${row.displayValue}</p>`)
-        .join('');
-
-      app.innerHTML = `<h1>MMPay Admin</h1>${rows}`;
-    </script>
+    <script type="module" src="/src/main.ts"></script>
   </body>
 </html>

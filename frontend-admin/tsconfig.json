@@ -2,11 +2,13 @@
   "compilerOptions": {
     "allowJs": true,
     "checkJs": true,
-    "module": "NodeNext",
-    "moduleResolution": "NodeNext",
+    "lib": ["ES2022", "DOM"],
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
     "noEmit": true,
     "strict": true,
-    "target": "ES2022"
+    "target": "ES2022",
+    "types": ["node"]
   },
-  "include": ["src/**/*.js", "tests/**/*.mjs", "scripts/**/*.mjs"]
+  "include": ["src/**/*.js", "src/**/*.ts", "tests/**/*.mjs", "scripts/**/*.mjs"]
 }
