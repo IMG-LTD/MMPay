@@ -1,0 +1,16 @@
+.DS_Store
+*.log
+target/
+node_modules/
+dist/
+coverage/
+.env
+.env.*
+!.env.example
+secrets/
+*.pem
+*.key
+*.p12
+*.jks
+*.keystore
+.tmp/
