@@ -7,12 +7,13 @@ const sampleHandles = {
 };
 
 /**
+ * @param {'en-US' | 'zh-CN'} [locale]
  * @returns {{ label: string, valueKind: string, displayValue: string }[]}
  */
-export function renderProviderCredentialRows() {
-  return providerCredentialFields().map((field) => ({
+export function renderProviderCredentialRows(locale = 'en-US') {
+  return providerCredentialFields(locale).map((field, index) => ({
     label: field.label,
     valueKind: field.valueKind,
-    displayValue: maskSecretHandle(sampleHandles[field.label]),
+    displayValue: maskSecretHandle(Object.values(sampleHandles)[index]),
   }));
 }

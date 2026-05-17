@@ -2,6 +2,7 @@ import { createApp, h } from 'vue';
 import { createPinia } from 'pinia';
 import { NCard, NConfigProvider, NDataTable, NMessageProvider, NTag } from 'naive-ui';
 import { renderProviderCredentialRows } from './app.js';
+import { t } from './i18n.js';
 
 export const soybeanAdminStack = Object.freeze({
   upstream: 'soybean-admin',
@@ -14,15 +15,16 @@ export function createMmpayAdminApp() {
   return createApp({
     name: 'MmpaySoybeanAdminShell',
     setup() {
-      const rows = renderProviderCredentialRows();
+      const locale = 'en-US';
+      const rows = renderProviderCredentialRows(locale);
       const columns = [
-        { title: 'Provider field', key: 'label' },
+        { title: t(locale, 'table.providerField'), key: 'label' },
         {
-          title: 'Value kind',
+          title: t(locale, 'table.valueKind'),
           key: 'valueKind',
           render: (row: { valueKind: string }) => h(NTag, { type: 'info' }, () => row.valueKind),
         },
-        { title: 'Secret handle', key: 'displayValue' },
+        { title: t(locale, 'table.secretHandle'), key: 'displayValue' },
       ];
 
       return () =>
@@ -30,7 +32,7 @@ export function createMmpayAdminApp() {
           default: () =>
             h(NMessageProvider, null, {
               default: () =>
-                h(NCard, { title: 'MMPay Admin' }, () => [
+                h(NCard, { title: t(locale, 'admin.title') }, () => [
                   h(NDataTable, { columns, data: rows, pagination: false, singleLine: false }),
                 ]),
             }),

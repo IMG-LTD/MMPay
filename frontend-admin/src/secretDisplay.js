@@ -1,3 +1,5 @@
+import { credentialFieldLabels } from './i18n.js';
+
 const VISIBLE_SUFFIX_LENGTH = 7;
 
 /**
@@ -12,12 +14,9 @@ export function maskSecretHandle(handle) {
 }
 
 /**
- * @returns {{ label: 'Merchant ID' | 'API Key' | 'Webhook Secret', valueKind: 'secret-handle' }[]}
+ * @param {'en-US' | 'zh-CN'} [locale]
+ * @returns {{ label: string, valueKind: 'secret-handle' }[]}
  */
-export function providerCredentialFields() {
-  return [
-    { label: 'Merchant ID', valueKind: 'secret-handle' },
-    { label: 'API Key', valueKind: 'secret-handle' },
-    { label: 'Webhook Secret', valueKind: 'secret-handle' },
-  ];
+export function providerCredentialFields(locale = 'en-US') {
+  return credentialFieldLabels(locale).map((label) => ({ label, valueKind: 'secret-handle' }));
 }
