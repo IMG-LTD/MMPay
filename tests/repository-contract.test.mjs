@@ -88,4 +88,16 @@ describe('MMPay open-source framework contract', () => {
     assert.match(notice, /Pig/);
     assert.match(notice, /soybean-admin/);
   });
+
+  it('documents dg-payment-skills as review-only Huifu guidance', async () => {
+    const notice = await readFile(path.join(root, 'NOTICE'), 'utf8');
+    const huifuDoc = await readFile(path.join(root, 'docs/providers/huifu.md'), 'utf8');
+    const huifuPom = await readFile(path.join(root, 'backend/mmpay-adapter-huifu/pom.xml'), 'utf8');
+
+    assert.match(notice, /dg-payment-skills/);
+    assert.match(notice, /CC BY-NC 4\.0/);
+    assert.match(huifuDoc, /review-only guidance/);
+    assert.match(huifuDoc, /must not be compiled into MMPay/);
+    assert.doesNotMatch(huifuPom, /dg-java-sdk/);
+  });
 });
