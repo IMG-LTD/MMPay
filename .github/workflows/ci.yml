@@ -29,5 +29,5 @@ jobs:
         with:
           version: 10.32.1
 
-      - name: Run local validation
-        run: bash scripts/validate-local.sh
+      - name: Run CI validation
+        run: bash scripts/validate-ci.sh

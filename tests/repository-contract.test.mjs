@@ -35,8 +35,13 @@ describe('MP-1 repository scaffold contract', () => {
     await fileExists('deploy/docker-compose.minimal.yml');
     await fileExists('backend/mmpay-gateway-core/src/main/resources/db/migration/V001__create_payment_core.sql');
     await fileExists('scripts/check-migration-naming.sh');
+    await fileExists('scripts/validate-ci.sh');
+    await fileExists('scripts/release-gate.sh');
 
     const validateLocal = await readFile(path.join(root, 'scripts/validate-local.sh'), 'utf8');
+    const validateCi = await readFile(path.join(root, 'scripts/validate-ci.sh'), 'utf8');
+    const releaseGate = await readFile(path.join(root, 'scripts/release-gate.sh'), 'utf8');
+    const ciWorkflow = await readFile(path.join(root, '.github/workflows/ci.yml'), 'utf8');
 
     assert.match(validateLocal, /mvn -f "\$ROOT_DIR\/backend\/pom\.xml" -DskipTests compile/);
     assert.match(validateLocal, /PaymentIntentTest,RefundTest,ReconciliationTest/);
@@ -48,6 +53,12 @@ describe('MP-1 repository scaffold contract', () => {
     assert.match(validateLocal, /e2e-evidence-contract\.test\.mjs/);
     assert.match(validateLocal, /check-migration-naming\.sh/);
     assert.match(validateLocal, /security-secret-scan\.sh/);
+    assert.match(validateLocal, /validate-ci\.sh/);
+    assert.match(validateLocal, /release-gate\.sh/);
+    assert.match(validateCi, /validate-local\.sh/);
+    assert.match(releaseGate, /git -C "\$ROOT_DIR" status --short/);
+    assert.match(releaseGate, /validate-ci\.sh/);
+    assert.match(ciWorkflow, /bash scripts\/validate-ci\.sh/);
   });
 });
 

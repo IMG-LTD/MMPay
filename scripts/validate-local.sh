@@ -21,6 +21,8 @@ pnpm --dir "$ROOT_DIR/frontend-admin" test
 bash -n "$ROOT_DIR/scripts/security-secret-scan.sh"
 bash -n "$ROOT_DIR/scripts/check-migration-naming.sh"
 bash -n "$ROOT_DIR/scripts/validate-e2e-evidence.sh"
+bash -n "$ROOT_DIR/scripts/validate-ci.sh"
 bash -n "$ROOT_DIR/scripts/validate-local.sh"
+bash -n "$ROOT_DIR/scripts/release-gate.sh"
 
 echo "mmpay local validation passed"
