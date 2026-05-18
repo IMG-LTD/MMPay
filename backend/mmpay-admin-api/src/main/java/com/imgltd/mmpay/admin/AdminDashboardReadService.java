@@ -9,6 +9,7 @@ public class AdminDashboardReadService {
   private static final String ZERO = "0";
   private static final String CREDENTIALS_REQUIRED = "credentials-required";
   private static final String INVOICE_UNSUPPORTED = "unsupported by current provider";
+  private static final String PROVIDER_CLIENT_UNWIRED = "live provider client is not wired";
 
   public AdminDashboardResponse getDashboard() {
     return new AdminDashboardResponse(navigation(), metrics(), tables());
@@ -54,11 +55,12 @@ public class AdminDashboardReadService {
   private static AdminDashboardResponse.AdminTable channelsTable() {
     return new AdminDashboardResponse.AdminTable(
         "channels",
-        List.of("merchant", "channel", "status", "updatedAt"),
+        List.of("merchant", "channel", "status", "reason", "updatedAt"),
         List.of(Map.of(
             "merchant", "MMMail",
             "channel", "Huifu sandbox",
             "status", CREDENTIALS_REQUIRED,
+            "reason", PROVIDER_CLIENT_UNWIRED,
             "updatedAt", "not connected")));
   }
 

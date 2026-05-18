@@ -29,6 +29,7 @@ class MmpayApplicationContractTest {
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.navigation[0].key", is("merchants")))
         .andExpect(jsonPath("$.tables[1].rows[0].status", is("credentials-required")))
+        .andExpect(jsonPath("$.tables[1].rows[0].reason", is("live provider client is not wired")))
         .andExpect(jsonPath("$.tables[2].rows").isEmpty())
         .andExpect(jsonPath("$.tables[4].rows[0].reason", is("unsupported by current provider")));
   }

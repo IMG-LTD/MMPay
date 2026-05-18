@@ -138,12 +138,20 @@ describe('MMPay open-source framework contract', () => {
   it('documents dg-payment-skills as review-only Huifu guidance', async () => {
     const notice = await readFile(path.join(root, 'NOTICE'), 'utf8');
     const huifuDoc = await readFile(path.join(root, 'docs/providers/huifu.md'), 'utf8');
+    const adapterContract = await readFile(path.join(root, 'docs/architecture/adapter-contract.md'), 'utf8');
     const huifuPom = await readFile(path.join(root, 'backend/mmpay-adapter-huifu/pom.xml'), 'utf8');
+    const huifuAdapter = await readFile(
+      path.join(root, 'backend/mmpay-adapter-huifu/src/main/java/com/imgltd/mmpay/huifu/HuifuPaymentAdapter.java'),
+      'utf8',
+    );
 
     assert.match(notice, /dg-payment-skills/);
     assert.match(notice, /CC BY-NC 4\.0/);
     assert.match(huifuDoc, /review-only guidance/);
     assert.match(huifuDoc, /must not be compiled into MMPay/);
+    assert.match(huifuDoc, /live provider client is not wired/);
+    assert.match(adapterContract, /Runtime status is separate from capability discovery/);
+    assert.match(huifuAdapter, /ProviderRuntimeStatus\.unavailable/);
     assert.doesNotMatch(huifuPom, /dg-java-sdk/);
   });
 

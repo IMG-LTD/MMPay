@@ -20,7 +20,13 @@ const sampleHandles = {
 /** @type {Readonly<Record<string, readonly TableRow[]>>} */
 const tableRows = Object.freeze({
   channels: Object.freeze([
-    Object.freeze({ merchant: 'MMMail', channel: 'Huifu sandbox', status: 'credentials-required', updatedAt: 'not connected' }),
+    Object.freeze({
+      merchant: 'MMMail',
+      channel: 'Huifu sandbox',
+      status: 'credentials-required',
+      reason: 'live provider client is not wired',
+      updatedAt: 'not connected',
+    }),
   ]),
   orders: Object.freeze([]),
   refunds: Object.freeze([]),
@@ -34,7 +40,7 @@ const tableRows = Object.freeze({
 /** @type {Readonly<Record<string, readonly string[]>>} */
 const tableColumns = Object.freeze({
   credentials: Object.freeze(['table.providerField', 'table.valueKind', 'table.secretHandle']),
-  channels: Object.freeze(['table.merchant', 'table.channel', 'table.status', 'table.updatedAt']),
+  channels: Object.freeze(['table.merchant', 'table.channel', 'table.status', 'table.reason', 'table.updatedAt']),
   orders: Object.freeze(['table.orderRef', 'table.channel', 'table.amount', 'table.status']),
   refunds: Object.freeze(['table.orderRef', 'table.amount', 'table.status', 'table.reason']),
   invoices: Object.freeze(['table.provider', 'table.status', 'table.reason']),

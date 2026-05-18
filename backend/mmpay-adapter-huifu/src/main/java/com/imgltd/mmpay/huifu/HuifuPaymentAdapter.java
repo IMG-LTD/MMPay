@@ -10,6 +10,7 @@ import com.imgltd.mmpay.adapter.ProviderPaymentResponse;
 import com.imgltd.mmpay.adapter.ProviderPaymentStatus;
 import com.imgltd.mmpay.adapter.ProviderRefundRequest;
 import com.imgltd.mmpay.adapter.ProviderRefundResult;
+import com.imgltd.mmpay.adapter.ProviderRuntimeStatus;
 import java.util.EnumSet;
 import java.util.Map;
 import java.util.Objects;
@@ -34,6 +35,11 @@ public final class HuifuPaymentAdapter implements PaymentProviderAdapter {
   @Override
   public Set<ProviderCapability> capabilities() {
     return CAPABILITIES;
+  }
+
+  @Override
+  public ProviderRuntimeStatus runtimeStatus() {
+    return ProviderRuntimeStatus.unavailable("live provider client is not wired");
   }
 
   @Override

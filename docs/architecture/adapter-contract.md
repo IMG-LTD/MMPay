@@ -1,10 +1,17 @@
 # Adapter Contract
 
 Provider adapters will expose payment creation, payment query, refund, inbound
-webhook verification, invoice support status, and capability discovery.
+webhook verification, runtime status, invoice support status, and capability
+discovery.
 
 Adapters must surface provider failures explicitly and must not return mock
 success results.
+
+Runtime status is separate from capability discovery. A provider may declare the
+operations it is designed to support while reporting `available=false` until its
+live client, credentials, and provider review are wired. Callers must treat an
+unavailable runtime status as a blocking condition, not as permission to fall
+back to fake success.
 
 Invoice support must be reported through the adapter SPI. A provider with no
 approved invoice integration must return `unsupported by current provider`

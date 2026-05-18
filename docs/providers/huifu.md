@@ -18,6 +18,8 @@ The current reviewed facts are:
 
 - Java SDK baseline documented by the skill package: `dg-java-sdk 3.0.36`.
 - Runtime credentials remain outside source control.
+- Runtime status is currently `available=false` with reason
+  `live provider client is not wired`.
 - Provider failures must surface explicitly and must not become mock success.
 - Invoice integration is currently `unsupported by current provider` until a
   Huifu invoice API path is reviewed and wired with real sandbox evidence.

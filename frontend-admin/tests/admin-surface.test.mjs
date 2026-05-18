@@ -32,6 +32,7 @@ describe('admin surface coverage', () => {
     assert.ok(channels);
     assert.ok(invoices);
     assert.equal(channels.rows[0].status, 'credentials-required');
+    assert.equal(channels.rows[0].reason, 'live provider client is not wired');
     assert.equal(invoices.rows[0].reason, 'unsupported by current provider');
     assert.deepEqual(runtimeTables.map((table) => table.rows.length), [0, 0, 1, 0, 0]);
     assert.ok(runtimeTables.every((table) => !table.rows.some((row) => row.status === 'succeeded')));

@@ -44,6 +44,14 @@ class HuifuAdapterContractTest {
   }
 
   @Test
+  void declaresRuntimeUnavailableUntilLiveProviderClientIsWired() {
+    PaymentProviderAdapter adapter = new HuifuPaymentAdapter(validCredentialHandles());
+
+    assertEquals(false, adapter.runtimeStatus().available());
+    assertEquals("live provider client is not wired", adapter.runtimeStatus().reason());
+  }
+
+  @Test
   void declaresInvoiceUnsupportedByCurrentProvider() {
     PaymentProviderAdapter adapter = new HuifuPaymentAdapter(validCredentialHandles());
 
