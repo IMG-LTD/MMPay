@@ -114,6 +114,7 @@ describe('MMPay open-source framework contract', () => {
       'utf8',
     );
     const readme = await readFile(path.join(root, 'README.md'), 'utf8');
+    const pigAlignment = await readFile(path.join(root, 'docs/architecture/pig-backend-alignment.md'), 'utf8');
 
     assert.match(backendPom, /spring-boot-dependencies/);
     assert.match(backendPom, /spring-cloud-dependencies/);
@@ -123,25 +124,45 @@ describe('MMPay open-source framework contract', () => {
     assert.match(appPom, /spring-cloud-starter-alibaba-nacos-discovery/);
     assert.match(appClass, /@SpringBootApplication/);
     assert.match(appConfig, /spring:\n  application:\n    name: mmpay-app/);
-    assert.match(readme, /Pig \(Spring Cloud Alibaba\)/);
-    assert.match(readme, /Disabled Pig modules/);
+    assert.match(readme, /Pig backend migration is tracked against upstream/);
+    assert.match(readme, /not fully migrated/);
+    assert.match(pigAlignment, /https:\/\/gitee\.com\/log4j\/pig/);
+    assert.match(pigAlignment, /28ef625701ebe047984661a61589330b9360d43e/);
+    assert.match(pigAlignment, /pig-register/);
+    assert.match(pigAlignment, /pig-gateway/);
+    assert.match(pigAlignment, /pig-auth/);
+    assert.match(pigAlignment, /pig-upms/);
   });
 
-  it('anchors the admin frontend on the soybean-admin stack', async () => {
+  it('rebases the admin frontend on the real soybean-admin project', async () => {
     const packageJson = JSON.parse(await readFile(path.join(root, 'frontend-admin/package.json'), 'utf8'));
     const mainTs = await readFile(path.join(root, 'frontend-admin/src/main.ts'), 'utf8');
+    const homeView = await readFile(path.join(root, 'frontend-admin/src/views/home/index.vue'), 'utf8');
+    const routes = await readFile(path.join(root, 'frontend-admin/src/router/elegant/routes.ts'), 'utf8');
+    const upstream = await readFile(path.join(root, 'frontend-admin/UPSTREAM.md'), 'utf8');
     const notice = await readFile(path.join(root, 'NOTICE'), 'utf8');
 
-    assert.equal(packageJson.dependencies.vue, '^3.5.13');
-    assert.equal(packageJson.dependencies.pinia, '^2.3.1');
-    assert.equal(packageJson.dependencies['naive-ui'], '^2.44.1');
-    assert.equal(packageJson.dependencies['@vueuse/core'], '^12.8.2');
-    assert.equal(packageJson.devDependencies.vite, '^7.3.2');
-    assert.equal(packageJson.devDependencies['@vitejs/plugin-vue'], '^6.0.7');
+    await fileExists('frontend-admin/pnpm-workspace.yaml');
+    await fileExists('frontend-admin/packages/axios/package.json');
+    await fileExists('frontend-admin/packages/hooks/package.json');
+    await fileExists('frontend-admin/packages/scripts/package.json');
+    await fileExists('frontend-admin/src/layouts/base-layout/index.vue');
+    await fileExists('frontend-admin/src/store/modules/auth/index.ts');
+
+    assert.equal(packageJson.name, 'mmpay-frontend-admin');
+    assert.equal(packageJson.dependencies.vue, '3.5.34');
+    assert.equal(packageJson.dependencies.pinia, '3.0.4');
+    assert.equal(packageJson.dependencies['naive-ui'], '2.44.1');
+    assert.equal(packageJson.dependencies['@vueuse/core'], '14.3.0');
+    assert.equal(packageJson.devDependencies.vite, '8.0.12');
+    assert.equal(packageJson.devDependencies['@vitejs/plugin-vue'], '6.0.6');
     assert.match(mainTs, /from 'vue'/);
-    assert.match(mainTs, /from 'pinia'/);
-    assert.match(mainTs, /from 'naive-ui'/);
-    assert.match(mainTs, /soybean-admin/);
+    assert.match(homeView, /MMPay Admin/);
+    assert.match(homeView, /fetch\('\/api\/admin\/dashboard'/);
+    assert.match(homeView, /Pig auth pending/);
+    assert.match(routes, /constant: true/);
+    assert.match(upstream, /https:\/\/github\.com\/soybeanjs\/soybean-admin/);
+    assert.match(upstream, /eba49504280a2866de3a61c65c3401e1453771ce/);
     assert.match(notice, /Pig/);
     assert.match(notice, /soybean-admin/);
   });
@@ -183,6 +204,7 @@ describe('MMPay open-source framework contract', () => {
 
   it('provides a root Docker build path for the MMPay app image', async () => {
     const dockerfile = await readFile(path.join(root, 'Dockerfile'), 'utf8');
+    const dockerignore = await readFile(path.join(root, '.dockerignore'), 'utf8');
     const appPom = await readFile(path.join(root, 'backend/mmpay-app/pom.xml'), 'utf8');
     const compose = await readFile(path.join(root, 'deploy/docker-compose.yml'), 'utf8');
     const minimalCompose = await readFile(path.join(root, 'deploy/docker-compose.minimal.yml'), 'utf8');
@@ -198,6 +220,9 @@ describe('MMPay open-source framework contract', () => {
     assert.match(dockerfile, /FROM eclipse-temurin:21-jre/);
     assert.match(dockerfile, /mvn -f backend\/pom\.xml -pl mmpay-app -am -DskipTests package/);
     assert.match(dockerfile, /USER mmpay/);
+    assert.match(dockerignore, /\*\*\/node_modules/);
+    assert.match(dockerignore, /\*\*\/dist/);
+    assert.match(dockerignore, /\*\*\/target/);
     assert.match(compose, /"8080:8080"/);
     assert.match(compose, /build:\n      context: \.\./);
     assert.match(compose, /replace-with-huifu-merchant-id/);

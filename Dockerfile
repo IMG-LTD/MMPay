@@ -4,10 +4,8 @@ WORKDIR /workspace
 
 RUN corepack enable && corepack prepare pnpm@10.32.1 --activate
 
-COPY frontend-admin/package.json frontend-admin/pnpm-lock.yaml frontend-admin/
-RUN pnpm --dir frontend-admin install --frozen-lockfile
-
 COPY frontend-admin frontend-admin
+RUN pnpm --dir frontend-admin install --frozen-lockfile
 RUN pnpm --dir frontend-admin build
 
 FROM maven:3.9.9-eclipse-temurin-21 AS backend-build

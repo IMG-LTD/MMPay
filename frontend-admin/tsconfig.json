@@ -1,14 +1,25 @@
 {
   "compilerOptions": {
-    "allowJs": true,
-    "checkJs": true,
-    "lib": ["ES2022", "DOM"],
+    "target": "ESNext",
+    "jsx": "preserve",
+    "jsxImportSource": "vue",
+    "lib": ["DOM", "ESNext"],
     "module": "ESNext",
-    "moduleResolution": "Bundler",
-    "noEmit": true,
+    "moduleResolution": "bundler",
+    "paths": {
+      "@/*": ["./src/*"],
+      "~/*": ["./*"]
+    },
+    "resolveJsonModule": true,
+    "types": ["vite/client", "node", "unplugin-icons/types/vue", "naive-ui/volar"],
     "strict": true,
-    "target": "ES2022",
-    "types": ["node"]
+    "strictNullChecks": true,
+    "noUnusedLocals": false,
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "isolatedModules": true
   },
-  "include": ["src/**/*.js", "src/**/*.ts", "tests/**/*.mjs", "scripts/**/*.mjs"]
+  "include": ["./**/*.ts", "./**/*.tsx", "./**/*.vue"],
+  "exclude": ["node_modules", "dist"]
 }

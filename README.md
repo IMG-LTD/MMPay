@@ -6,15 +6,17 @@ source tree and must remain in its own repository.
 
 ## Status
 
-`v0.1.1` is the public MP-8 preparation release for deploying MMPay to a public
+`v0.2.0` is the public MP-8 preparation release for deploying MMPay to a public
 test server, opening the bundled admin UI, wiring Huifu sandbox callbacks, and
 collecting external evidence for MMMail subscription and license relay flows. It
 is not a full payment-closure or GA evidence release.
 
 This repository has the MP-0 through MP-7 scaffold in place:
 
-- Backend foundation: Pig (Spring Cloud Alibaba) compatible Spring Boot app
-  baseline, with payment domain modules split under `backend/`.
+- Backend foundation: Pig backend migration is tracked against upstream
+  `log4j/pig` commit `28ef625701ebe047984661a61589330b9360d43e`. The current
+  runtime remains the MMPay Spring Boot payment app until Pig auth, gateway,
+  common, upms, and database bootstrap are wired with tests.
 - Payment domain: payment intent, transaction, refund, reconciliation, and
   Flyway migration contracts.
 - Provider adapter: Huifu reconciliation mapping plus signed create, query, and
@@ -22,10 +24,11 @@ This repository has the MP-0 through MP-7 scaffold in place:
   a real endpoint is wired and evidenced.
 - Outbound webhook: MMMail-compatible HMAC signature contract.
 - License boundary: relay-only delivery; no license signing module exists here.
-- Admin surface: read-only dashboard API plus soybean-admin stack frontend using
-  Vue 3, Vite, Pinia, and Naive UI. Merchant, channel, order, refund, webhook,
-  and reconciliation views are present; runtime tables remain empty until a real
-  provider connection exists. Credential fields display only secret handles.
+- Admin surface: `frontend-admin` is rebased on the real soybean-admin upstream
+  commit `eba49504280a2866de3a61c65c3401e1453771ce`, including Soybean layout,
+  router, store, package workspace, UnoCSS and Naive UI integration. The home
+  page is adapted to MMPay and calls `/api/admin/dashboard`; runtime tables
+  remain empty until a real provider connection exists.
 - Deployment: Docker Compose and an app-only Helm chart exist for the runnable
   baseline. The Docker image bundles the Spring Boot API and built
   `frontend-admin` static assets, so `/` serves the admin UI while `/api/*` and
@@ -33,10 +36,10 @@ This repository has the MP-0 through MP-7 scaffold in place:
   PostgreSQL, Redis, and Kubernetes Secret references; it does not create
   provider credentials.
 
-Disabled Pig modules for this phase: code generation, full auth center,
-standalone gateway cluster, distributed job scheduler, and unrelated sample
-business modules. MMPay keeps the Pig-style Spring Cloud Alibaba foundation but
-only enables the minimal app surface required by the payment gateway.
+Pig alignment for this phase is documented in
+`docs/architecture/pig-backend-alignment.md`. Public documents must describe the
+backend state as Pig-aligned or Pig migration in progress, not fully migrated,
+until Pig auth, gateway and upms become the active runtime.
 
 ## Security Boundary
 
@@ -56,10 +59,10 @@ docker compose -f deploy/docker-compose.yml up --build -d
 ```
 
 For a prebuilt-image deployment after the `MMPay Images` workflow publishes
-`v0.1.1`, use:
+`v0.2.0`, use:
 
 ```text
-ghcr.io/img-ltd/mmpay-app:v0.1.1
+ghcr.io/img-ltd/mmpay-app:v0.2.0
 ```
 
 Runtime credentials must be injected through environment variables, secret

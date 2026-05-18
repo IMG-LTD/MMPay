@@ -1,0 +1,15 @@
+.git
+.github
+.idea
+.vscode
+
+**/node_modules
+**/dist
+**/target
+**/.turbo
+**/.vite
+
+.tmp
+*.log
+*.local
+coverage

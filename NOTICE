@@ -7,10 +7,11 @@ MMPay uses the following open source framework foundations:
 
 - Pig, a Spring Cloud Alibaba based backend scaffold from
   https://gitee.com/log4j/pig. MMPay uses the Spring Cloud Alibaba foundation
-  and keeps unrelated Pig modules disabled in this repository.
+  and tracks the backend-only migration boundary in
+  docs/architecture/pig-backend-alignment.md.
 - soybean-admin, a Vue 3 admin frontend template from
-  https://github.com/soybeanjs/soybean-admin. MMPay uses the Vue, Vite, Pinia,
-  and Naive UI stack for the admin console baseline.
+  https://github.com/soybeanjs/soybean-admin. MMPay frontend-admin is rebased on
+  the real soybean-admin project and adapts its home page for the MMPay console.
 - dg-payment-skills, a Huifu payment integration skill package from
   https://github.com/huifurepo/dg-payment-skills. Its repository declares
   CC BY-NC 4.0 and Huifu-owned technical content. MMPay treats it as
