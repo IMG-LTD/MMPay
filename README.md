@@ -6,10 +6,10 @@ source tree and must remain in its own repository.
 
 ## Status
 
-`v0.1.0` is the first public MP-8 preparation release. It is intended for
-deploying MMPay to a public test server, wiring Huifu sandbox callbacks, and
-collecting external evidence for MMMail subscription and license relay flows.
-It is not a full payment-closure or GA evidence release.
+`v0.1.1` is the public MP-8 preparation release for deploying MMPay to a public
+test server, opening the bundled admin UI, wiring Huifu sandbox callbacks, and
+collecting external evidence for MMMail subscription and license relay flows. It
+is not a full payment-closure or GA evidence release.
 
 This repository has the MP-0 through MP-7 scaffold in place:
 
@@ -27,8 +27,11 @@ This repository has the MP-0 through MP-7 scaffold in place:
   and reconciliation views are present; runtime tables remain empty until a real
   provider connection exists. Credential fields display only secret handles.
 - Deployment: Docker Compose and an app-only Helm chart exist for the runnable
-  baseline. The Helm chart expects external PostgreSQL, Redis, and Kubernetes
-  Secret references; it does not create provider credentials.
+  baseline. The Docker image bundles the Spring Boot API and built
+  `frontend-admin` static assets, so `/` serves the admin UI while `/api/*` and
+  `/actuator/*` stay on the backend. The Helm chart expects external
+  PostgreSQL, Redis, and Kubernetes Secret references; it does not create
+  provider credentials.
 
 Disabled Pig modules for this phase: code generation, full auth center,
 standalone gateway cluster, distributed job scheduler, and unrelated sample
@@ -53,10 +56,10 @@ docker compose -f deploy/docker-compose.yml up --build -d
 ```
 
 For a prebuilt-image deployment after the `MMPay Images` workflow publishes
-`v0.1.0`, use:
+`v0.1.1`, use:
 
 ```text
-ghcr.io/img-ltd/mmpay-app:v0.1.0
+ghcr.io/img-ltd/mmpay-app:v0.1.1
 ```
 
 Runtime credentials must be injected through environment variables, secret
@@ -68,6 +71,12 @@ The backend health endpoint is:
 
 ```bash
 curl -fsS http://localhost:8080/actuator/health
+```
+
+The bundled admin UI is served from:
+
+```text
+http://localhost:8080/
 ```
 
 For Huifu sandbox callbacks, configure `HUIFU_NOTIFY_URL` to a public HTTPS URL

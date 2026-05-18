@@ -189,6 +189,12 @@ describe('MMPay open-source framework contract', () => {
     const installDoc = await readFile(path.join(root, 'docs/ops/install.md'), 'utf8');
 
     assert.match(dockerfile, /FROM maven:3\.9\.9-eclipse-temurin-21 AS backend-build/);
+    assert.match(dockerfile, /FROM node:22-bookworm-slim AS frontend-build/);
+    assert.match(dockerfile, /pnpm --dir frontend-admin build/);
+    assert.match(
+      dockerfile,
+      /COPY --from=frontend-build \/workspace\/frontend-admin\/dist backend\/mmpay-app\/src\/main\/resources\/static/,
+    );
     assert.match(dockerfile, /FROM eclipse-temurin:21-jre/);
     assert.match(dockerfile, /mvn -f backend\/pom\.xml -pl mmpay-app -am -DskipTests package/);
     assert.match(dockerfile, /USER mmpay/);

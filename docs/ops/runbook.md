@@ -16,6 +16,12 @@ For the minimal prebuilt-image path, use
 ## Health Check
 
 ```bash
+curl -fsS http://localhost:8080/
+```
+
+Expected result: Spring Boot returns the bundled admin UI `index.html`.
+
+```bash
 curl -fsS http://localhost:8080/actuator/health
 ```
 

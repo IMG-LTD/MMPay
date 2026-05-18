@@ -1,7 +1,7 @@
 # Install
 
-MMPay can run locally as a minimal backend stack after the app image is built.
-This path is for local validation and MP-8 preparation; Huifu sandbox
+MMPay can run locally as a minimal web and backend stack after the app image is
+built. This path is for local validation and MP-8 preparation; Huifu sandbox
 credentials, provider private keys, and license signing keys remain outside this
 repository.
 
@@ -39,7 +39,8 @@ want the smallest runtime stack:
 docker compose -f deploy/docker-compose.minimal.yml up
 ```
 
-The backend exposes Spring Boot actuator health on port `8080`.
+The bundled admin UI is served from `http://localhost:8080/`. The backend
+exposes Spring Boot actuator health on `http://localhost:8080/actuator/health`.
 
 ## Helm Chart
 

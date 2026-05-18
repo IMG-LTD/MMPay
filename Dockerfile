@@ -1,3 +1,15 @@
+FROM node:22-bookworm-slim AS frontend-build
+
+WORKDIR /workspace
+
+RUN corepack enable && corepack prepare pnpm@10.32.1 --activate
+
+COPY frontend-admin/package.json frontend-admin/pnpm-lock.yaml frontend-admin/
+RUN pnpm --dir frontend-admin install --frozen-lockfile
+
+COPY frontend-admin frontend-admin
+RUN pnpm --dir frontend-admin build
+
 FROM maven:3.9.9-eclipse-temurin-21 AS backend-build
 
 WORKDIR /workspace
@@ -13,6 +25,7 @@ COPY backend/mmpay-license-relay/pom.xml backend/mmpay-license-relay/pom.xml
 COPY backend/mmpay-admin-api/pom.xml backend/mmpay-admin-api/pom.xml
 COPY backend/mmpay-app/pom.xml backend/mmpay-app/pom.xml
 COPY backend backend
+COPY --from=frontend-build /workspace/frontend-admin/dist backend/mmpay-app/src/main/resources/static
 
 RUN mvn -f backend/pom.xml -pl mmpay-app -am -DskipTests package
 
