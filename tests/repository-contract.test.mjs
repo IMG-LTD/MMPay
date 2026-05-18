@@ -140,6 +140,14 @@ describe('MMPay open-source framework contract', () => {
     const huifuDoc = await readFile(path.join(root, 'docs/providers/huifu.md'), 'utf8');
     const adapterContract = await readFile(path.join(root, 'docs/architecture/adapter-contract.md'), 'utf8');
     const huifuPom = await readFile(path.join(root, 'backend/mmpay-adapter-huifu/pom.xml'), 'utf8');
+    const smokeScript = await readFile(path.join(root, 'scripts/huifu-env-smoke.sh'), 'utf8');
+    const smokeTest = await readFile(
+      path.join(
+        root,
+        'backend/mmpay-adapter-huifu/src/test/java/com/imgltd/mmpay/huifu/HuifuEnvironmentSmokeTest.java',
+      ),
+      'utf8',
+    );
     const huifuAdapter = await readFile(
       path.join(root, 'backend/mmpay-adapter-huifu/src/main/java/com/imgltd/mmpay/huifu/HuifuPaymentAdapter.java'),
       'utf8',
@@ -155,6 +163,10 @@ describe('MMPay open-source framework contract', () => {
     assert.match(adapterContract, /Runtime status is separate from capability discovery/);
     assert.match(adapterContract, /Provider-specific request preparation/);
     assert.match(huifuAdapter, /ProviderRuntimeStatus\.unavailable/);
+    assert.match(smokeScript, /MMPAY_HUIFU_ENV_SMOKE=true/);
+    assert.match(smokeScript, /HuifuEnvironmentSmokeTest/);
+    assert.match(smokeTest, /EnabledIfEnvironmentVariable/);
+    assert.match(smokeTest, /HuifuSandboxCredentials\.from\(System\.getenv\(\)\)/);
     assert.doesNotMatch(huifuPom, /dg-java-sdk/);
   });
 

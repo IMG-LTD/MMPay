@@ -57,3 +57,14 @@ environment-sourced values:
 - `HUIFU_NOTIFY_URL`
 - `HUIFU_WEBHOOK_ENDPOINT_KEY`
 - `HUIFU_SDK_ROOT` optional, only used when an approved local SDK is mounted
+
+For local credential validation, store the variables outside this repository
+and run:
+
+```bash
+MMPAY_HUIFU_ENV_FILE="$HOME/.config/mmpay/huifu.env" bash scripts/huifu-env-smoke.sh
+```
+
+The smoke path only loads environment credentials, prepares signed request
+envelopes, and verifies signatures locally. It does not send a provider request,
+mark runtime status available, or record a paid result.
