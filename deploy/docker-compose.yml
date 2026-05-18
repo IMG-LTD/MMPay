@@ -32,9 +32,14 @@ services:
       MMPAY_DATASOURCE_USERNAME: mmpay
       MMPAY_DATASOURCE_PASSWORD: replace-with-local-password
       MMPAY_REDIS_URL: redis://redis:6379
-      MMPAY_HUIFU_MERCHANT_ID_FILE: /run/secrets/replace-with-huifu-merchant-id
-      MMPAY_HUIFU_API_KEY_FILE: /run/secrets/replace-with-huifu-api-key
-      MMPAY_HUIFU_WEBHOOK_SECRET_FILE: /run/secrets/replace-with-huifu-webhook-secret
+      HUIFU_SYS_ID_FILE: /run/secrets/replace-with-huifu-sys-id
+      HUIFU_PRODUCT_ID_FILE: /run/secrets/replace-with-huifu-product-id
+      HUIFU_RSA_PUBLIC_KEY_FILE: /run/secrets/replace-with-huifu-rsa-public-key
+      HUIFU_RSA_PRIVATE_KEY_FILE: /run/secrets/replace-with-huifu-rsa-private-key
+      HUIFU_SKILL_SOURCE_FILE: /run/secrets/replace-with-huifu-skill-source
+      HUIFU_MERCHANT_ID_FILE: /run/secrets/replace-with-huifu-merchant-id
+      HUIFU_NOTIFY_URL_FILE: /run/secrets/replace-with-huifu-notify-url
+      HUIFU_WEBHOOK_ENDPOINT_KEY_FILE: /run/secrets/replace-with-huifu-webhook-endpoint-key
 
 volumes:
   mmpay-postgres-data:

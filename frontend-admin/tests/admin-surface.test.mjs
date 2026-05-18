@@ -43,11 +43,11 @@ describe('admin surface coverage', () => {
     const credentials = dashboard.tables.find((table) => table.key === 'credentials');
 
     assert.ok(credentials);
-    assert.equal(credentials.rows.length, 3);
+    assert.equal(credentials.rows.length, 8);
     for (const row of credentials.rows) {
       assert.equal(row.valueKind, 'secret-handle');
       assert.match(row.displayValue, /^kms:\/\/\*+/);
-      assert.doesNotMatch(row.displayValue, /sandbox\/api-key|webhook-secret|merchant-id/);
+      assert.doesNotMatch(row.displayValue, /sandbox\/|merchant-id|private-key|endpoint-key/);
     }
   });
 

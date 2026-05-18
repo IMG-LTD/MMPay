@@ -59,7 +59,7 @@ describe('MP-1 repository scaffold contract', () => {
 
     assert.match(validateLocal, /mvn -f "\$ROOT_DIR\/backend\/pom\.xml" -DskipTests compile/);
     assert.match(validateLocal, /PaymentIntentTest,MerchantChannelTest,RefundTest,ReconciliationTest/);
-    assert.match(validateLocal, /HuifuAdapterContractTest,HuifuReconciliationTest/);
+    assert.match(validateLocal, /HuifuAdapterContractTest,HuifuSignedRequestTest,HuifuReconciliationTest/);
     assert.match(validateLocal, /WebhookOutContractTest/);
     assert.match(validateLocal, /mmpay-license-relay/);
     assert.match(validateLocal, /AdminDashboardControllerTest/);
@@ -150,7 +150,10 @@ describe('MMPay open-source framework contract', () => {
     assert.match(huifuDoc, /review-only guidance/);
     assert.match(huifuDoc, /must not be compiled into MMPay/);
     assert.match(huifuDoc, /live provider client is not wired/);
+    assert.match(huifuDoc, /SHA256withRSA/);
+    assert.match(huifuDoc, /HUIFU_RSA_PRIVATE_KEY/);
     assert.match(adapterContract, /Runtime status is separate from capability discovery/);
+    assert.match(adapterContract, /Provider-specific request preparation/);
     assert.match(huifuAdapter, /ProviderRuntimeStatus\.unavailable/);
     assert.doesNotMatch(huifuPom, /dg-java-sdk/);
   });
@@ -194,8 +197,8 @@ describe('MMPay open-source framework contract', () => {
     assert.match(values, /\/actuator\/health\/readiness/);
     assert.match(values, /\/actuator\/health\/liveness/);
     assert.match(deployment, /secretKeyRef:/);
-    assert.match(deployment, /MMPAY_HUIFU_API_KEY/);
-    assert.match(deployment, /MMPAY_HUIFU_WEBHOOK_SECRET/);
+    assert.match(deployment, /HUIFU_RSA_PRIVATE_KEY/);
+    assert.match(deployment, /HUIFU_WEBHOOK_ENDPOINT_KEY/);
     assert.match(configMap, /MMPAY_DATASOURCE_URL/);
     assert.match(installDoc, /bash scripts\/validate-helm-chart\.sh/);
     assert.doesNotMatch(values, /apiKey: "[^"]+"/);

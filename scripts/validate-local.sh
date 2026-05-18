@@ -8,7 +8,7 @@ bash "$ROOT_DIR/scripts/check-migration-naming.sh"
 bash "$ROOT_DIR/scripts/validate-helm-chart.sh"
 mvn -f "$ROOT_DIR/backend/pom.xml" -DskipTests compile
 timeout 60s mvn -f "$ROOT_DIR/backend/pom.xml" -pl mmpay-gateway-core -am -Dtest=PaymentIntentTest,MerchantChannelTest,RefundTest,ReconciliationTest test
-timeout 60s mvn -f "$ROOT_DIR/backend/pom.xml" -pl mmpay-adapter-huifu -am -Dtest=HuifuAdapterContractTest,HuifuReconciliationTest test
+timeout 60s mvn -f "$ROOT_DIR/backend/pom.xml" -pl mmpay-adapter-huifu -am -Dtest=HuifuAdapterContractTest,HuifuSignedRequestTest,HuifuReconciliationTest test
 timeout 60s mvn -f "$ROOT_DIR/backend/pom.xml" -pl mmpay-webhook-out -am -Dtest=WebhookOutContractTest test
 timeout 60s mvn -f "$ROOT_DIR/backend/pom.xml" -pl mmpay-license-relay -am test
 timeout 60s mvn -f "$ROOT_DIR/backend/pom.xml" -pl mmpay-admin-api -am -Dtest=AdminDashboardControllerTest test

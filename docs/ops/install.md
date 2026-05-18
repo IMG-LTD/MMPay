@@ -48,6 +48,11 @@ operator to provide PostgreSQL, Redis, and a Kubernetes Secret that contains
 provider credential values. The chart never creates Huifu credentials or MMMail
 license signing material.
 
+For Huifu sandbox preparation, store these keys in the external Secret instead
+of source files: `HUIFU_SYS_ID`, `HUIFU_PRODUCT_ID`, `HUIFU_RSA_PUBLIC_KEY`,
+`HUIFU_RSA_PRIVATE_KEY`, `HUIFU_SKILL_SOURCE`, `HUIFU_MERCHANT_ID`,
+`HUIFU_NOTIFY_URL`, and `HUIFU_WEBHOOK_ENDPOINT_KEY`.
+
 Validate the chart structure before using it:
 
 ```bash

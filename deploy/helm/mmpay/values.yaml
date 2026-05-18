@@ -56,9 +56,14 @@ secrets:
   existingSecret: "replace-with-mmpay-secret"
   keys:
     datasourcePassword: "datasource-password"
+    huifuSysId: "huifu-sys-id"
+    huifuProductId: "huifu-product-id"
+    huifuRsaPublicKey: "huifu-rsa-public-key"
+    huifuRsaPrivateKey: "huifu-rsa-private-key"
+    huifuSkillSource: "huifu-skill-source"
     huifuMerchantId: "huifu-merchant-id"
-    huifuApiKey: "huifu-api-key"
-    huifuWebhookSecret: "huifu-webhook-secret"
+    huifuNotifyUrl: "huifu-notify-url"
+    huifuWebhookEndpointKey: "huifu-webhook-endpoint-key"
 
 probes:
   liveness:

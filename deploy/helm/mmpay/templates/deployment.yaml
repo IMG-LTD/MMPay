@@ -49,21 +49,46 @@ spec:
                 secretKeyRef:
                   name: {{ required "secrets.existingSecret is required" .Values.secrets.existingSecret }}
                   key: {{ .Values.secrets.keys.datasourcePassword }}
-            - name: MMPAY_HUIFU_MERCHANT_ID
+            - name: HUIFU_SYS_ID
+              valueFrom:
+                secretKeyRef:
+                  name: {{ required "secrets.existingSecret is required" .Values.secrets.existingSecret }}
+                  key: {{ .Values.secrets.keys.huifuSysId }}
+            - name: HUIFU_PRODUCT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: {{ required "secrets.existingSecret is required" .Values.secrets.existingSecret }}
+                  key: {{ .Values.secrets.keys.huifuProductId }}
+            - name: HUIFU_RSA_PUBLIC_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ required "secrets.existingSecret is required" .Values.secrets.existingSecret }}
+                  key: {{ .Values.secrets.keys.huifuRsaPublicKey }}
+            - name: HUIFU_RSA_PRIVATE_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ required "secrets.existingSecret is required" .Values.secrets.existingSecret }}
+                  key: {{ .Values.secrets.keys.huifuRsaPrivateKey }}
+            - name: HUIFU_SKILL_SOURCE
+              valueFrom:
+                secretKeyRef:
+                  name: {{ required "secrets.existingSecret is required" .Values.secrets.existingSecret }}
+                  key: {{ .Values.secrets.keys.huifuSkillSource }}
+            - name: HUIFU_MERCHANT_ID
               valueFrom:
                 secretKeyRef:
                   name: {{ required "secrets.existingSecret is required" .Values.secrets.existingSecret }}
                   key: {{ .Values.secrets.keys.huifuMerchantId }}
-            - name: MMPAY_HUIFU_API_KEY
+            - name: HUIFU_NOTIFY_URL
               valueFrom:
                 secretKeyRef:
                   name: {{ required "secrets.existingSecret is required" .Values.secrets.existingSecret }}
-                  key: {{ .Values.secrets.keys.huifuApiKey }}
-            - name: MMPAY_HUIFU_WEBHOOK_SECRET
+                  key: {{ .Values.secrets.keys.huifuNotifyUrl }}
+            - name: HUIFU_WEBHOOK_ENDPOINT_KEY
               valueFrom:
                 secretKeyRef:
                   name: {{ required "secrets.existingSecret is required" .Values.secrets.existingSecret }}
-                  key: {{ .Values.secrets.keys.huifuWebhookSecret }}
+                  key: {{ .Values.secrets.keys.huifuWebhookEndpointKey }}
           livenessProbe:
             httpGet:
               path: {{ .Values.probes.liveness.path }}

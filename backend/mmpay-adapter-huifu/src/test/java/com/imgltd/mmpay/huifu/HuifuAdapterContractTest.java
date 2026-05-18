@@ -65,10 +65,11 @@ class HuifuAdapterContractTest {
 
     IllegalStateException failure = assertThrows(IllegalStateException.class, () -> HuifuSandboxCredentials.from(env));
 
-    assertTrue(failure.getMessage().contains("HUIFU_API_KEY"));
+    assertTrue(failure.getMessage().contains("HUIFU_SYS_ID"));
   }
 
   private static HuifuCredentialHandles validCredentialHandles() {
-    return new HuifuCredentialHandles("kms://huifu/merchant-id", "kms://huifu/api-key", "kms://huifu/webhook");
+    return new HuifuCredentialHandles(
+        "kms://huifu/merchant-id", "kms://huifu/rsa-private-key", "kms://huifu/webhook-endpoint-key");
   }
 }

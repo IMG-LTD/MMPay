@@ -7,9 +7,14 @@ export const adminMessages = Object.freeze({
   'en-US': Object.freeze({
     'admin.title': 'MMPay Admin',
     'admin.subtitle': 'Payment operations',
+    'credential.sysId': 'Sys ID',
+    'credential.productId': 'Product ID',
+    'credential.rsaPublicKey': 'RSA Public Key',
+    'credential.rsaPrivateKey': 'RSA Private Key',
     'credential.merchantId': 'Merchant ID',
-    'credential.apiKey': 'API Key',
-    'credential.webhookSecret': 'Webhook Secret',
+    'credential.notifyUrl': 'Notify URL',
+    'credential.webhookEndpointKey': 'Webhook Endpoint Key',
+    'credential.skillSource': 'Skill Source',
     'metric.activeMerchants': 'Active merchants',
     'metric.enabledChannels': 'Enabled channels',
     'metric.todayOrders': 'Today orders',
@@ -38,9 +43,14 @@ export const adminMessages = Object.freeze({
   'zh-CN': Object.freeze({
     'admin.title': 'MMPay 管理后台',
     'admin.subtitle': '支付运营',
+    'credential.sysId': '系统号',
+    'credential.productId': '产品号',
+    'credential.rsaPublicKey': 'RSA 公钥',
+    'credential.rsaPrivateKey': 'RSA 私钥',
     'credential.merchantId': '商户号',
-    'credential.apiKey': 'API 密钥',
-    'credential.webhookSecret': 'Webhook 密钥',
+    'credential.notifyUrl': '通知地址',
+    'credential.webhookEndpointKey': 'Webhook 终端密钥',
+    'credential.skillSource': 'Skill Source',
     'metric.activeMerchants': '活跃商户',
     'metric.enabledChannels': '启用通道',
     'metric.todayOrders': '今日订单',
@@ -69,9 +79,14 @@ export const adminMessages = Object.freeze({
 });
 
 export const credentialFieldKeys = Object.freeze([
+  'credential.sysId',
+  'credential.productId',
+  'credential.rsaPublicKey',
+  'credential.rsaPrivateKey',
   'credential.merchantId',
-  'credential.apiKey',
-  'credential.webhookSecret',
+  'credential.notifyUrl',
+  'credential.webhookEndpointKey',
+  'credential.skillSource',
 ]);
 
 /**

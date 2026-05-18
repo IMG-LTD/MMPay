@@ -17,3 +17,9 @@ Invoice support must be reported through the adapter SPI. A provider with no
 approved invoice integration must return `unsupported by current provider`
 instead of fabricating invoice identifiers or marking invoice delivery as
 available.
+
+Provider-specific request preparation may exist below the adapter SPI before a
+live HTTP client is connected. That preparation may sign provider payloads,
+construct provider headers, and verify inbound provider callbacks, but it must
+not mark runtime status available or return successful payment results until a
+real provider endpoint has been wired and evidenced.

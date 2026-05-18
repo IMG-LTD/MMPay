@@ -12,9 +12,14 @@ import { t } from './i18n.js';
  */
 
 const sampleHandles = {
+  'Sys ID': 'kms://huifu/sandbox/sys-id',
+  'Product ID': 'kms://huifu/sandbox/product-id',
+  'RSA Public Key': 'kms://huifu/sandbox/rsa-public-key',
+  'RSA Private Key': 'kms://huifu/sandbox/rsa-private-key',
   'Merchant ID': 'kms://huifu/sandbox/merchant-id',
-  'API Key': 'kms://huifu/sandbox/api-key',
-  'Webhook Secret': 'kms://mmpay/mmmail/webhook-secret',
+  'Notify URL': 'kms://huifu/sandbox/notify-url',
+  'Webhook Endpoint Key': 'kms://huifu/sandbox/webhook-endpoint-key',
+  'Skill Source': 'kms://huifu/sandbox/skill-source',
 };
 
 /** @type {Readonly<Record<string, readonly TableRow[]>>} */
