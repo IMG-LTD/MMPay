@@ -50,6 +50,10 @@ Huifu sandbox credentials, provider private keys, and license signing keys stay
 outside this repository. A release cannot be called end-to-end complete until the
 external sandbox run and redacted evidence package exist.
 
+The current blocking items are tracked in
+`docs/release/external-closure-blockers.md`. They must remain blocked until real
+Huifu, MMMail, and vendor-issued license relay evidence exists.
+
 Use `docs/release/e2e-evidence-template.md` for the redacted MP-8 evidence file.
 After a real sandbox or live run, render the evidence from explicit external
 facts:

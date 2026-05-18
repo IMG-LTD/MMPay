@@ -37,6 +37,7 @@ describe('MP-1 repository scaffold contract', () => {
     await fileExists('deploy/helm/mmpay/Chart.yaml');
     await fileExists('deploy/helm/mmpay/values.yaml');
     await fileExists('deploy/helm/mmpay/templates/deployment.yaml');
+    await fileExists('docs/release/external-closure-blockers.md');
     await fileExists('backend/mmpay-gateway-core/src/main/resources/db/migration/V001__create_payment_core.sql');
     await fileExists('scripts/check-migration-naming.sh');
     await fileExists('scripts/validate-helm-chart.sh');
@@ -53,6 +54,7 @@ describe('MP-1 repository scaffold contract', () => {
     const evidenceRenderer = await readFile(path.join(root, 'scripts/render-e2e-evidence.sh'), 'utf8');
     const ciWorkflow = await readFile(path.join(root, '.github/workflows/ci.yml'), 'utf8');
     const releaseWorkflow = await readFile(path.join(root, '.github/workflows/release.yml'), 'utf8');
+    const externalBlockers = await readFile(path.join(root, 'docs/release/external-closure-blockers.md'), 'utf8');
     const dependabotMirrorWorkflow = await readFile(
       path.join(root, '.github/workflows/dependabot-mirror.yml'),
       'utf8',
@@ -84,6 +86,10 @@ describe('MP-1 repository scaffold contract', () => {
     assert.match(releaseWorkflow, /bash scripts\/release-gate\.sh/);
     assert.match(releaseWorkflow, /gh release create "\$\{RELEASE_TAG\}"/);
     assert.match(releaseWorkflow, /--verify-tag/);
+    assert.match(externalBlockers, /real Huifu sandbox request and callback evidence/);
+    assert.match(externalBlockers, /MMMail paid state webhook acceptance evidence/);
+    assert.match(externalBlockers, /vendor-issued license claim relay evidence/);
+    assert.doesNotMatch(externalBlockers, /Status: complete/);
     assert.match(dependabotMirrorWorkflow, /name: MMPay Dependabot Mirror/);
     assert.match(dependabotMirrorWorkflow, /repository-contract\.test\.mjs/);
     assert.match(dependabotMirrorWorkflow, /security-secret-scan\.sh/);

@@ -40,6 +40,23 @@ const tableRows = Object.freeze({
   ]),
   'webhook-logs': Object.freeze([]),
   reconciliation: Object.freeze([]),
+  'external-readiness': Object.freeze([
+    Object.freeze({
+      item: 'Huifu sandbox payment',
+      status: 'blocked',
+      requiredEvidence: 'real Huifu sandbox request and callback evidence',
+    }),
+    Object.freeze({
+      item: 'MMMail webhook acceptance',
+      status: 'blocked',
+      requiredEvidence: 'MMMail paid state webhook acceptance evidence',
+    }),
+    Object.freeze({
+      item: 'License relay',
+      status: 'blocked',
+      requiredEvidence: 'vendor-issued license claim relay evidence',
+    }),
+  ]),
 });
 
 /** @type {Readonly<Record<string, readonly string[]>>} */
@@ -51,6 +68,7 @@ const tableColumns = Object.freeze({
   invoices: Object.freeze(['table.provider', 'table.status', 'table.reason']),
   'webhook-logs': Object.freeze(['table.event', 'table.status', 'table.updatedAt']),
   reconciliation: Object.freeze(['table.channel', 'table.amount', 'table.status', 'table.updatedAt']),
+  'external-readiness': Object.freeze(['table.item', 'table.status', 'table.requiredEvidence']),
 });
 
 /** @type {readonly string[]} */
@@ -62,6 +80,7 @@ const navigationKeys = Object.freeze([
   'invoices',
   'webhook-logs',
   'reconciliation',
+  'external-readiness',
 ]);
 
 /** @type {readonly (readonly [string, string])[]} */
@@ -103,7 +122,7 @@ export function renderAdminDashboard(locale = 'en-US') {
  * @returns {readonly NavigationItem[]}
  */
 function renderNavigation(locale) {
-  return navigationKeys.map((key) => ({ key, label: t(locale, `nav.${key === 'webhook-logs' ? 'webhookLogs' : key}`) }));
+  return navigationKeys.map((key) => ({ key, label: t(locale, `nav.${navigationMessageKey(key)}`) }));
 }
 
 /**
@@ -119,6 +138,7 @@ function renderTables(locale) {
     renderTable(locale, 'invoices', tableRows.invoices),
     renderTable(locale, 'webhook-logs', tableRows['webhook-logs']),
     renderTable(locale, 'reconciliation', tableRows.reconciliation),
+    renderTable(locale, 'external-readiness', tableRows['external-readiness']),
   ];
 }
 
@@ -131,10 +151,32 @@ function renderTables(locale) {
 function renderTable(locale, key, rows) {
   return {
     key,
-    title: t(locale, key === 'credentials' ? 'table.credentials' : `nav.${key === 'webhook-logs' ? 'webhookLogs' : key}`),
+    title: t(locale, tableTitleKey(key)),
     columns: tableColumns[key].map((labelKey) => ({ label: t(locale, labelKey), key: toColumnKey(labelKey) })),
     rows,
   };
+}
+
+/**
+ * @param {string} key
+ * @returns {string}
+ */
+function tableTitleKey(key) {
+  if (key === 'credentials') {
+    return 'table.credentials';
+  }
+  return `nav.${navigationMessageKey(key)}`;
+}
+
+/**
+ * @param {string} key
+ * @returns {string}
+ */
+function navigationMessageKey(key) {
+  return {
+    'external-readiness': 'externalReadiness',
+    'webhook-logs': 'webhookLogs',
+  }[key] ?? key;
 }
 
 /**
@@ -142,5 +184,8 @@ function renderTable(locale, key, rows) {
  * @returns {string}
  */
 function toColumnKey(labelKey) {
-  return labelKey.replace('table.', '').replace('providerField', 'label').replace('secretHandle', 'displayValue');
+  return labelKey
+    .replace('table.', '')
+    .replace('providerField', 'label')
+    .replace('secretHandle', 'displayValue');
 }

@@ -10,6 +10,8 @@ describe('admin i18n messages', () => {
     assert.equal(t('zh-CN', 'credential.rsaPrivateKey'), 'RSA 私钥');
     assert.equal(t('en-US', 'nav.invoices'), 'Invoices');
     assert.equal(t('zh-CN', 'nav.invoices'), '发票');
+    assert.equal(t('en-US', 'nav.externalReadiness'), 'External readiness');
+    assert.equal(t('zh-CN', 'nav.externalReadiness'), '外部就绪');
   });
 
   it('renders provider credential labels through locale keys', () => {

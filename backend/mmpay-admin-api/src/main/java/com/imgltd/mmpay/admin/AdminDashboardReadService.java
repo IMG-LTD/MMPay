@@ -23,7 +23,8 @@ public class AdminDashboardReadService {
         new AdminDashboardResponse.NavigationItem("refunds", "Refunds"),
         new AdminDashboardResponse.NavigationItem("invoices", "Invoices"),
         new AdminDashboardResponse.NavigationItem("webhook-logs", "Webhook logs"),
-        new AdminDashboardResponse.NavigationItem("reconciliation", "Reconciliation"));
+        new AdminDashboardResponse.NavigationItem("reconciliation", "Reconciliation"),
+        new AdminDashboardResponse.NavigationItem("external-readiness", "External readiness"));
   }
 
   private static List<AdminDashboardResponse.MetricCard> metrics() {
@@ -42,7 +43,8 @@ public class AdminDashboardReadService {
         emptyTable("refunds"),
         invoicesTable(),
         emptyTable("webhook-logs"),
-        emptyTable("reconciliation"));
+        emptyTable("reconciliation"),
+        externalReadinessTable());
   }
 
   private static AdminDashboardResponse.AdminTable credentialsTable() {
@@ -76,6 +78,20 @@ public class AdminDashboardReadService {
 
   private static AdminDashboardResponse.AdminTable emptyTable(String key) {
     return new AdminDashboardResponse.AdminTable(key, List.of(), List.of());
+  }
+
+  private static AdminDashboardResponse.AdminTable externalReadinessTable() {
+    return new AdminDashboardResponse.AdminTable(
+        "external-readiness",
+        List.of("item", "status", "requiredEvidence"),
+        List.of(
+            blocker("Huifu sandbox payment", "real Huifu sandbox request and callback evidence"),
+            blocker("MMMail webhook acceptance", "MMMail paid state webhook acceptance evidence"),
+            blocker("License relay", "vendor-issued license claim relay evidence")));
+  }
+
+  private static Map<String, String> blocker(String item, String requiredEvidence) {
+    return Map.of("item", item, "status", "blocked", "requiredEvidence", requiredEvidence);
   }
 
   private static Map<String, String> secretField(String label) {

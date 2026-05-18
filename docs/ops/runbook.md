@@ -34,6 +34,11 @@ This is intentional and prevents seeded fake payment success rows.
 
 ## Evidence Check
 
+External closure blockers are recorded in
+`docs/release/external-closure-blockers.md`. Keep them blocked until the real
+Huifu sandbox callback, MMMail webhook acceptance, and vendor-issued license
+relay evidence has been captured.
+
 After a real sandbox or live run, validate the redacted evidence file:
 
 ```bash

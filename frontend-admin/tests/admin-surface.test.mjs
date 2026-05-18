@@ -12,14 +12,32 @@ describe('admin surface coverage', () => {
 
     assert.deepEqual(
       dashboard.navigation.map((item) => item.key),
-      ['merchants', 'channels', 'orders', 'refunds', 'invoices', 'webhook-logs', 'reconciliation'],
+      [
+        'merchants',
+        'channels',
+        'orders',
+        'refunds',
+        'invoices',
+        'webhook-logs',
+        'reconciliation',
+        'external-readiness',
+      ],
     );
     assert.equal(dashboard.metricCards.length, 4);
     assert.deepEqual(dashboard.metricCards.map((metric) => metric.value), ['0', '0', '0', '0']);
-    assert.equal(dashboard.tables.length, 7);
+    assert.equal(dashboard.tables.length, 8);
     assert.deepEqual(
       dashboard.tables.map((table) => table.key),
-      ['credentials', 'channels', 'orders', 'refunds', 'invoices', 'webhook-logs', 'reconciliation'],
+      [
+        'credentials',
+        'channels',
+        'orders',
+        'refunds',
+        'invoices',
+        'webhook-logs',
+        'reconciliation',
+        'external-readiness',
+      ],
     );
   });
 
@@ -34,8 +52,18 @@ describe('admin surface coverage', () => {
     assert.equal(channels.rows[0].status, 'credentials-required');
     assert.equal(channels.rows[0].reason, 'live provider client is not wired');
     assert.equal(invoices.rows[0].reason, 'unsupported by current provider');
-    assert.deepEqual(runtimeTables.map((table) => table.rows.length), [0, 0, 1, 0, 0]);
+    assert.deepEqual(runtimeTables.map((table) => table.rows.length), [0, 0, 1, 0, 0, 3]);
     assert.ok(runtimeTables.every((table) => !table.rows.some((row) => row.status === 'succeeded')));
+  });
+
+  it('shows external closure blockers without marking them complete', () => {
+    const dashboard = renderAdminDashboard('en-US');
+    const readiness = dashboard.tables.find((table) => table.key === 'external-readiness');
+
+    assert.ok(readiness);
+    assert.equal(readiness.rows.length, 3);
+    assert.ok(readiness.rows.every((row) => row.status === 'blocked'));
+    assert.equal(readiness.rows[0].requiredEvidence, 'real Huifu sandbox request and callback evidence');
   });
 
   it('keeps credential rows handle-only without plaintext secret fields', () => {
