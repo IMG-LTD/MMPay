@@ -6,6 +6,11 @@ source tree and must remain in its own repository.
 
 ## Status
 
+`v0.1.0` is the first public MP-8 preparation release. It is intended for
+deploying MMPay to a public test server, wiring Huifu sandbox callbacks, and
+collecting external evidence for MMMail subscription and license relay flows.
+It is not a full payment-closure or GA evidence release.
+
 This repository has the MP-0 through MP-7 scaffold in place:
 
 - Backend foundation: Pig (Spring Cloud Alibaba) compatible Spring Boot app
@@ -38,6 +43,36 @@ only enables the minimal app surface required by the payment gateway.
   licenses.
 - License issuance remains an IMG-LTD vendor-controlled process outside this
   repository.
+
+## Docker Deployment
+
+For a source-based server deployment, clone this repository and run:
+
+```bash
+docker compose -f deploy/docker-compose.yml up --build -d
+```
+
+For a prebuilt-image deployment after the `MMPay Images` workflow publishes
+`v0.1.0`, use:
+
+```text
+ghcr.io/img-ltd/mmpay-app:v0.1.0
+```
+
+Runtime credentials must be injected through environment variables, secret
+files, or the Helm chart's external Kubernetes Secret references. Do not place
+Huifu merchant credentials, RSA private keys, webhook secrets, or license
+signing material in this repository.
+
+The backend health endpoint is:
+
+```bash
+curl -fsS http://localhost:8080/actuator/health
+```
+
+For Huifu sandbox callbacks, configure `HUIFU_NOTIFY_URL` to a public HTTPS URL
+that reaches the deployed MMPay callback endpoint. A localhost URL cannot
+receive provider callbacks from Huifu.
 
 ## Local Validation
 
