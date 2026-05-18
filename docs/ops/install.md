@@ -41,6 +41,29 @@ docker compose -f deploy/docker-compose.minimal.yml up
 
 The backend exposes Spring Boot actuator health on port `8080`.
 
+## Helm Chart
+
+The optional Helm chart is app-only. It deploys `mmpay-app` and expects the
+operator to provide PostgreSQL, Redis, and a Kubernetes Secret that contains
+provider credential values. The chart never creates Huifu credentials or MMMail
+license signing material.
+
+Validate the chart structure before using it:
+
+```bash
+bash scripts/validate-helm-chart.sh
+```
+
+Create a Secret with the key names configured in
+`deploy/helm/mmpay/values.yaml`, then override the external service endpoints:
+
+```bash
+helm upgrade --install mmpay deploy/helm/mmpay \
+  --set app.datasource.url=jdbc:postgresql://postgres.example:5432/mmpay \
+  --set app.redis.url=redis://redis.example:6379 \
+  --set secrets.existingSecret=replace-with-mmpay-secret
+```
+
 ## Evidence Boundary
 
 This local install path does not prove end-to-end payment completion by itself.

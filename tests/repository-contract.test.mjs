@@ -34,8 +34,12 @@ describe('MP-1 repository scaffold contract', () => {
   it('provides runnable local gates for compile, migration naming, and secret scan', async () => {
     await fileExists('deploy/docker-compose.yml');
     await fileExists('deploy/docker-compose.minimal.yml');
+    await fileExists('deploy/helm/mmpay/Chart.yaml');
+    await fileExists('deploy/helm/mmpay/values.yaml');
+    await fileExists('deploy/helm/mmpay/templates/deployment.yaml');
     await fileExists('backend/mmpay-gateway-core/src/main/resources/db/migration/V001__create_payment_core.sql');
     await fileExists('scripts/check-migration-naming.sh');
+    await fileExists('scripts/validate-helm-chart.sh');
     await fileExists('scripts/validate-ci.sh');
     await fileExists('scripts/release-gate.sh');
     await fileExists('.github/workflows/release.yml');
@@ -63,6 +67,7 @@ describe('MP-1 repository scaffold contract', () => {
     assert.match(validateLocal, /e2e-evidence-contract\.test\.mjs/);
     assert.match(validateLocal, /check-migration-naming\.sh/);
     assert.match(validateLocal, /security-secret-scan\.sh/);
+    assert.match(validateLocal, /validate-helm-chart\.sh/);
     assert.match(validateLocal, /validate-ci\.sh/);
     assert.match(validateLocal, /release-gate\.sh/);
     assert.match(validateCi, /validate-local\.sh/);
@@ -164,6 +169,29 @@ describe('MMPay open-source framework contract', () => {
     assert.match(appPom, /spring-boot-maven-plugin/);
     assert.match(appPom, /<version>\$\{spring\.boot\.version\}<\/version>/);
     assert.match(appPom, /<goal>repackage<\/goal>/);
+  });
+
+  it('provides a Helm chart with external secret references only', async () => {
+    const chart = await readFile(path.join(root, 'deploy/helm/mmpay/Chart.yaml'), 'utf8');
+    const values = await readFile(path.join(root, 'deploy/helm/mmpay/values.yaml'), 'utf8');
+    const deployment = await readFile(path.join(root, 'deploy/helm/mmpay/templates/deployment.yaml'), 'utf8');
+    const configMap = await readFile(path.join(root, 'deploy/helm/mmpay/templates/configmap.yaml'), 'utf8');
+    const installDoc = await readFile(path.join(root, 'docs/ops/install.md'), 'utf8');
+
+    assert.match(chart, /^apiVersion: v2$/m);
+    assert.match(chart, /^name: mmpay$/m);
+    assert.match(values, /repository: ghcr\.io\/img-ltd\/mmpay-app/);
+    assert.match(values, /existingSecret: "replace-with-mmpay-secret"/);
+    assert.match(values, /readOnlyRootFilesystem: true/);
+    assert.match(values, /\/actuator\/health\/readiness/);
+    assert.match(values, /\/actuator\/health\/liveness/);
+    assert.match(deployment, /secretKeyRef:/);
+    assert.match(deployment, /MMPAY_HUIFU_API_KEY/);
+    assert.match(deployment, /MMPAY_HUIFU_WEBHOOK_SECRET/);
+    assert.match(configMap, /MMPAY_DATASOURCE_URL/);
+    assert.match(installDoc, /bash scripts\/validate-helm-chart\.sh/);
+    assert.doesNotMatch(values, /apiKey: "[^"]+"/);
+    assert.doesNotMatch(values, /password: "[^"]+"/);
   });
 
   it('defines an image publishing workflow for the Docker build path', async () => {

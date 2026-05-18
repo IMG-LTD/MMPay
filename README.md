@@ -19,6 +19,9 @@ This repository has the MP-0 through MP-7 scaffold in place:
   Vue 3, Vite, Pinia, and Naive UI. Merchant, channel, order, refund, webhook,
   and reconciliation views are present; runtime tables remain empty until a real
   provider connection exists. Credential fields display only secret handles.
+- Deployment: Docker Compose and an app-only Helm chart exist for the runnable
+  baseline. The Helm chart expects external PostgreSQL, Redis, and Kubernetes
+  Secret references; it does not create provider credentials.
 
 Disabled Pig modules for this phase: code generation, full auth center,
 standalone gateway cluster, distributed job scheduler, and unrelated sample

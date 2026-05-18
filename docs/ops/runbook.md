@@ -23,6 +23,9 @@ Expected result: Spring Boot returns an actuator health response. If Docker
 socket access fails, fix host permissions first; do not bypass the Docker build
 with a fake image.
 
+For Kubernetes deployments, the Helm chart exposes readiness and liveness probes
+against `/actuator/health/readiness` and `/actuator/health/liveness`.
+
 ## Admin Dashboard State
 
 Before real Huifu credentials are connected, `/api/admin/dashboard` reports the

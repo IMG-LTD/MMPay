@@ -1,0 +1,16 @@
+apiVersion: v2
+name: mmpay
+description: MMPay self-hosted payment gateway application chart
+type: application
+version: 0.1.0
+appVersion: "0.1.0"
+keywords:
+  - mmpay
+  - payment-gateway
+  - huifu
+home: https://github.com/IMG-LTD/MMPay
+sources:
+  - https://github.com/IMG-LTD/MMPay
+maintainers:
+  - name: IMG-LTD
+    url: https://github.com/IMG-LTD

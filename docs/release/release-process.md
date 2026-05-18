@@ -14,7 +14,9 @@ bash scripts/validate-local.sh
 
 This gate covers secret scanning, migration naming, backend compilation, the
 admin dashboard API contract, repository governance contracts, and the
-soybean-admin frontend checks.
+soybean-admin frontend checks. It also runs `scripts/validate-helm-chart.sh` to
+confirm the app-only Helm chart uses the MMPay image, external secret
+references, and actuator probes without embedding provider credentials.
 
 ## GitHub Release workflow
 
