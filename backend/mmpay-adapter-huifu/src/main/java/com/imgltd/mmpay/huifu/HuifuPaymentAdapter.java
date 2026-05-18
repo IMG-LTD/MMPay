@@ -3,6 +3,7 @@ package com.imgltd.mmpay.huifu;
 import com.imgltd.mmpay.adapter.PaymentProviderAdapter;
 import com.imgltd.mmpay.adapter.ProviderCapability;
 import com.imgltd.mmpay.adapter.ProviderEvent;
+import com.imgltd.mmpay.adapter.ProviderInvoiceSupport;
 import com.imgltd.mmpay.adapter.ProviderOperationUnavailableException;
 import com.imgltd.mmpay.adapter.ProviderPaymentRequest;
 import com.imgltd.mmpay.adapter.ProviderPaymentResponse;
@@ -33,6 +34,11 @@ public final class HuifuPaymentAdapter implements PaymentProviderAdapter {
   @Override
   public Set<ProviderCapability> capabilities() {
     return CAPABILITIES;
+  }
+
+  @Override
+  public ProviderInvoiceSupport invoiceSupport() {
+    return ProviderInvoiceSupport.unsupportedByCurrentProvider();
   }
 
   @Override

@@ -8,6 +8,8 @@ describe('admin i18n messages', () => {
     assert.equal(t('zh-CN', 'admin.title'), 'MMPay 管理后台');
     assert.equal(t('en-US', 'credential.apiKey'), 'API Key');
     assert.equal(t('zh-CN', 'credential.apiKey'), 'API 密钥');
+    assert.equal(t('en-US', 'nav.invoices'), 'Invoices');
+    assert.equal(t('zh-CN', 'nav.invoices'), '发票');
   });
 
   it('renders provider credential labels through locale keys', () => {

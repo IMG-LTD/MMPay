@@ -24,6 +24,9 @@ const tableRows = Object.freeze({
   ]),
   orders: Object.freeze([]),
   refunds: Object.freeze([]),
+  invoices: Object.freeze([
+    Object.freeze({ provider: 'Huifu sandbox', status: 'unsupported', reason: 'unsupported by current provider' }),
+  ]),
   'webhook-logs': Object.freeze([]),
   reconciliation: Object.freeze([]),
 });
@@ -34,6 +37,7 @@ const tableColumns = Object.freeze({
   channels: Object.freeze(['table.merchant', 'table.channel', 'table.status', 'table.updatedAt']),
   orders: Object.freeze(['table.orderRef', 'table.channel', 'table.amount', 'table.status']),
   refunds: Object.freeze(['table.orderRef', 'table.amount', 'table.status', 'table.reason']),
+  invoices: Object.freeze(['table.provider', 'table.status', 'table.reason']),
   'webhook-logs': Object.freeze(['table.event', 'table.status', 'table.updatedAt']),
   reconciliation: Object.freeze(['table.channel', 'table.amount', 'table.status', 'table.updatedAt']),
 });
@@ -44,6 +48,7 @@ const navigationKeys = Object.freeze([
   'channels',
   'orders',
   'refunds',
+  'invoices',
   'webhook-logs',
   'reconciliation',
 ]);
@@ -100,6 +105,7 @@ function renderTables(locale) {
     renderTable(locale, 'channels', tableRows.channels),
     renderTable(locale, 'orders', tableRows.orders),
     renderTable(locale, 'refunds', tableRows.refunds),
+    renderTable(locale, 'invoices', tableRows.invoices),
     renderTable(locale, 'webhook-logs', tableRows['webhook-logs']),
     renderTable(locale, 'reconciliation', tableRows.reconciliation),
   ];

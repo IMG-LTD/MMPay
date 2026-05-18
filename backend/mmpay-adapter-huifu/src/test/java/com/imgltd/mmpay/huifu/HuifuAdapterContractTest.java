@@ -44,6 +44,14 @@ class HuifuAdapterContractTest {
   }
 
   @Test
+  void declaresInvoiceUnsupportedByCurrentProvider() {
+    PaymentProviderAdapter adapter = new HuifuPaymentAdapter(validCredentialHandles());
+
+    assertEquals(false, adapter.invoiceSupport().supported());
+    assertEquals("unsupported by current provider", adapter.invoiceSupport().reason());
+  }
+
+  @Test
   void reportsMissingSandboxEnvironmentVariables() {
     Map<String, String> env = Map.of("HUIFU_MERCHANT_ID", "replace-with-merchant-id");
 

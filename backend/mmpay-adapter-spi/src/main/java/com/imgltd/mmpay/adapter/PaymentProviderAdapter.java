@@ -8,6 +8,8 @@ public interface PaymentProviderAdapter {
 
   Set<ProviderCapability> capabilities();
 
+  ProviderInvoiceSupport invoiceSupport();
+
   ProviderPaymentResponse createPayment(ProviderPaymentRequest request);
 
   ProviderPaymentStatus queryPayment(String providerOrderId);

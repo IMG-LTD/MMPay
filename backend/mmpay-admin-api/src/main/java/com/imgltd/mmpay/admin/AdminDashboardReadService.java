@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 public class AdminDashboardReadService {
   private static final String ZERO = "0";
   private static final String CREDENTIALS_REQUIRED = "credentials-required";
+  private static final String INVOICE_UNSUPPORTED = "unsupported by current provider";
 
   public AdminDashboardResponse getDashboard() {
     return new AdminDashboardResponse(navigation(), metrics(), tables());
@@ -19,6 +20,7 @@ public class AdminDashboardReadService {
         new AdminDashboardResponse.NavigationItem("channels", "Channels"),
         new AdminDashboardResponse.NavigationItem("orders", "Orders"),
         new AdminDashboardResponse.NavigationItem("refunds", "Refunds"),
+        new AdminDashboardResponse.NavigationItem("invoices", "Invoices"),
         new AdminDashboardResponse.NavigationItem("webhook-logs", "Webhook logs"),
         new AdminDashboardResponse.NavigationItem("reconciliation", "Reconciliation"));
   }
@@ -37,6 +39,7 @@ public class AdminDashboardReadService {
         channelsTable(),
         emptyTable("orders"),
         emptyTable("refunds"),
+        invoicesTable(),
         emptyTable("webhook-logs"),
         emptyTable("reconciliation"));
   }
@@ -57,6 +60,16 @@ public class AdminDashboardReadService {
             "channel", "Huifu sandbox",
             "status", CREDENTIALS_REQUIRED,
             "updatedAt", "not connected")));
+  }
+
+  private static AdminDashboardResponse.AdminTable invoicesTable() {
+    return new AdminDashboardResponse.AdminTable(
+        "invoices",
+        List.of("provider", "status", "reason"),
+        List.of(Map.of(
+            "provider", "Huifu sandbox",
+            "status", "unsupported",
+            "reason", INVOICE_UNSUPPORTED)));
   }
 
   private static AdminDashboardResponse.AdminTable emptyTable(String key) {

@@ -12,14 +12,14 @@ describe('admin surface coverage', () => {
 
     assert.deepEqual(
       dashboard.navigation.map((item) => item.key),
-      ['merchants', 'channels', 'orders', 'refunds', 'webhook-logs', 'reconciliation'],
+      ['merchants', 'channels', 'orders', 'refunds', 'invoices', 'webhook-logs', 'reconciliation'],
     );
     assert.equal(dashboard.metricCards.length, 4);
     assert.deepEqual(dashboard.metricCards.map((metric) => metric.value), ['0', '0', '0', '0']);
-    assert.equal(dashboard.tables.length, 6);
+    assert.equal(dashboard.tables.length, 7);
     assert.deepEqual(
       dashboard.tables.map((table) => table.key),
-      ['credentials', 'channels', 'orders', 'refunds', 'webhook-logs', 'reconciliation'],
+      ['credentials', 'channels', 'orders', 'refunds', 'invoices', 'webhook-logs', 'reconciliation'],
     );
   });
 
@@ -27,10 +27,14 @@ describe('admin surface coverage', () => {
     const dashboard = renderAdminDashboard('en-US');
     const runtimeTables = dashboard.tables.filter((table) => table.key !== 'credentials' && table.key !== 'channels');
     const channels = dashboard.tables.find((table) => table.key === 'channels');
+    const invoices = dashboard.tables.find((table) => table.key === 'invoices');
 
     assert.ok(channels);
+    assert.ok(invoices);
     assert.equal(channels.rows[0].status, 'credentials-required');
-    assert.deepEqual(runtimeTables.map((table) => table.rows.length), [0, 0, 0, 0]);
+    assert.equal(invoices.rows[0].reason, 'unsupported by current provider');
+    assert.deepEqual(runtimeTables.map((table) => table.rows.length), [0, 0, 1, 0, 0]);
+    assert.ok(runtimeTables.every((table) => !table.rows.some((row) => row.status === 'succeeded')));
   });
 
   it('keeps credential rows handle-only without plaintext secret fields', () => {

@@ -19,6 +19,8 @@ The current reviewed facts are:
 - Java SDK baseline documented by the skill package: `dg-java-sdk 3.0.36`.
 - Runtime credentials remain outside source control.
 - Provider failures must surface explicitly and must not become mock success.
+- Invoice integration is currently `unsupported by current provider` until a
+  Huifu invoice API path is reviewed and wired with real sandbox evidence.
 
 MMPay may use this guidance to shape adapter contracts, but production Huifu
 HTTP or SDK wiring requires a separate license and merchant credential review

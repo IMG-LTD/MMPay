@@ -17,10 +17,11 @@ class AdminDashboardControllerTest {
     GetMapping mapping = AdminDashboardController.class.getMethod("getDashboard").getAnnotation(GetMapping.class);
     assertEquals("/api/admin/dashboard", mapping.value()[0]);
     assertEquals(
-        List.of("merchants", "channels", "orders", "refunds", "webhook-logs", "reconciliation"),
+        List.of("merchants", "channels", "orders", "refunds", "invoices", "webhook-logs", "reconciliation"),
         response.navigation().stream().map(AdminDashboardResponse.NavigationItem::key).toList());
     assertEquals(List.of("0", "0", "0", "0"), response.metrics().stream().map(AdminDashboardResponse.MetricCard::value).toList());
     assertEquals("credentials-required", response.table("channels").rows().getFirst().get("status"));
+    assertEquals("unsupported by current provider", response.table("invoices").rows().getFirst().get("reason"));
     assertEquals("secret-handle", response.table("credentials").rows().getFirst().get("valueKind"));
     assertFalse(response.table("orders").containsStatus("succeeded"));
     assertFalse(response.table("webhook-logs").containsStatus("delivered"));
