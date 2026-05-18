@@ -1,6 +1,7 @@
 package com.imgltd.mmpay.huifu;
 
 import com.imgltd.mmpay.adapter.ProviderPaymentRequest;
+import com.imgltd.mmpay.adapter.ProviderRefundRequest;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
@@ -26,6 +27,33 @@ public final class HuifuPaymentRequestFactory {
     return new HuifuSignedRequest(envelope(data, sign), headers(data), data, sign);
   }
 
+  public HuifuSignedRequest queryAggregationPayment(
+      LocalDate requestDate,
+      String requestSequenceId,
+      String originalRequestDate,
+      String originalRequestSequenceId) {
+    Map<String, Object> data =
+        originalPaymentData(requestDate, requestSequenceId, originalRequestDate, originalRequestSequenceId);
+    String sign = HuifuRsaSigner.signData(data, credentials.rsaPrivateKey());
+    return new HuifuSignedRequest(envelope(data, sign), headers(data), data, sign);
+  }
+
+  public HuifuSignedRequest refundAggregationPayment(
+      ProviderRefundRequest request,
+      LocalDate requestDate,
+      String requestSequenceId,
+      String originalRequestDate,
+      String originalRequestSequenceId) {
+    Objects.requireNonNull(request, "request");
+    Map<String, Object> data =
+        originalPaymentData(requestDate, requestSequenceId, originalRequestDate, originalRequestSequenceId);
+    data.put("ord_amt", formatAmount(request.amountMinor()));
+    data.put("remark", request.reason());
+    data.put("notify_url", credentials.notifyUrl());
+    String sign = HuifuRsaSigner.signData(data, credentials.rsaPrivateKey());
+    return new HuifuSignedRequest(envelope(data, sign), headers(data), data, sign);
+  }
+
   private Map<String, Object> paymentData(
       ProviderPaymentRequest request, LocalDate requestDate, String requestSequenceId) {
     Objects.requireNonNull(request, "request");
@@ -38,6 +66,21 @@ public final class HuifuPaymentRequestFactory {
     data.put("req_seq_id", requireText(requestSequenceId, "requestSequenceId"));
     data.put("trade_type", DEFAULT_TRADE_TYPE);
     data.put("trans_amt", formatAmount(request.amountMinor()));
+    return data;
+  }
+
+  private Map<String, Object> originalPaymentData(
+      LocalDate requestDate,
+      String requestSequenceId,
+      String originalRequestDate,
+      String originalRequestSequenceId) {
+    Objects.requireNonNull(requestDate, "requestDate");
+    Map<String, Object> data = new LinkedHashMap<>();
+    data.put("huifu_id", credentials.merchantId());
+    data.put("req_date", requestDate.format(REQUEST_DATE));
+    data.put("req_seq_id", requireText(requestSequenceId, "requestSequenceId"));
+    data.put("org_req_date", requireText(originalRequestDate, "originalRequestDate"));
+    data.put("org_req_seq_id", requireText(originalRequestSequenceId, "originalRequestSequenceId"));
     return data;
   }
 

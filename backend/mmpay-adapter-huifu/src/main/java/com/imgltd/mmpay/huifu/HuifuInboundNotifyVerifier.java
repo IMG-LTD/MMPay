@@ -32,6 +32,10 @@ public final class HuifuInboundNotifyVerifier {
     return toProviderEvent(readRespData(respData));
   }
 
+  public static String acknowledge(String requestSequenceId) {
+    return "RECV_ORD_ID_" + requireText(requestSequenceId, "requestSequenceId");
+  }
+
   private static ProviderEvent toProviderEvent(Map<String, String> data) {
     return new ProviderEvent(
         requireText(data.get("hf_seq_id"), "hf_seq_id"),

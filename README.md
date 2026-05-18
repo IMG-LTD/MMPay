@@ -12,7 +12,9 @@ This repository has the MP-0 through MP-7 scaffold in place:
   baseline, with payment domain modules split under `backend/`.
 - Payment domain: payment intent, transaction, refund, reconciliation, and
   Flyway migration contracts.
-- Provider adapter: Huifu reconciliation mapping MVP.
+- Provider adapter: Huifu reconciliation mapping plus signed create, query, and
+  refund request preparation. Live provider execution remains unavailable until
+  a real endpoint is wired and evidenced.
 - Outbound webhook: MMMail-compatible HMAC signature contract.
 - License boundary: relay-only delivery; no license signing module exists here.
 - Admin surface: read-only dashboard API plus soybean-admin stack frontend using

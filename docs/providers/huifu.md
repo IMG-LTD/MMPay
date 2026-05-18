@@ -20,6 +20,12 @@ The current reviewed facts are:
 - Request signing uses `SHA256withRSA` over first-level sorted `data`
   fields. Interface `notify_url` callbacks verify the raw `resp_data` body with
   the Huifu RSA public key.
+- Aggregation scan payment request preparation currently covers signed native
+  payment creation, payment query, and refund request envelopes. Query locates
+  the original payment by `req_date` and `req_seq_id`; refund sends `ord_amt`,
+  `org_req_date`, `org_req_seq_id`, and optional `notify_url`.
+- `notify_url` acknowledgement bodies are `RECV_ORD_ID_` followed by the Huifu
+  request sequence ID after signature verification and event handling.
 - `jpt-x-skill-source` must carry the configured skill source value, and
   `jpt-x-skill-huifu_id` must carry the current request `data.huifu_id` when
   present.
@@ -38,7 +44,8 @@ before adding any runtime dependency.
 
 ## Local Sandbox Variables
 
-The adapter can prepare signed requests and verify `notify_url` payloads from
+The adapter can prepare signed create, query, and refund requests, verify
+`notify_url` payloads, and build the required `notify_url` acknowledgement from
 environment-sourced values:
 
 - `HUIFU_SYS_ID`

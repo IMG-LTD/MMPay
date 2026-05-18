@@ -20,6 +20,7 @@ available.
 
 Provider-specific request preparation may exist below the adapter SPI before a
 live HTTP client is connected. That preparation may sign provider payloads,
-construct provider headers, and verify inbound provider callbacks, but it must
-not mark runtime status available or return successful payment results until a
-real provider endpoint has been wired and evidenced.
+construct provider headers, prepare query and refund envelopes, verify inbound
+provider callbacks, and build provider-required callback acknowledgements. It
+must not mark runtime status available or return successful payment results
+until a real provider endpoint has been wired and evidenced.

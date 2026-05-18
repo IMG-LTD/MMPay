@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import com.imgltd.mmpay.adapter.ProviderEvent;
 import com.imgltd.mmpay.adapter.ProviderPaymentRequest;
 import com.imgltd.mmpay.adapter.ProviderPaymentStatus;
+import com.imgltd.mmpay.adapter.ProviderRefundRequest;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.time.LocalDate;
@@ -51,6 +52,55 @@ class HuifuSignedRequestTest {
     assertEquals("202605180001", event.providerOrderId());
     assertEquals(ProviderPaymentStatus.SUCCEEDED, event.status());
     assertEquals(1234, event.amountMinor());
+  }
+
+  @Test
+  void buildsSignedAggregationQueryEnvelopeWithOriginalPaymentReference() throws Exception {
+    KeyPair keyPair = generateKeyPair();
+    HuifuSandboxCredentials credentials = credentials(keyPair);
+    HuifuPaymentRequestFactory factory = new HuifuPaymentRequestFactory(credentials);
+
+    HuifuSignedRequest signed =
+        factory.queryAggregationPayment(
+            LocalDate.of(2026, 5, 18), "202605180002", "20260517", "origin-pay-seq-1");
+
+    assertEquals("test-sys-id", signed.envelope().get("sys_id"));
+    assertEquals("test-product-id", signed.envelope().get("product_id"));
+    assertEquals("hfps/1.2.0", signed.headers().get("jpt-x-skill-source"));
+    assertEquals("test-merchant-id", signed.headers().get("jpt-x-skill-huifu_id"));
+    assertEquals("20260518", signed.data().get("req_date"));
+    assertEquals("202605180002", signed.data().get("req_seq_id"));
+    assertEquals("test-merchant-id", signed.data().get("huifu_id"));
+    assertEquals("20260517", signed.data().get("org_req_date"));
+    assertEquals("origin-pay-seq-1", signed.data().get("org_req_seq_id"));
+    assertTrue(HuifuRsaSigner.verifyData(signed.data(), credentials.rsaPublicKey(), signed.sign()));
+  }
+
+  @Test
+  void buildsSignedAggregationRefundEnvelopeWithOriginalPaymentReference() throws Exception {
+    KeyPair keyPair = generateKeyPair();
+    HuifuSandboxCredentials credentials = credentials(keyPair);
+    HuifuPaymentRequestFactory factory = new HuifuPaymentRequestFactory(credentials);
+    ProviderRefundRequest request = new ProviderRefundRequest("refund-order-1", 345, "customer request");
+
+    HuifuSignedRequest signed =
+        factory.refundAggregationPayment(
+            request, LocalDate.of(2026, 5, 18), "202605180003", "20260517", "origin-pay-seq-1");
+
+    assertEquals("3.45", signed.data().get("ord_amt"));
+    assertEquals("customer request", signed.data().get("remark"));
+    assertEquals("http://localhost:8000/notify.php", signed.data().get("notify_url"));
+    assertEquals("20260518", signed.data().get("req_date"));
+    assertEquals("202605180003", signed.data().get("req_seq_id"));
+    assertEquals("test-merchant-id", signed.data().get("huifu_id"));
+    assertEquals("20260517", signed.data().get("org_req_date"));
+    assertEquals("origin-pay-seq-1", signed.data().get("org_req_seq_id"));
+    assertTrue(HuifuRsaSigner.verifyData(signed.data(), credentials.rsaPublicKey(), signed.sign()));
+  }
+
+  @Test
+  void buildsNotifyUrlAcknowledgementFromRequestSequenceId() {
+    assertEquals("RECV_ORD_ID_202605180001", HuifuInboundNotifyVerifier.acknowledge("202605180001"));
   }
 
   private static HuifuSandboxCredentials credentials(KeyPair keyPair) {
