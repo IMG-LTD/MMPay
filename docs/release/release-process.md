@@ -50,8 +50,28 @@ Huifu sandbox credentials, provider private keys, and license signing keys stay
 outside this repository. A release cannot be called end-to-end complete until the
 external sandbox run and redacted evidence package exist.
 
-Use `docs/release/e2e-evidence-template.md` for the redacted MP-8 evidence file,
-then verify it with:
+Use `docs/release/e2e-evidence-template.md` for the redacted MP-8 evidence file.
+After a real sandbox or live run, render the evidence from explicit external
+facts:
+
+```bash
+MMPAY_EVIDENCE_PROVIDER=huifu \
+MMPAY_EVIDENCE_ENVIRONMENT=sandbox \
+MMPAY_EVIDENCE_MMMAIL_SHA=<40-char MMMail public release commit SHA> \
+MMPAY_EVIDENCE_PROVIDER_EVENT_ID=<redacted provider event ID> \
+MMPAY_EVIDENCE_MMMAIL_WEBHOOK_EVENT_ID=<redacted MMMail webhook event ID> \
+MMPAY_EVIDENCE_LICENSE_CLAIM_ID=<redacted license claim ID or not-used> \
+MMPAY_EVIDENCE_RUN_FINISHED_AT=<ISO 8601 UTC timestamp> \
+MMPAY_EVIDENCE_HAPPY=<happy path evidence summary> \
+MMPAY_EVIDENCE_BAD_SIGNATURE=<bad signature rejection summary> \
+MMPAY_EVIDENCE_EXPIRED_WINDOW=<expired timestamp rejection summary> \
+MMPAY_EVIDENCE_PROVIDER_ERROR=<provider error unchanged-state summary> \
+MMPAY_EVIDENCE_REPLAY=<duplicate event rejection summary> \
+bash scripts/render-e2e-evidence.sh > redacted-e2e-evidence.md
+```
+
+The renderer validates its output before writing to stdout. Verify the final
+file again with:
 
 ```bash
 bash scripts/validate-e2e-evidence.sh <redacted-e2e-evidence.md>

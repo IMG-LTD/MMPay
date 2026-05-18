@@ -40,6 +40,7 @@ describe('MP-1 repository scaffold contract', () => {
     await fileExists('backend/mmpay-gateway-core/src/main/resources/db/migration/V001__create_payment_core.sql');
     await fileExists('scripts/check-migration-naming.sh');
     await fileExists('scripts/validate-helm-chart.sh');
+    await fileExists('scripts/render-e2e-evidence.sh');
     await fileExists('scripts/validate-ci.sh');
     await fileExists('scripts/release-gate.sh');
     await fileExists('.github/workflows/release.yml');
@@ -49,6 +50,7 @@ describe('MP-1 repository scaffold contract', () => {
     const validateLocal = await readFile(path.join(root, 'scripts/validate-local.sh'), 'utf8');
     const validateCi = await readFile(path.join(root, 'scripts/validate-ci.sh'), 'utf8');
     const releaseGate = await readFile(path.join(root, 'scripts/release-gate.sh'), 'utf8');
+    const evidenceRenderer = await readFile(path.join(root, 'scripts/render-e2e-evidence.sh'), 'utf8');
     const ciWorkflow = await readFile(path.join(root, '.github/workflows/ci.yml'), 'utf8');
     const releaseWorkflow = await readFile(path.join(root, '.github/workflows/release.yml'), 'utf8');
     const dependabotMirrorWorkflow = await readFile(
@@ -68,11 +70,14 @@ describe('MP-1 repository scaffold contract', () => {
     assert.match(validateLocal, /check-migration-naming\.sh/);
     assert.match(validateLocal, /security-secret-scan\.sh/);
     assert.match(validateLocal, /validate-helm-chart\.sh/);
+    assert.match(validateLocal, /render-e2e-evidence\.sh/);
     assert.match(validateLocal, /validate-ci\.sh/);
     assert.match(validateLocal, /release-gate\.sh/);
     assert.match(validateCi, /validate-local\.sh/);
     assert.match(releaseGate, /git -C "\$ROOT_DIR" status --short/);
     assert.match(releaseGate, /validate-ci\.sh/);
+    assert.match(evidenceRenderer, /MMPAY_EVIDENCE_PROVIDER_EVENT_ID/);
+    assert.match(evidenceRenderer, /validate-e2e-evidence\.sh/);
     assert.match(ciWorkflow, /bash scripts\/validate-ci\.sh/);
     assert.match(releaseWorkflow, /name: MMPay Release/);
     assert.match(releaseWorkflow, /tags:\n      - 'v\*'/);

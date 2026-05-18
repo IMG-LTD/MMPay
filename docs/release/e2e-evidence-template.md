@@ -26,3 +26,10 @@ replay: <duplicate event ID evidence; duplicate rejected and state unchanged>
   redacted license claim ID when the relay path is exercised.
 - This template is not evidence until every placeholder is replaced with real
   redacted values from an actual sandbox or live run.
+
+## Rendering Helper
+
+Prefer rendering the final file through `scripts/render-e2e-evidence.sh` after
+collecting the real external run facts. The helper requires all scenario fields
+as environment variables and runs `scripts/validate-e2e-evidence.sh` before it
+prints the completed evidence document.
