@@ -58,7 +58,7 @@ describe('MP-1 repository scaffold contract', () => {
     const dependabotConfig = await readFile(path.join(root, '.github/dependabot.yml'), 'utf8');
 
     assert.match(validateLocal, /mvn -f "\$ROOT_DIR\/backend\/pom\.xml" -DskipTests compile/);
-    assert.match(validateLocal, /PaymentIntentTest,RefundTest,ReconciliationTest/);
+    assert.match(validateLocal, /PaymentIntentTest,MerchantChannelTest,RefundTest,ReconciliationTest/);
     assert.match(validateLocal, /HuifuAdapterContractTest,HuifuReconciliationTest/);
     assert.match(validateLocal, /WebhookOutContractTest/);
     assert.match(validateLocal, /mmpay-license-relay/);
@@ -225,5 +225,22 @@ describe('MMPay open-source framework contract', () => {
     assert.match(upgrade, /bash scripts\/check-migration-naming\.sh/);
     assert.match(backupRestore, /pg_dump/);
     assert.match(backupRestore, /pg_restore/);
+  });
+
+  it('keeps the core schema aligned with merchant, channel, and idempotency domains', async () => {
+    const migration = await readFile(
+      path.join(root, 'backend/mmpay-gateway-core/src/main/resources/db/migration/V001__create_payment_core.sql'),
+      'utf8',
+    );
+    const dataModel = await readFile(path.join(root, 'docs/architecture/data-model.md'), 'utf8');
+    const idempotency = await readFile(path.join(root, 'docs/architecture/idempotency.md'), 'utf8');
+
+    assert.match(migration, /CREATE TABLE merchants/);
+    assert.match(migration, /CREATE TABLE channels/);
+    assert.match(migration, /credential_handle VARCHAR\(256\) NOT NULL/);
+    assert.match(migration, /idempotency_key VARCHAR\(128\) NOT NULL UNIQUE/);
+    assert.match(dataModel, /credential handles only/);
+    assert.match(dataModel, /required idempotency\s+key/);
+    assert.match(idempotency, /schema keeps it unique/);
   });
 });

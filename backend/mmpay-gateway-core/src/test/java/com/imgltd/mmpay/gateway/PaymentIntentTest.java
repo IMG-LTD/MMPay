@@ -9,15 +9,18 @@ import org.junit.jupiter.api.Test;
 class PaymentIntentTest {
   @Test
   void newIntentStartsInRequiresPaymentState() {
-    PaymentIntent intent = PaymentIntent.create("pi_001", 1999, "CNY", "order-001", Instant.EPOCH);
+    PaymentIntent intent =
+        PaymentIntent.create("pi_001", 1999, "CNY", "order-001", "idem-001", Instant.EPOCH);
 
     assertEquals("pi_001", intent.id());
+    assertEquals("idem-001", intent.idempotencyKey());
     assertEquals(PaymentIntentStatus.REQUIRES_PAYMENT, intent.status());
   }
 
   @Test
   void intentCanMoveThroughProcessingToSucceeded() {
-    PaymentIntent intent = PaymentIntent.create("pi_002", 2999, "CNY", "order-002", Instant.EPOCH);
+    PaymentIntent intent =
+        PaymentIntent.create("pi_002", 2999, "CNY", "order-002", "idem-002", Instant.EPOCH);
 
     PaymentIntent succeeded = intent.markProcessing().markSucceeded();
 
@@ -29,6 +32,13 @@ class PaymentIntentTest {
   void intentRejectsNonPositiveAmounts() {
     assertThrows(
         IllegalArgumentException.class,
-        () -> PaymentIntent.create("pi_bad", 0, "CNY", "order-bad", Instant.EPOCH));
+        () -> PaymentIntent.create("pi_bad", 0, "CNY", "order-bad", "idem-bad", Instant.EPOCH));
+  }
+
+  @Test
+  void intentRejectsBlankIdempotencyKeys() {
+    assertThrows(
+        IllegalArgumentException.class,
+        () -> PaymentIntent.create("pi_bad", 100, "CNY", "order-bad", " ", Instant.EPOCH));
   }
 }

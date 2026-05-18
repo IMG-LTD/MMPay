@@ -8,16 +8,23 @@ public record PaymentIntent(
     long amountMinor,
     String currency,
     String orderRef,
+    String idempotencyKey,
     Instant createdAt,
     PaymentIntentStatus status) {
   public static PaymentIntent create(
-      String id, long amountMinor, String currency, String orderRef, Instant createdAt) {
+      String id,
+      long amountMinor,
+      String currency,
+      String orderRef,
+      String idempotencyKey,
+      Instant createdAt) {
     DomainChecks.requirePositiveAmount(amountMinor);
     return new PaymentIntent(
         DomainChecks.requireText(id, "id"),
         amountMinor,
         DomainChecks.requireText(currency, "currency"),
         DomainChecks.requireText(orderRef, "orderRef"),
+        DomainChecks.requireText(idempotencyKey, "idempotencyKey"),
         Objects.requireNonNull(createdAt, "createdAt"),
         PaymentIntentStatus.REQUIRES_PAYMENT);
   }
@@ -33,7 +40,8 @@ public record PaymentIntent(
   }
 
   private PaymentIntent withStatus(PaymentIntentStatus nextStatus) {
-    return new PaymentIntent(id, amountMinor, currency, orderRef, createdAt, nextStatus);
+    return new PaymentIntent(
+        id, amountMinor, currency, orderRef, idempotencyKey, createdAt, nextStatus);
   }
 
   private void requireStatus(PaymentIntentStatus expectedStatus) {
