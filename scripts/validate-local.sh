@@ -30,6 +30,7 @@ node --test "$ROOT_DIR/tests/p2-merchant-channel-contract.test.mjs"
 node --test "$ROOT_DIR/tests/p3-payment-lifecycle-contract.test.mjs"
 node --test "$ROOT_DIR/tests/p4-license-relay-integrations-contract.test.mjs"
 node --test "$ROOT_DIR/tests/p5-release-closure-contract.test.mjs"
+node --test "$ROOT_DIR/tests/p5-external-closure-blockers-contract.test.mjs"
 pnpm --dir "$ROOT_DIR/frontend-admin" install --frozen-lockfile
 pnpm --dir "$ROOT_DIR/frontend-admin" typecheck
 pnpm --dir "$ROOT_DIR/frontend-admin" lint
