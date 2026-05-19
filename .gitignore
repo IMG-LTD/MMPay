@@ -14,3 +14,5 @@ secrets/
 *.jks
 *.keystore
 .tmp/
+docs/security/private-key.asc
+docs/security/revocation-certificate.asc

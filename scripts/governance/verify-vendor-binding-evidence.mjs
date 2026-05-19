@@ -191,9 +191,11 @@ function verifyVendorKey(vendorKey, signedAt) {
 function verifyRevocationFeed(url, fingerprint) {
   let feed;
   if (url.startsWith('file://')) {
-    feed = readRequired(url.slice('file://'.length), 'vendor revocation feed missing');
-  } else {
+    feed = readRequired(resolvePath(url.slice('file://'.length)), 'vendor revocation feed missing');
+  } else if (/^https?:\/\//.test(url)) {
     feed = execFileSync('curl', ['--fail', '--silent', '--show-error', '--max-time', '10', url], { encoding: 'utf8' });
+  } else {
+    feed = readRequired(resolvePath(url), 'vendor revocation feed missing');
   }
   if (feed.includes(fingerprint)) {
     fail('vendor key fingerprint is present in the revocation feed');

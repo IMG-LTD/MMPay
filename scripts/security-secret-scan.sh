@@ -5,6 +5,7 @@ ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 
 PATTERNS=(
   'BEGIN (RSA |EC |OPENSSH )?PRIVATE KEY'
+  'BEGIN PGP PRIVATE KEY BLOCK'
   'ghp_[A-Za-z0-9_]{20,}'
   'gho_[A-Za-z0-9_]{20,}'
   'sk-[A-Za-z0-9]{20,}'
@@ -15,14 +16,14 @@ PATTERNS=(
 )
 
 for pattern in "${PATTERNS[@]}"; do
-  if grep -RInE "$pattern" "$ROOT_DIR" \
-    --exclude-dir=.git \
-    --exclude-dir=target \
-    --exclude-dir=node_modules \
-    --exclude=security-secret-scan.sh; then
-    echo "security-secret-scan failed: matched pattern $pattern" >&2
-    exit 1
-  fi
+  while IFS= read -r -d '' file; do
+    [[ "$file" == "scripts/security-secret-scan.sh" ]] && continue
+    [[ -f "$ROOT_DIR/$file" ]] || continue
+    if grep -InE "$pattern" "$ROOT_DIR/$file"; then
+      echo "security-secret-scan failed: matched pattern $pattern" >&2
+      exit 1
+    fi
+  done < <(git -C "$ROOT_DIR" ls-files --cached --others --exclude-standard -z)
 done
 
 echo "security-secret-scan passed"

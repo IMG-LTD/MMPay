@@ -25,6 +25,7 @@ timeout 60s mvn -f "$ROOT_DIR/backend/pom.xml" -pl mmpay-admin-api -am -Dtest=Ad
 timeout 60s mvn -f "$ROOT_DIR/backend/pom.xml" -pl mmpay-app -am -Dtest=MmpayApplicationContractTest,ProviderRegistrySpringContextTest test
 node --test "$ROOT_DIR/tests/repository-contract.test.mjs"
 node --test "$ROOT_DIR/tests/e2e-evidence-contract.test.mjs"
+node --test "$ROOT_DIR/tests/security-pgp-key-governance-contract.test.mjs"
 node --test "$ROOT_DIR/tests/p1-foundation-contract.test.mjs"
 node --test "$ROOT_DIR/tests/p2-merchant-channel-contract.test.mjs"
 node --test "$ROOT_DIR/tests/p3-payment-lifecycle-contract.test.mjs"

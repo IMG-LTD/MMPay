@@ -1,0 +1,4 @@
+# Active vendor binding key revocation feed.
+#
+# Add one revoked primary key fingerprint per line. The GA vendor binding
+# verifier fails if the binding key fingerprint appears in this file.
