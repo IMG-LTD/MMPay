@@ -43,24 +43,49 @@ describe('P2 merchant channel contract', () => {
     assert.match(validateLocal, /p2-merchant-channel-contract\.test\.mjs/);
     assert.match(validateLocal, /ProviderRegistryTest,HuifuProviderDescriptorTest/);
     assert.match(validateLocal, /P2MerchantChannelCrudContractTest/);
+    assert.match(validateLocal, /P2MerchantChannelLifecycleContractTest/);
   });
 
   it('ships real backend and Soybean Admin merchant/channel pages', async () => {
     const controller = await read('backend/mmpay-app/src/main/java/com/imgltd/mmpay/merchant/MerchantAdminController.java');
     const service = await read('backend/mmpay-app/src/main/java/com/imgltd/mmpay/merchant/MerchantAdminService.java');
     const routes = await read('frontend-admin/src/router/elegant/routes.ts');
+    const adminApi = await read('frontend-admin/src/service/api/admin.ts');
     const merchants = await read('frontend-admin/src/views/merchants/index.vue');
+    const merchantDetail = await read('frontend-admin/src/views/merchants/detail/index.vue');
+    const channelDetail = await read('frontend-admin/src/views/channels/detail/index.vue');
     const channelNew = await read('frontend-admin/src/views/merchants/channel-new/index.vue');
 
     assert.match(controller, /\/api\/admin/);
     assert.match(controller, /\/merchants/);
+    assert.match(controller, /@PatchMapping\("\/merchants\/\{id\}"\)/);
+    assert.match(controller, /@DeleteMapping\("\/merchants\/\{id\}"\)/);
+    assert.match(controller, /@PostMapping\("\/merchants\/\{id\}\/verify-binding"\)/);
+    assert.match(controller, /@PatchMapping\("\/channels\/\{id\}"\)/);
+    assert.match(controller, /@DeleteMapping\("\/channels\/\{id\}"\)/);
+    assert.match(controller, /@PostMapping\("\/channels\/\{id\}\/verify-binding"\)/);
     assert.match(service, /credential_ref\.bind/);
+    assert.match(service, /credential_ref\.unbind/);
     assert.match(service, /merchant\.create/);
+    assert.match(service, /merchant\.update/);
+    assert.match(service, /merchant\.delete/);
     assert.match(routes, /\/merchants\/:id\/channels\/new/);
+    assert.match(adminApi, /updateMerchant/);
+    assert.match(adminApi, /archiveMerchant/);
+    assert.match(adminApi, /verifyMerchantBinding/);
+    assert.match(adminApi, /updateChannel/);
+    assert.match(adminApi, /archiveChannel/);
+    assert.match(adminApi, /verifyChannelBinding/);
     assert.match(merchants, /<NTable/);
     assert.match(merchants, /createMerchant/);
+    assert.match(merchantDetail, /updateMerchant/);
+    assert.match(merchantDetail, /archiveMerchant/);
+    assert.match(merchantDetail, /verifyMerchantBinding/);
+    assert.match(channelDetail, /updateChannel/);
+    assert.match(channelDetail, /archiveChannel/);
+    assert.match(channelDetail, /verifyChannelBinding/);
     assert.match(channelNew, /<NSelect/);
-    assert.doesNotMatch(`${merchants}\n${channelNew}`, /<(textarea|input\s+type="file")/i);
+    assert.doesNotMatch(`${merchants}\n${merchantDetail}\n${channelDetail}\n${channelNew}`, /<(textarea|input\s+type="file")/i);
   });
 });
 

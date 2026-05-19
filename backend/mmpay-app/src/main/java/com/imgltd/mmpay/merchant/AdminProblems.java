@@ -7,6 +7,7 @@ final class AdminProblems {
   static final String ARCHIVED_TARGET = "urn:mmpay:problem:archived-target";
   static final String CREDENTIAL_REF_INVALID = "urn:mmpay:problem:credential-ref-invalid";
   static final String FK_ARCHIVED_MERCHANT = "urn:mmpay:problem:fk-archived-merchant";
+  static final String FINGERPRINT_REBIND_REQUIRED = "urn:mmpay:problem:fingerprint-rebind-required";
   static final String IDEMPOTENCY_MISMATCH = "urn:mmpay:problem:idempotency-key-replay-mismatch";
   static final String MASS_ASSIGNMENT = "urn:mmpay:problem:patch-mass-assignment-rejected";
   static final String PROVIDER_RESERVED = "urn:mmpay:problem:provider-code-reserved";

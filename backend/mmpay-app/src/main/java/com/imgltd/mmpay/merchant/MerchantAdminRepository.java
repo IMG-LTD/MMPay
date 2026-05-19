@@ -54,6 +54,26 @@ public final class MerchantAdminRepository {
     return findMerchant(id).orElseThrow(() -> AdminProblems.conflict(AdminProblems.ARCHIVED_TARGET, "merchant not found"));
   }
 
+  public MerchantRow updateMerchant(String id, MerchantPatchRequest request, CredentialBindingResult binding, Instant now) {
+    var current = requireMerchant(id);
+    var credential = binding == null ? currentBinding(current) : binding;
+    updateMerchantRow(id, nameOrCurrent(request.displayName(), current), statusOrCurrent(request.status(), current), credential, now);
+    return requireMerchant(id);
+  }
+
+  public void archiveMerchant(String id, Instant now) {
+    requireMerchant(id);
+    var updated =
+        jdbcTemplate.update(
+            "UPDATE merchants SET status = 'archived', updated_at = ? WHERE tenant_id = ? AND id = ? AND status <> 'archived'",
+            Timestamp.from(now),
+            TENANT_ID,
+            id);
+    if (updated == 0) {
+      throw AdminProblems.conflict(AdminProblems.ARCHIVED_TARGET, "merchant not found");
+    }
+  }
+
   public Optional<MerchantRow> findMerchant(String id) {
     var rows =
         jdbcTemplate.query(
@@ -100,6 +120,26 @@ public final class MerchantAdminRepository {
     return rows.stream().findFirst().orElseThrow(() -> AdminProblems.conflict(AdminProblems.ARCHIVED_TARGET, "channel not found"));
   }
 
+  public ChannelRow updateChannel(String id, ChannelPatchRequest request, CredentialBindingResult binding, Instant now) {
+    var current = requireChannel(id);
+    var credential = binding == null ? currentBinding(current) : binding;
+    updateChannelRow(id, nameOrCurrent(request.displayName(), current), statusOrCurrent(request.status(), current), credential, now);
+    return requireChannel(id);
+  }
+
+  public void archiveChannel(String id, Instant now) {
+    requireChannel(id);
+    var updated =
+        jdbcTemplate.update(
+            "UPDATE channels SET status = 'archived', updated_at = ? WHERE tenant_id = ? AND id = ? AND status <> 'archived'",
+            Timestamp.from(now),
+            TENANT_ID,
+            id);
+    if (updated == 0) {
+      throw AdminProblems.conflict(AdminProblems.ARCHIVED_TARGET, "channel not found");
+    }
+  }
+
   private List<MerchantRow> listMerchantsAfter(String status, PageWindow page) {
     return jdbcTemplate.query(
         "SELECT * FROM merchants WHERE tenant_id = ? AND status = ? AND (created_at > ? OR (created_at = ? AND id > ?)) "
@@ -143,6 +183,58 @@ public final class MerchantAdminRepository {
         TENANT_ID,
         Timestamp.from(now),
         Timestamp.from(now));
+  }
+
+  private void updateMerchantRow(
+      String id, String displayName, String status, CredentialBindingResult binding, Instant now) {
+    jdbcTemplate.update(
+        "UPDATE merchants SET display_name = ?, status = ?, credential_ref = ?, credential_fingerprint = ?, "
+            + "updated_at = ? WHERE tenant_id = ? AND id = ? AND status <> 'archived'",
+        displayName,
+        status,
+        binding.credentialRef(),
+        binding.fingerprint(),
+        Timestamp.from(now),
+        TENANT_ID,
+        id);
+  }
+
+  private void updateChannelRow(
+      String id, String displayName, String status, CredentialBindingResult binding, Instant now) {
+    jdbcTemplate.update(
+        "UPDATE channels SET display_name = ?, status = ?, credential_ref = ?, credential_fingerprint = ?, "
+            + "updated_at = ? WHERE tenant_id = ? AND id = ? AND status <> 'archived'",
+        displayName,
+        status,
+        binding.credentialRef(),
+        binding.fingerprint(),
+        Timestamp.from(now),
+        TENANT_ID,
+        id);
+  }
+
+  private CredentialBindingResult currentBinding(MerchantRow row) {
+    return new CredentialBindingResult(row.credentialRef(), row.credentialFingerprint());
+  }
+
+  private CredentialBindingResult currentBinding(ChannelRow row) {
+    return new CredentialBindingResult(row.credentialRef(), row.credentialFingerprint());
+  }
+
+  private String nameOrCurrent(String displayName, MerchantRow row) {
+    return displayName == null ? row.displayName() : displayName;
+  }
+
+  private String nameOrCurrent(String displayName, ChannelRow row) {
+    return displayName == null ? row.displayName() : displayName;
+  }
+
+  private String statusOrCurrent(String status, MerchantRow row) {
+    return status == null ? row.status() : status;
+  }
+
+  private String statusOrCurrent(String status, ChannelRow row) {
+    return status == null ? row.status() : status;
   }
 
   private MerchantRow merchant(ResultSet resultSet, int rowNumber) throws SQLException {

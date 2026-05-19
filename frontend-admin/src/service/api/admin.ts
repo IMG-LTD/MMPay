@@ -41,6 +41,29 @@ export interface ChannelCreateInput {
   credential_ref: string;
 }
 
+export interface CredentialRefPatch {
+  type: 'Set' | 'Unbind';
+  value?: string;
+}
+
+export interface MerchantPatchInput {
+  display_name?: string;
+  status?: string;
+  credential_ref?: CredentialRefPatch;
+}
+
+export interface ChannelPatchInput {
+  display_name?: string;
+  status?: string;
+  credential_ref?: CredentialRefPatch;
+}
+
+export interface VerifyBindingResult {
+  status: string;
+  stored_fingerprint: string;
+  resolved_fingerprint: string;
+}
+
 export function fetchMerchants() {
   return adminFetch<AdminPage<Merchant>>('/api/admin/merchants');
 }
@@ -51,6 +74,18 @@ export function fetchMerchant(id: string) {
 
 export function createMerchant(input: MerchantCreateInput) {
   return adminFetch<Merchant>('/api/admin/merchants', postOptions(input));
+}
+
+export function updateMerchant(id: string, input: MerchantPatchInput) {
+  return adminFetch<Merchant>(`/api/admin/merchants/${encodeURIComponent(id)}`, jsonOptions('PATCH', input));
+}
+
+export function archiveMerchant(id: string) {
+  return adminFetch<void>(`/api/admin/merchants/${encodeURIComponent(id)}`, { method: 'DELETE' });
+}
+
+export function verifyMerchantBinding(id: string) {
+  return adminFetch<VerifyBindingResult>(`/api/admin/merchants/${encodeURIComponent(id)}/verify-binding`, { method: 'POST' });
 }
 
 export function fetchMerchantChannels(merchantId: string) {
@@ -65,20 +100,35 @@ export function fetchChannel(id: string) {
   return adminFetch<Channel>(`/api/admin/channels/${encodeURIComponent(id)}`);
 }
 
+export function updateChannel(id: string, input: ChannelPatchInput) {
+  return adminFetch<Channel>(`/api/admin/channels/${encodeURIComponent(id)}`, jsonOptions('PATCH', input));
+}
+
+export function archiveChannel(id: string) {
+  return adminFetch<void>(`/api/admin/channels/${encodeURIComponent(id)}`, { method: 'DELETE' });
+}
+
+export function verifyChannelBinding(id: string) {
+  return adminFetch<VerifyBindingResult>(`/api/admin/channels/${encodeURIComponent(id)}/verify-binding`, { method: 'POST' });
+}
+
 async function adminFetch<T>(url: string, init: RequestInit = {}) {
   const response = await fetch(url, { ...init, headers: headers(init.headers) });
   if (!response.ok) {
     throw await problem(response);
   }
+  if (response.status === 204) {
+    return undefined as T;
+  }
   return (await response.json()) as T;
 }
 
 function postOptions(input: unknown): RequestInit {
-  return {
-    method: 'POST',
-    body: JSON.stringify(input),
-    headers: { 'Content-Type': 'application/json', 'Idempotency-Key': crypto.randomUUID() }
-  };
+  return jsonOptions('POST', input, { 'Idempotency-Key': crypto.randomUUID() });
+}
+
+function jsonOptions(method: string, input: unknown, extraHeaders: HeadersInit = {}): RequestInit {
+  return { method, body: JSON.stringify(input), headers: { 'Content-Type': 'application/json', ...extraHeaders } };
 }
 
 function headers(input?: HeadersInit): HeadersInit {

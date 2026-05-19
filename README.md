@@ -6,11 +6,11 @@ source tree and must remain in its own repository.
 
 ## Status
 
-`v0.3.0` is the Soybean Admin and Pig-aligned rescue release. It keeps MMPay as
+`v0.4.0` is the P2 merchant/channel lifecycle preview release. It keeps MMPay as
 an independent payment gateway, ships the real Soybean Admin frontend as the
-product admin console, and adds the first merchant/channel management foundation
-needed before Huifu live execution. It is not a full payment-closure or GA
-evidence release.
+product admin console, and adds merchant/channel update, archive, credential
+bind/unbind, and explicit binding verification flows needed before Huifu live
+execution. It is not a full payment-closure or GA evidence release.
 
 This repository has the MP-0 through MP-7 scaffold in place:
 
@@ -26,8 +26,10 @@ This repository has the MP-0 through MP-7 scaffold in place:
 - Outbound webhook: MMMail-compatible HMAC signature contract.
 - License boundary: relay-only delivery; no license signing module exists here.
 - Merchant/channel admin: P2 now has real admin APIs and Soybean Admin pages for
-  merchant creation, list/detail, channel creation/detail, role checks,
-  idempotency replay, credential environment references, and audit emission.
+  merchant creation, list/detail, update, soft archive, channel creation/detail,
+  channel update/archive, role checks, idempotency replay, credential environment
+  references, credential bind/unbind, explicit binding verification, and audit
+  emission.
 - Admin surface: `frontend-admin` is rebased on the real soybean-admin upstream
   commit `eba49504280a2866de3a61c65c3401e1453771ce`, including Soybean layout,
   router, store, package workspace, UnoCSS and Naive UI integration. The home,
@@ -62,10 +64,10 @@ docker compose -f deploy/docker-compose.yml up --build -d
 ```
 
 For a prebuilt-image deployment after the `MMPay Images` workflow publishes
-`v0.3.0`, use:
+`v0.4.0`, use:
 
 ```text
-ghcr.io/img-ltd/mmpay-app:v0.3.0
+ghcr.io/img-ltd/mmpay-app:v0.4.0
 ```
 
 Runtime credentials must be injected through environment variables, secret

@@ -9,7 +9,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -64,6 +66,27 @@ public class MerchantAdminController {
     return service.getMerchant(id);
   }
 
+  @PatchMapping("/merchants/{id}")
+  @PreAuthorize("hasRole('ADMIN')")
+  MerchantResponse patchMerchant(@PathVariable("id") String id, @RequestBody String body, Authentication auth) {
+    var request = read(body, MerchantPatchRequest.class);
+    rejectTenant(body);
+    return service.patchMerchant(id, request, AuditActor.from(auth));
+  }
+
+  @DeleteMapping("/merchants/{id}")
+  @PreAuthorize("hasRole('ADMIN')")
+  ResponseEntity<Void> archiveMerchant(@PathVariable("id") String id, Authentication auth) {
+    service.archiveMerchant(id, AuditActor.from(auth));
+    return ResponseEntity.noContent().build();
+  }
+
+  @PostMapping("/merchants/{id}/verify-binding")
+  @PreAuthorize("hasRole('ADMIN')")
+  VerifyBindingResponse verifyMerchantBinding(@PathVariable("id") String id, Authentication auth) {
+    return service.verifyMerchantBinding(id, AuditActor.from(auth));
+  }
+
   @PostMapping("/merchants/{id}/channels")
   @PreAuthorize("hasRole('ADMIN')")
   ResponseEntity<ChannelResponse> createChannel(@PathVariable("id") String id, @RequestBody String body, Authentication auth) {
@@ -86,6 +109,27 @@ public class MerchantAdminController {
   @PreAuthorize("hasAnyRole('ADMIN','OPS','FINANCE','AUDITOR')")
   ChannelResponse getChannel(@PathVariable("id") String id) {
     return service.getChannel(id);
+  }
+
+  @PatchMapping("/channels/{id}")
+  @PreAuthorize("hasRole('ADMIN')")
+  ChannelResponse patchChannel(@PathVariable("id") String id, @RequestBody String body, Authentication auth) {
+    var request = read(body, ChannelPatchRequest.class);
+    rejectTenant(body);
+    return service.patchChannel(id, request, AuditActor.from(auth));
+  }
+
+  @DeleteMapping("/channels/{id}")
+  @PreAuthorize("hasRole('ADMIN')")
+  ResponseEntity<Void> archiveChannel(@PathVariable("id") String id, Authentication auth) {
+    service.archiveChannel(id, AuditActor.from(auth));
+    return ResponseEntity.noContent().build();
+  }
+
+  @PostMapping("/channels/{id}/verify-binding")
+  @PreAuthorize("hasRole('ADMIN')")
+  VerifyBindingResponse verifyChannelBinding(@PathVariable("id") String id, Authentication auth) {
+    return service.verifyChannelBinding(id, AuditActor.from(auth));
   }
 
   private <T> T read(String body, Class<T> type) {
