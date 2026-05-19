@@ -27,7 +27,18 @@ describe('P4 license relay and integrations contract', () => {
     const relay = await read('backend/mmpay-license-relay/src/main/java/com/imgltd/mmpay/license/LicenseRelay.java');
     const source = relay + '\n' + await read('backend/mmpay-license-relay/src/main/java/com/imgltd/mmpay/license/LicenseRelayReceipt.java');
 
-    assert.doesNotMatch(pom, /jackson|gson|snakeyaml|protobuf|okhttp|httpclient|spring-web|spring-aop|reactor/i);
+    // Strip XML comments and <excludes>...</excludes> blocks from the pom before the
+    // banned-substring check — names inside <exclude> tags or inside a <!-- comment --> are bans,
+    // not dependencies. The pom must still not pull any banned root as an actual <dependency>.
+    const pomWithoutExcludesOrComments = pom
+      .replace(/<!--[\s\S]*?-->/g, '')
+      .replace(/<excludes>[\s\S]*?<\/excludes>/g, '');
+    assert.doesNotMatch(
+      pomWithoutExcludesOrComments,
+      /jackson|gson|snakeyaml|protobuf|okhttp|httpclient|spring-web|spring-aop|reactor/i,
+    );
+    // And assert the enforcer block IS present so the ban is enforced at build time.
+    assert.match(pom, /<bannedDependencies>[\s\S]*<\/bannedDependencies>/);
     assert.match(relay, /java\.net\.http\.HttpClient/);
     assert.match(relay, /MessageDigest\.getInstance\("SHA-256"\)/);
     assert.doesNotMatch(source, /ObjectMapper|JsonNode|Gson|Yaml|Files\.write|System\.loadLibrary|Runtime\.getRuntime\(\)\.load/);
