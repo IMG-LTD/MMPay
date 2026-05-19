@@ -22,9 +22,16 @@ public final class HuifuPaymentAdapter implements PaymentProviderAdapter {
       Set.copyOf(EnumSet.allOf(ProviderCapability.class));
 
   private final HuifuCredentialHandles credentials;
+  private final HuifuInboundNotifyVerifier inboundVerifier;
 
   public HuifuPaymentAdapter(HuifuCredentialHandles credentials) {
+    this(credentials, null);
+  }
+
+  public HuifuPaymentAdapter(
+      HuifuCredentialHandles credentials, HuifuInboundNotifyVerifier inboundVerifier) {
     this.credentials = Objects.requireNonNull(credentials, "credentials");
+    this.inboundVerifier = inboundVerifier;
   }
 
   @Override
@@ -70,7 +77,10 @@ public final class HuifuPaymentAdapter implements PaymentProviderAdapter {
   public ProviderEvent verifyInboundWebhook(Map<String, String> headers, byte[] rawBody) {
     Objects.requireNonNull(headers, "headers");
     Objects.requireNonNull(rawBody, "rawBody");
-    throw unavailable("verifyInboundWebhook");
+    if (inboundVerifier == null) {
+      throw unavailable("verifyInboundWebhook");
+    }
+    return inboundVerifier.verify(rawBody);
   }
 
   public HuifuCredentialHandles credentials() {
