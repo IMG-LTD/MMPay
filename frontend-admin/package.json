@@ -1,6 +1,6 @@
 {
   "name": "mmpay-frontend-admin",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "description": "MMPay payment operations console with Vue3, Vite, TypeScript, Naive UI and UnoCSS.",
   "keywords": [
     "TypeScript",

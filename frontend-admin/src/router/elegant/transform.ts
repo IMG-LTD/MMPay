@@ -179,6 +179,8 @@ const routeMap: RouteMap = {
   "reconciliation-detail": "/reconciliation/:id",
   "webhook-out": "/webhook-out",
   "webhook-out-delivery-log-detail": "/webhook-out/delivery-logs/:id",
+  "integrations": "/integrations",
+  "integration-detail": "/integrations/:id",
   "iframe-page": "/iframe-page/:url",
   "login": "/login/:module(pwd-login|code-login|register|reset-pwd|bind-wechat)?"
 };

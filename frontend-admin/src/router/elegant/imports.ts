@@ -33,4 +33,6 @@ export const views: Record<LastLevelRouteKey, RouteComponent | (() => Promise<Ro
   "reconciliation-detail": () => import("@/views/reconciliation/detail/index.vue"),
   "webhook-out": () => import("@/views/webhook-out/index.vue"),
   "webhook-out-delivery-log-detail": () => import("@/views/webhook-out/delivery-log-detail/index.vue"),
+  integrations: () => import("@/views/integrations/index.vue"),
+  "integration-detail": () => import("@/views/integrations/detail/index.vue"),
 };

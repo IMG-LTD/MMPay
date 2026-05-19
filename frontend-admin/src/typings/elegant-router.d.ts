@@ -33,6 +33,8 @@ declare module "@elegant-router/types" {
     "reconciliation-detail": "/reconciliation/:id";
     "webhook-out": "/webhook-out";
     "webhook-out-delivery-log-detail": "/webhook-out/delivery-logs/:id";
+    "integrations": "/integrations";
+    "integration-detail": "/integrations/:id";
     "iframe-page": "/iframe-page/:url";
     "login": "/login/:module(pwd-login|code-login|register|reset-pwd|bind-wechat)?";
   };
@@ -83,6 +85,8 @@ declare module "@elegant-router/types" {
     | "reconciliation-detail"
     | "webhook-out"
     | "webhook-out-delivery-log-detail"
+    | "integrations"
+    | "integration-detail"
     | "iframe-page"
     | "login"
   >;
@@ -120,6 +124,8 @@ declare module "@elegant-router/types" {
     | "reconciliation-detail"
     | "webhook-out"
     | "webhook-out-delivery-log-detail"
+    | "integrations"
+    | "integration-detail"
   >;
 
   /**

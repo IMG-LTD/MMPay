@@ -63,6 +63,7 @@ EOF
 }
 
 require_external_facts
+bash "$ROOT_DIR/scripts/governance/evidence-safety-precheck.sh" >&2
 mmpay_sha="$(git -C "$ROOT_DIR" rev-parse HEAD)"
 tmp_file="$(mktemp)"
 trap 'rm -f "$tmp_file"' EXIT

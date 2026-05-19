@@ -207,6 +207,30 @@ export const generatedRoutes: GeneratedRoute[] = [
     }
   },
   {
+    name: 'integrations',
+    path: '/integrations',
+    component: 'layout.base$view.integrations',
+    meta: {
+      title: 'integrations',
+      i18nKey: 'route.integrations',
+      constant: true,
+      icon: 'mdi:connection',
+      order: 7
+    }
+  },
+  {
+    name: 'integration-detail',
+    path: '/integrations/:id',
+    component: 'layout.base$view.integration-detail',
+    props: true,
+    meta: {
+      title: 'integration-detail',
+      i18nKey: 'route.integration-detail',
+      constant: true,
+      hideInMenu: true
+    }
+  },
+  {
     name: 'iframe-page',
     path: '/iframe-page/:url',
     component: 'layout.base$view.iframe-page',

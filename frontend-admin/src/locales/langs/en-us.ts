@@ -242,7 +242,9 @@ const local: App.I18n.Schema = {
     reconciliation: 'Reconciliation',
     'reconciliation-detail': 'Reconciliation Detail',
     'webhook-out': 'Webhook Out',
-    'webhook-out-delivery-log-detail': 'Delivery Log'
+    'webhook-out-delivery-log-detail': 'Delivery Log',
+    integrations: 'Integrations',
+    'integration-detail': 'Integration Detail'
   },
   page: {
     login: {

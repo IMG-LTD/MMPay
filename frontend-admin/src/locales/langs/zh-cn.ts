@@ -238,7 +238,9 @@ const local: App.I18n.Schema = {
     reconciliation: '对账',
     'reconciliation-detail': '对账详情',
     'webhook-out': 'Webhook 投递',
-    'webhook-out-delivery-log-detail': '投递日志'
+    'webhook-out-delivery-log-detail': '投递日志',
+    integrations: '集成上游',
+    'integration-detail': '集成详情'
   },
   page: {
     login: {

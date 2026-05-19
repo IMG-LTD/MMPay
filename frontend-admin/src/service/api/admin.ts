@@ -146,6 +146,44 @@ export interface DeliveryLog {
   dead_letter: boolean;
 }
 
+export interface Integration {
+  id: string;
+  kind: string;
+  name: string;
+  slug: string;
+  target_url_masked: string;
+  status: string;
+  relay_target_id: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface IntegrationCreateInput {
+  id: string;
+  kind: 'relay';
+  name: string;
+  slug: string;
+  target_url: string;
+  secret_ref: string;
+}
+
+export interface LicenseRelayLog {
+  id: number;
+  target_id: string;
+  request_id: string;
+  attempt: number;
+  byte_count: number;
+  payload_sha256: string;
+  http_status: number | null;
+  response_sha256: string | null;
+  response_size_bytes: number | null;
+  response_truncated: boolean;
+  error_class: string | null;
+  synthetic: boolean;
+  dead_letter: boolean;
+  dispatched_at: string;
+}
+
 export function fetchMerchants() {
   return adminFetch<AdminPage<Merchant>>('/api/admin/merchants');
 }
@@ -248,6 +286,26 @@ export function fetchDeliveryLog(id: string | number) {
 
 export function redispatchDeliveryLog(id: string | number) {
   return adminFetch<DeliveryLog>(`/api/admin/webhook-out/delivery-logs/${id}/redispatch`, { method: 'POST' });
+}
+
+export function fetchIntegrations() {
+  return adminFetch<AdminPage<Integration>>('/api/admin/integrations');
+}
+
+export function fetchIntegration(id: string) {
+  return adminFetch<Integration>(`/api/admin/integrations/${encodeURIComponent(id)}`);
+}
+
+export function createIntegration(input: IntegrationCreateInput) {
+  return adminFetch<Integration>('/api/admin/integrations', jsonOptions('POST', input));
+}
+
+export function testIntegration(id: string) {
+  return adminFetch<LicenseRelayLog>(`/api/admin/integrations/${encodeURIComponent(id)}/test`, { method: 'POST' });
+}
+
+export function redispatchLicenseRelayLog(id: string | number) {
+  return adminFetch<LicenseRelayLog>(`/api/admin/license-relay/logs/${id}/redispatch`, { method: 'POST' });
 }
 
 async function adminFetch<T>(url: string, init: RequestInit = {}) {

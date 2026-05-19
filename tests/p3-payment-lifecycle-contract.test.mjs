@@ -67,7 +67,7 @@ describe('P3 payment lifecycle contract', () => {
     ]) {
       await exists(file);
     }
-    assert.equal(packageJson.version, '0.5.0');
+    assert.match(packageJson.version, /^0\.(5|6)\.0$/);
     assert.match(routes, /path: '\/payments'/);
     assert.match(routes, /path: '\/refunds\/new'/);
     assert.match(routes, /path: '\/reconciliation'/);
