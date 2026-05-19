@@ -54,13 +54,36 @@ public final class PaymentRepository {
     if (!"pending".equals(intent.status())) {
       throw PaymentProblems.conflict(PaymentProblems.STATE_TRANSITION_ILLEGAL, "payment intent is not pending");
     }
-    jdbcTemplate.update(
-        "UPDATE payment_intents SET status = 'cancelled', updated_at = ?, version = version + 1 "
-            + "WHERE tenant_id = ? AND id = ?",
-        Timestamp.from(now),
-        TENANT_ID,
-        id);
+    // Optimistic concurrency: WHERE version = ? guards against callback racing past cancel.
+    int updated =
+        jdbcTemplate.update(
+            "UPDATE payment_intents SET status = 'cancelled', updated_at = ?, version = version + 1 "
+                + "WHERE tenant_id = ? AND id = ? AND status = 'pending' AND version = ?",
+            Timestamp.from(now),
+            TENANT_ID,
+            id,
+            intent.version());
+    if (updated == 0) {
+      throw PaymentProblems.conflict(PaymentProblems.STATE_TRANSITION_ILLEGAL, "payment intent state changed concurrently");
+    }
     return requirePaymentIntent(id);
+  }
+
+  RefundRow cancelPendingRefund(String id, Instant now) {
+    var refund = requireRefund(id);
+    if (!"pending".equals(refund.status())) {
+      throw PaymentProblems.conflict(PaymentProblems.STATE_TRANSITION_ILLEGAL, "refund is not pending");
+    }
+    int updated =
+        jdbcTemplate.update(
+            "UPDATE refunds SET status = 'cancelled', version = version + 1 "
+                + "WHERE tenant_id = ? AND id = ? AND status = 'pending'",
+            TENANT_ID,
+            id);
+    if (updated == 0) {
+      throw PaymentProblems.conflict(PaymentProblems.STATE_TRANSITION_ILLEGAL, "refund state changed concurrently");
+    }
+    return requireRefund(id);
   }
 
   boolean insertProviderEvent(String providerCode, ProviderCallbackRequest request, String signatureSha, Instant now) {
@@ -264,7 +287,8 @@ public final class PaymentRepository {
         rs.getString("order_ref"),
         rs.getString("status"),
         instant(rs, "created_at"),
-        instant(rs, "updated_at"));
+        instant(rs, "updated_at"),
+        rs.getLong("version"));
   }
 
   private RefundRow refund(ResultSet rs, int row) throws SQLException {

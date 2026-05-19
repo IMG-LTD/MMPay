@@ -16,7 +16,8 @@ record PaymentIntentRow(
     String orderRef,
     String status,
     Instant createdAt,
-    Instant updatedAt) {}
+    Instant updatedAt,
+    long version) {}
 
 record RefundRow(
     String id,

@@ -35,6 +35,10 @@ public final class AuditVerifier {
     return verifyEventHmacs(events, acceptedBreakIds(segmentResult.segmentBreaks()), breakStatuses);
   }
 
+  String keyFingerprint() {
+    return hasher.keyFingerprint();
+  }
+
   private AuditVerifyResult verifyEventHmacs(
       List<AuditEvent> events, Set<Long> acceptedBreakIds, List<AuditVerifyResult.AuditSegmentBreakStatus> breaks) {
     String expectedPrevious = null;
@@ -56,23 +60,24 @@ public final class AuditVerifier {
     return new AuditSegmentVerifier(new AuditSegmentVerifierOptions(Set.of(), Set.of(), details -> false, (signature, payload) -> false));
   }
 
-  private static AuditVerifyResult result(List<AuditEvent> events, VerifyOutcome outcome) {
-    var segments = buildSegments(events, acceptedBreakStatusIds(outcome.breaks()));
+  private AuditVerifyResult result(List<AuditEvent> events, VerifyOutcome outcome) {
+    var segments = buildSegments(events, acceptedBreakStatusIds(outcome.breaks()), hasher.keyFingerprint());
     return new AuditVerifyResult(
         firstId(events), lastId(events), outcome.ok(), outcome.firstBreakId(), segments.size(), segments, outcome.breaks());
   }
 
-  private static List<AuditVerifyResult.AuditSegmentStatus> buildSegments(List<AuditEvent> events, Set<Long> acceptedBreakIds) {
+  private static List<AuditVerifyResult.AuditSegmentStatus> buildSegments(
+      List<AuditEvent> events, Set<Long> acceptedBreakIds, String keyFingerprint) {
     if (events.isEmpty()) {
       return List.of();
     }
     var segments = new ArrayList<AuditVerifyResult.AuditSegmentStatus>();
-    var window = SegmentWindow.first(events.getFirst().id());
+    var window = SegmentWindow.first(events.getFirst().id(), keyFingerprint);
     for (int index = 0; index < events.size(); index++) {
       var event = events.get(index);
       if (acceptedBreakIds.contains(event.id()) && index > 0) {
         segments.add(window.close(events.get(index - 1).id()));
-        window = SegmentWindow.fromBreak(segments.size(), event);
+        window = SegmentWindow.fromBreak(segments.size(), event, keyFingerprint);
       }
     }
     segments.add(window.close(events.getLast().id()));
@@ -126,17 +131,25 @@ public final class AuditVerifier {
     return expected == null ? actual == null : expected.equals(actual);
   }
 
-  private record SegmentWindow(int segmentId, long firstId, Long restoreRowId, String restoreNonce, Boolean pgpValid) {
-    static SegmentWindow first(long firstId) {
-      return new SegmentWindow(0, firstId, null, null, null);
+  private record SegmentWindow(
+      int segmentId, long firstId, String keyFingerprint, Long restoreRowId, String restoreNonce, Boolean pgpValid) {
+    static SegmentWindow first(long firstId, String keyFingerprint) {
+      return new SegmentWindow(0, firstId, keyFingerprint, null, null, null);
     }
 
-    static SegmentWindow fromBreak(int segmentId, AuditEvent event) {
-      return new SegmentWindow(segmentId, event.id(), event.id(), String.valueOf(event.details().get("restore_nonce")), true);
+    static SegmentWindow fromBreak(int segmentId, AuditEvent event, String keyFingerprint) {
+      return new SegmentWindow(
+          segmentId,
+          event.id(),
+          keyFingerprint,
+          event.id(),
+          String.valueOf(event.details().get("restore_nonce")),
+          true);
     }
 
     AuditVerifyResult.AuditSegmentStatus close(long lastId) {
-      return new AuditVerifyResult.AuditSegmentStatus(segmentId, firstId, lastId, null, true, restoreRowId, restoreNonce, pgpValid);
+      return new AuditVerifyResult.AuditSegmentStatus(
+          segmentId, firstId, lastId, keyFingerprint, true, restoreRowId, restoreNonce, pgpValid);
     }
   }
 

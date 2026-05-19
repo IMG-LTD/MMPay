@@ -60,7 +60,21 @@ public class AuditConfiguration {
 
   @Bean
   ApplicationRunner auditStartupHeartbeat(AuditWriter auditWriter) {
-    return args -> auditWriter.emit("system", null, "system.start", "runtime", "mmpay", Map.of("version", "test"));
+    return args ->
+        auditWriter.emit(
+            "system", null, "system.start", "runtime", "mmpay", Map.of("version", resolveVersion()));
+  }
+
+  static String resolveVersion() {
+    var sha = System.getenv("MMPAY_GIT_COMMIT_SHA");
+    if (sha != null && !sha.isBlank()) {
+      return sha;
+    }
+    var packageVersion = AuditConfiguration.class.getPackage().getImplementationVersion();
+    if (packageVersion != null && !packageVersion.isBlank()) {
+      return packageVersion;
+    }
+    return "unknown";
   }
 
   private static byte[] auditKey() {

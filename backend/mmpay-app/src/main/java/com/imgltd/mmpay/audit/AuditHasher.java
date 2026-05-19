@@ -1,6 +1,7 @@
 package com.imgltd.mmpay.audit;
 
 import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
 import java.util.Comparator;
 import java.util.HexFormat;
 import java.util.List;
@@ -11,12 +12,18 @@ import javax.crypto.spec.SecretKeySpec;
 public final class AuditHasher {
   private static final int MIN_KEY_BYTES = 32;
   private final byte[] hmacKey;
+  private final String keyFingerprint;
 
   public AuditHasher(byte[] hmacKey) {
     if (hmacKey.length < MIN_KEY_BYTES) {
       throw new IllegalArgumentException("audit key too short");
     }
     this.hmacKey = hmacKey.clone();
+    this.keyFingerprint = computeFingerprint(this.hmacKey);
+  }
+
+  public String keyFingerprint() {
+    return keyFingerprint;
   }
 
   public String rowHmac(AuditEvent event, String previous) {
@@ -61,6 +68,15 @@ public final class AuditHasher {
 
   private static boolean equalsNullable(String expected, String actual) {
     return expected == null ? actual == null : expected.equals(actual);
+  }
+
+  private static String computeFingerprint(byte[] keyBytes) {
+    try {
+      var digest = MessageDigest.getInstance("SHA-256");
+      return HexFormat.of().formatHex(digest.digest(keyBytes)).substring(0, 8);
+    } catch (Exception exception) {
+      throw new IllegalStateException("audit key fingerprint failed", exception);
+    }
   }
 
   private static long firstId(List<AuditEvent> candidateEvents) {

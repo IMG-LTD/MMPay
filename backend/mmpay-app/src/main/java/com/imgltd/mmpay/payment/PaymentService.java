@@ -98,6 +98,17 @@ public final class PaymentService {
     return RefundResponse.from(repository.requireRefund(id));
   }
 
+  public RefundResponse cancelRefund(String id, String actor) {
+    try {
+      var row = repository.cancelPendingRefund(id, Instant.now(clock));
+      audit(actor, "refund.cancel", "refund", id, accepted());
+      return RefundResponse.from(row);
+    } catch (RuntimeException exception) {
+      audit(actor, "refund.cancel", "refund", id, rejected("state_transition_illegal"));
+      throw exception;
+    }
+  }
+
   public ListResponse<ReconciliationRunResponse> listReconciliationRuns() {
     var items = repository.listReconciliationRuns().stream().map(ReconciliationRunResponse::from).toList();
     return new ListResponse<>(items, null, false);

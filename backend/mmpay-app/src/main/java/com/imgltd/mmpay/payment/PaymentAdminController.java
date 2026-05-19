@@ -80,6 +80,13 @@ public class PaymentAdminController {
     return service.getRefund(id);
   }
 
+  @PostMapping("/api/admin/refunds/{id}/cancel")
+  @PreAuthorize("hasAnyRole('ADMIN','OPS')")
+  RefundResponse cancelRefund(@PathVariable("id") String id, Authentication auth) {
+    degradedModeGuard.requireWriteAllowed("refund-cancel");
+    return service.cancelRefund(id, actor(auth));
+  }
+
   @GetMapping("/api/admin/reconciliation/runs")
   @PreAuthorize("hasAnyRole('ADMIN','OPS','FINANCE','AUDITOR')")
   ListResponse<ReconciliationRunResponse> listReconciliationRuns() {
