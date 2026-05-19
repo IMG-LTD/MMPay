@@ -31,6 +31,7 @@ node --test "$ROOT_DIR/tests/p3-payment-lifecycle-contract.test.mjs"
 node --test "$ROOT_DIR/tests/p4-license-relay-integrations-contract.test.mjs"
 node --test "$ROOT_DIR/tests/p5-release-closure-contract.test.mjs"
 node --test "$ROOT_DIR/tests/p5-external-closure-blockers-contract.test.mjs"
+node --test "$ROOT_DIR/tests/p5-vendor-binding-evidence-contract.test.mjs"
 pnpm --dir "$ROOT_DIR/frontend-admin" install --frozen-lockfile
 pnpm --dir "$ROOT_DIR/frontend-admin" typecheck
 pnpm --dir "$ROOT_DIR/frontend-admin" lint
@@ -41,8 +42,10 @@ bash -n "$ROOT_DIR/scripts/validate-helm-chart.sh"
 bash -n "$ROOT_DIR/scripts/validate-e2e-evidence.sh"
 bash -n "$ROOT_DIR/scripts/governance/evidence-safety-precheck.sh"
 bash -n "$ROOT_DIR/scripts/governance/verify-image-digest-evidence.sh"
+bash -n "$ROOT_DIR/scripts/governance/verify-vendor-binding-evidence.sh"
 bash -n "$ROOT_DIR/scripts/governance/audit-chain-verify-cli.sh"
 bash -n "$ROOT_DIR/scripts/governance/verify-v1-tag-ruleset-evidence.sh"
+node --check "$ROOT_DIR/scripts/governance/verify-vendor-binding-evidence.mjs"
 bash -n "$ROOT_DIR/scripts/render-e2e-evidence.sh"
 bash -n "$ROOT_DIR/scripts/validate-ci.sh"
 bash -n "$ROOT_DIR/scripts/validate-local.sh"

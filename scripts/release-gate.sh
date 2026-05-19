@@ -68,13 +68,10 @@ require_file() {
   fi
 }
 
-check_vendor_binding_marker() {
-  local binding="$ROOT_DIR/docs/release/vendor-binding/v1.0.0-BINDING_OK.asc"
+check_vendor_binding() {
   require_file "docs/release/vendor-binding/v1.0.0-BINDING_OK.asc"
-  grep -Fq "BEGIN PGP SIGNATURE" "$binding" \
-    || { echo "Vendor PGP BINDING_OK signature is missing" >&2; exit 1; }
-  grep -Fq "vendor_key_fingerprint" "$binding" \
-    || { echo "Vendor PGP BINDING_OK canonical content is missing" >&2; exit 1; }
+  bash "$ROOT_DIR/scripts/governance/verify-vendor-binding-evidence.sh" \
+    "$ROOT_DIR/docs/release/vendor-binding/v1.0.0-BINDING_OK.asc"
 }
 
 check_ga_promotion() {
@@ -95,7 +92,7 @@ check_ga_promotion() {
   grep -Fq "Operator PGP signature: valid" \
     "$ROOT_DIR/docs/release/backup-restore-drill-evidence.md" \
     || { echo "backup restore drill evidence lacks operator PGP proof" >&2; exit 1; }
-  check_vendor_binding_marker
+  check_vendor_binding
 }
 
 tag="$(tag_name)"
