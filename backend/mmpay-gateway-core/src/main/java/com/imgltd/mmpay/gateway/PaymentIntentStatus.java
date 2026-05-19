@@ -1,8 +1,11 @@
 package com.imgltd.mmpay.gateway;
 
 public enum PaymentIntentStatus {
-  REQUIRES_PAYMENT,
-  PROCESSING,
+  PENDING,
+  SUBMITTED,
   SUCCEEDED,
-  FAILED
+  FAILED,
+  CANCELLED,
+  REFUNDED,
+  PARTIALLY_REFUNDED
 }

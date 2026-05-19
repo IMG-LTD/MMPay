@@ -229,7 +229,16 @@ const local: App.I18n.Schema = {
     merchants: '商户管理',
     'merchant-detail': '商户详情',
     'merchant-channel-new': '新建通道',
-    'channel-detail': '通道详情'
+    'channel-detail': '通道详情',
+    payments: '支付意图',
+    'payment-detail': '支付详情',
+    refunds: '退款',
+    'refund-detail': '退款详情',
+    'refund-new': '新建退款',
+    reconciliation: '对账',
+    'reconciliation-detail': '对账详情',
+    'webhook-out': 'Webhook 投递',
+    'webhook-out-delivery-log-detail': '投递日志'
   },
   page: {
     login: {

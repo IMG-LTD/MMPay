@@ -100,6 +100,113 @@ export const generatedRoutes: GeneratedRoute[] = [
     }
   },
   {
+    name: 'payments',
+    path: '/payments',
+    component: 'layout.base$view.payments',
+    meta: {
+      title: 'payments',
+      i18nKey: 'route.payments',
+      constant: true,
+      icon: 'mdi:credit-card-outline',
+      order: 3
+    }
+  },
+  {
+    name: 'payment-detail',
+    path: '/payments/:id',
+    component: 'layout.base$view.payment-detail',
+    props: true,
+    meta: {
+      title: 'payment-detail',
+      i18nKey: 'route.payment-detail',
+      constant: true,
+      hideInMenu: true
+    }
+  },
+  {
+    name: 'refunds',
+    path: '/refunds',
+    component: 'layout.base$view.refunds',
+    meta: {
+      title: 'refunds',
+      i18nKey: 'route.refunds',
+      constant: true,
+      icon: 'mdi:cash-refund',
+      order: 4
+    }
+  },
+  {
+    name: 'refund-detail',
+    path: '/refunds/:id',
+    component: 'layout.base$view.refund-detail',
+    props: true,
+    meta: {
+      title: 'refund-detail',
+      i18nKey: 'route.refund-detail',
+      constant: true,
+      hideInMenu: true
+    }
+  },
+  {
+    name: 'refund-new',
+    path: '/refunds/new',
+    component: 'layout.base$view.refund-new',
+    meta: {
+      title: 'refund-new',
+      i18nKey: 'route.refund-new',
+      constant: true,
+      hideInMenu: true
+    }
+  },
+  {
+    name: 'reconciliation',
+    path: '/reconciliation',
+    component: 'layout.base$view.reconciliation',
+    meta: {
+      title: 'reconciliation',
+      i18nKey: 'route.reconciliation',
+      constant: true,
+      icon: 'mdi:clipboard-check-outline',
+      order: 5
+    }
+  },
+  {
+    name: 'reconciliation-detail',
+    path: '/reconciliation/:id',
+    component: 'layout.base$view.reconciliation-detail',
+    props: true,
+    meta: {
+      title: 'reconciliation-detail',
+      i18nKey: 'route.reconciliation-detail',
+      constant: true,
+      hideInMenu: true
+    }
+  },
+  {
+    name: 'webhook-out',
+    path: '/webhook-out',
+    component: 'layout.base$view.webhook-out',
+    meta: {
+      title: 'webhook-out',
+      i18nKey: 'route.webhook-out',
+      constant: true,
+      icon: 'mdi:webhook',
+      order: 6
+    }
+  },
+  {
+    name: 'webhook-out-delivery-log-detail',
+    path: '/webhook-out/delivery-logs/:id',
+    component: 'layout.base$view.webhook-out-delivery-log-detail',
+    props: true,
+    meta: {
+      title: 'webhook-out-delivery-log-detail',
+      i18nKey: 'route.webhook-out-delivery-log-detail',
+      constant: true,
+      hideInMenu: true
+    }
+  },
+  {
     name: 'iframe-page',
     path: '/iframe-page/:url',
     component: 'layout.base$view.iframe-page',

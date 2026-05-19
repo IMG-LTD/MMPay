@@ -14,7 +14,7 @@ class RefundTest {
 
     Refund refund = Refund.request("rf_001", transaction, 500, Instant.EPOCH);
 
-    assertEquals(RefundStatus.REQUESTED, refund.status());
+    assertEquals(RefundStatus.PENDING, refund.status());
     assertEquals("txn_001", refund.transactionId());
   }
 

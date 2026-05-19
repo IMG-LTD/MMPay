@@ -18,7 +18,7 @@ public record Refund(
         transaction.id(),
         amountMinor,
         Objects.requireNonNull(requestedAt, "requestedAt"),
-        RefundStatus.REQUESTED);
+        RefundStatus.PENDING);
   }
 
   private static void requireRefundable(Transaction transaction, long amountMinor) {

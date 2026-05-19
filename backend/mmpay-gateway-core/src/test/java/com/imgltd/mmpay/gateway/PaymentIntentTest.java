@@ -14,18 +14,37 @@ class PaymentIntentTest {
 
     assertEquals("pi_001", intent.id());
     assertEquals("idem-001", intent.idempotencyKey());
-    assertEquals(PaymentIntentStatus.REQUIRES_PAYMENT, intent.status());
+    assertEquals(PaymentIntentStatus.PENDING, intent.status());
   }
 
   @Test
-  void intentCanMoveThroughProcessingToSucceeded() {
+  void intentCanMoveThroughSubmittedToSucceeded() {
     PaymentIntent intent =
         PaymentIntent.create("pi_002", 2999, "CNY", "order-002", "idem-002", Instant.EPOCH);
 
-    PaymentIntent succeeded = intent.markProcessing().markSucceeded();
+    PaymentIntent succeeded = intent.markSubmitted().markSucceeded();
 
     assertEquals(PaymentIntentStatus.SUCCEEDED, succeeded.status());
-    assertEquals(PaymentIntentStatus.REQUIRES_PAYMENT, intent.status());
+    assertEquals(PaymentIntentStatus.PENDING, intent.status());
+  }
+
+  @Test
+  void pendingIntentCanBeCancelledBeforeProviderSubmission() {
+    PaymentIntent intent =
+        PaymentIntent.create("pi_cancel", 2999, "CNY", "order-cancel", "idem-cancel", Instant.EPOCH);
+
+    assertEquals(PaymentIntentStatus.CANCELLED, intent.cancelPending().status());
+  }
+
+  @Test
+  void succeededIntentCanMoveThroughPartialAndFullRefundStates() {
+    PaymentIntent succeeded =
+        PaymentIntent.create("pi_refund", 2999, "CNY", "order-refund", "idem-refund", Instant.EPOCH)
+            .markSubmitted()
+            .markSucceeded();
+
+    assertEquals(PaymentIntentStatus.PARTIALLY_REFUNDED, succeeded.markPartiallyRefunded().status());
+    assertEquals(PaymentIntentStatus.REFUNDED, succeeded.markRefunded().status());
   }
 
   @Test

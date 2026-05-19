@@ -24,4 +24,13 @@ export const views: Record<LastLevelRouteKey, RouteComponent | (() => Promise<Ro
   "merchant-detail": () => import("@/views/merchants/detail/index.vue"),
   "merchant-channel-new": () => import("@/views/merchants/channel-new/index.vue"),
   "channel-detail": () => import("@/views/channels/detail/index.vue"),
+  payments: () => import("@/views/payments/index.vue"),
+  "payment-detail": () => import("@/views/payments/detail/index.vue"),
+  refunds: () => import("@/views/refunds/index.vue"),
+  "refund-detail": () => import("@/views/refunds/detail/index.vue"),
+  "refund-new": () => import("@/views/refunds/new/index.vue"),
+  reconciliation: () => import("@/views/reconciliation/index.vue"),
+  "reconciliation-detail": () => import("@/views/reconciliation/detail/index.vue"),
+  "webhook-out": () => import("@/views/webhook-out/index.vue"),
+  "webhook-out-delivery-log-detail": () => import("@/views/webhook-out/delivery-log-detail/index.vue"),
 };

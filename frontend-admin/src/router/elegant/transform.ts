@@ -170,6 +170,15 @@ const routeMap: RouteMap = {
   "merchant-detail": "/merchants/:id",
   "merchant-channel-new": "/merchants/:id/channels/new",
   "channel-detail": "/channels/:id",
+  "payments": "/payments",
+  "payment-detail": "/payments/:id",
+  "refunds": "/refunds",
+  "refund-detail": "/refunds/:id",
+  "refund-new": "/refunds/new",
+  "reconciliation": "/reconciliation",
+  "reconciliation-detail": "/reconciliation/:id",
+  "webhook-out": "/webhook-out",
+  "webhook-out-delivery-log-detail": "/webhook-out/delivery-logs/:id",
   "iframe-page": "/iframe-page/:url",
   "login": "/login/:module(pwd-login|code-login|register|reset-pwd|bind-wechat)?"
 };

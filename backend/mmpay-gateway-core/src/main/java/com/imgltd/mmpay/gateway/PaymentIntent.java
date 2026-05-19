@@ -26,17 +26,32 @@ public record PaymentIntent(
         DomainChecks.requireText(orderRef, "orderRef"),
         DomainChecks.requireText(idempotencyKey, "idempotencyKey"),
         Objects.requireNonNull(createdAt, "createdAt"),
-        PaymentIntentStatus.REQUIRES_PAYMENT);
+        PaymentIntentStatus.PENDING);
   }
 
-  public PaymentIntent markProcessing() {
-    requireStatus(PaymentIntentStatus.REQUIRES_PAYMENT);
-    return withStatus(PaymentIntentStatus.PROCESSING);
+  public PaymentIntent markSubmitted() {
+    requireStatus(PaymentIntentStatus.PENDING);
+    return withStatus(PaymentIntentStatus.SUBMITTED);
   }
 
   public PaymentIntent markSucceeded() {
-    requireStatus(PaymentIntentStatus.PROCESSING);
+    requireStatus(PaymentIntentStatus.SUBMITTED);
     return withStatus(PaymentIntentStatus.SUCCEEDED);
+  }
+
+  public PaymentIntent cancelPending() {
+    requireStatus(PaymentIntentStatus.PENDING);
+    return withStatus(PaymentIntentStatus.CANCELLED);
+  }
+
+  public PaymentIntent markPartiallyRefunded() {
+    requireRefundable();
+    return withStatus(PaymentIntentStatus.PARTIALLY_REFUNDED);
+  }
+
+  public PaymentIntent markRefunded() {
+    requireRefundable();
+    return withStatus(PaymentIntentStatus.REFUNDED);
   }
 
   private PaymentIntent withStatus(PaymentIntentStatus nextStatus) {
@@ -47,6 +62,12 @@ public record PaymentIntent(
   private void requireStatus(PaymentIntentStatus expectedStatus) {
     if (status != expectedStatus) {
       throw new IllegalStateException("Expected " + expectedStatus + " but was " + status);
+    }
+  }
+
+  private void requireRefundable() {
+    if (status != PaymentIntentStatus.SUCCEEDED && status != PaymentIntentStatus.PARTIALLY_REFUNDED) {
+      throw new IllegalStateException("Expected refundable intent but was " + status);
     }
   }
 }

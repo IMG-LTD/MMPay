@@ -233,7 +233,16 @@ const local: App.I18n.Schema = {
     merchants: 'Merchants',
     'merchant-detail': 'Merchant Detail',
     'merchant-channel-new': 'New Channel',
-    'channel-detail': 'Channel Detail'
+    'channel-detail': 'Channel Detail',
+    payments: 'Payment Intents',
+    'payment-detail': 'Payment Detail',
+    refunds: 'Refunds',
+    'refund-detail': 'Refund Detail',
+    'refund-new': 'New Refund',
+    reconciliation: 'Reconciliation',
+    'reconciliation-detail': 'Reconciliation Detail',
+    'webhook-out': 'Webhook Out',
+    'webhook-out-delivery-log-detail': 'Delivery Log'
   },
   page: {
     login: {

@@ -12,6 +12,7 @@ mvn -f "$ROOT_DIR/backend/pom.xml" -DskipTests compile
 timeout 60s mvn -f "$ROOT_DIR/backend/pom.xml" -pl mmpay-app -am -Dtest=AuditFoundationTest,AuditAppendOnlyTest,ActuatorHardeningTest,ReferenceResolverFoundationTest,SetupFoundationTest,P1AdminSecurityContractTest,P1SetupRouteLifecycleTest,P1SetupRateLimitTest,P1BootstrapAdminInitializerTest,P1SetupStartupTokenLogTest,P1SetupSingleFlightTest,P1SetupThymeleafTemplateTest,JdbcAuditEventStoreTest,AuditChainSerializationTest,SpringAuthorizationServerJdbcWiringTest,ServicePrincipalGrantTest,PasswordGrantTokenTest -Dsurefire.failIfNoSpecifiedTests=false test
 timeout 60s mvn -f "$ROOT_DIR/backend/pom.xml" -pl mmpay-adapter-huifu -am -Dtest=ProviderRegistryTest,HuifuProviderDescriptorTest -Dsurefire.failIfNoSpecifiedTests=false test
 timeout 60s mvn -f "$ROOT_DIR/backend/pom.xml" -pl mmpay-app -am -Dtest=P2MerchantChannelCrudContractTest,P2MerchantChannelLifecycleContractTest -Dsurefire.failIfNoSpecifiedTests=false test
+timeout 60s mvn -f "$ROOT_DIR/backend/pom.xml" -pl mmpay-app -am -Dtest=P3PaymentLifecycleContractTest -Dsurefire.failIfNoSpecifiedTests=false test
 timeout 60s mvn -f "$ROOT_DIR/backend/pom.xml" -pl mmpay-gateway-core -am -Dtest=PaymentIntentTest,MerchantChannelTest,RefundTest,ReconciliationTest test
 timeout 60s mvn -f "$ROOT_DIR/backend/pom.xml" -pl mmpay-adapter-huifu -am -Dtest=HuifuAdapterContractTest,HuifuSignedRequestTest,HuifuReconciliationTest test
 timeout 60s mvn -f "$ROOT_DIR/backend/pom.xml" -pl mmpay-webhook-out -am -Dtest=WebhookOutContractTest test
@@ -22,6 +23,7 @@ node --test "$ROOT_DIR/tests/repository-contract.test.mjs"
 node --test "$ROOT_DIR/tests/e2e-evidence-contract.test.mjs"
 node --test "$ROOT_DIR/tests/p1-foundation-contract.test.mjs"
 node --test "$ROOT_DIR/tests/p2-merchant-channel-contract.test.mjs"
+node --test "$ROOT_DIR/tests/p3-payment-lifecycle-contract.test.mjs"
 pnpm --dir "$ROOT_DIR/frontend-admin" install --frozen-lockfile
 pnpm --dir "$ROOT_DIR/frontend-admin" typecheck
 pnpm --dir "$ROOT_DIR/frontend-admin" lint

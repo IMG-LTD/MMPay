@@ -6,11 +6,13 @@ source tree and must remain in its own repository.
 
 ## Status
 
-`v0.4.0` is the P2 merchant/channel lifecycle preview release. It keeps MMPay as
-an independent payment gateway, ships the real Soybean Admin frontend as the
-product admin console, and adds merchant/channel update, archive, credential
-bind/unbind, and explicit binding verification flows needed before Huifu live
-execution. It is not a full payment-closure or GA evidence release.
+`v0.5.0` is the P3 payment lifecycle preview release. It keeps MMPay as an
+independent payment gateway, ships the real Soybean Admin frontend as the
+product admin console, and adds admin-managed payment intents, refunds,
+provider callback intake, reconciliation runs, and webhook-out delivery
+operations on top of the P2 merchant/channel lifecycle. Live provider execution
+still defaults to an explicit disabled response until a real provider endpoint
+and external MP-8 evidence are captured.
 
 This repository has the MP-0 through MP-7 scaffold in place:
 
@@ -18,7 +20,8 @@ This repository has the MP-0 through MP-7 scaffold in place:
   `log4j/pig` commit `28ef625701ebe047984661a61589330b9360d43e`. The current
   runtime remains the MMPay Spring Boot payment app, with Pig-aligned security,
   IAM, setup, audit, and gateway module boundaries wired through tests.
-- Payment domain: payment intent, transaction, refund, reconciliation, and
+- Payment domain: payment intent creation/list/detail/cancel, transaction
+  recording from verified callbacks, refund bounds, reconciliation ack, and
   Flyway migration contracts.
 - Provider adapter: Huifu reconciliation mapping plus signed create, query, and
   refund request preparation. Live provider execution remains unavailable until
@@ -30,6 +33,10 @@ This repository has the MP-0 through MP-7 scaffold in place:
   channel update/archive, role checks, idempotency replay, credential environment
   references, credential bind/unbind, explicit binding verification, and audit
   emission.
+- Payment lifecycle admin: P3 adds Soybean Admin pages for payment-intent
+  creation, payment detail/cancel, refund creation/detail, reconciliation
+  acknowledgement, webhook-out integration creation, delivery-log detail, single
+  redispatch, and guarded bulk redispatch. All pages use Naive UI components.
 - Admin surface: `frontend-admin` is rebased on the real soybean-admin upstream
   commit `eba49504280a2866de3a61c65c3401e1453771ce`, including Soybean layout,
   router, store, package workspace, UnoCSS and Naive UI integration. The home,
@@ -64,10 +71,10 @@ docker compose -f deploy/docker-compose.yml up --build -d
 ```
 
 For a prebuilt-image deployment after the `MMPay Images` workflow publishes
-`v0.4.0`, use:
+`v0.5.0`, use:
 
 ```text
-ghcr.io/img-ltd/mmpay-app:v0.4.0
+ghcr.io/img-ltd/mmpay-app:v0.5.0
 ```
 
 Runtime credentials must be injected through environment variables, secret

@@ -1,7 +1,9 @@
 package com.imgltd.mmpay.gateway;
 
 public enum RefundStatus {
-  REQUESTED,
+  PENDING,
+  SUBMITTED,
   SUCCEEDED,
-  FAILED
+  FAILED,
+  CANCELLED
 }

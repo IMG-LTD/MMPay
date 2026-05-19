@@ -64,6 +64,88 @@ export interface VerifyBindingResult {
   resolved_fingerprint: string;
 }
 
+export interface PaymentIntent {
+  id: string;
+  merchant_id: string;
+  channel_id: string;
+  provider_order_id: string | null;
+  amount_minor: number;
+  currency: string;
+  order_ref: string;
+  status: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface PaymentIntentCreateInput {
+  channel_id: string;
+  amount_minor: number;
+  currency: string;
+  order_ref: string;
+}
+
+export interface Refund {
+  id: string;
+  payment_intent_id: string;
+  merchant_id: string;
+  amount_minor: number;
+  currency: string;
+  status: string;
+  requested_at: string;
+}
+
+export interface RefundCreateInput {
+  payment_intent_id: string;
+  amount_minor: number;
+}
+
+export interface ReconciliationRun {
+  id: number;
+  run_date: string;
+  provider_code: string;
+  channel_id: string;
+  ingest_count: number;
+  matched_count: number;
+  unmatched_count: number;
+  outcome: string;
+  ack_status: string;
+  ack_at: string | null;
+  ack_actor: string | null;
+}
+
+export interface WebhookIntegrationInput {
+  id: string;
+  display_name: string;
+  target_url: string;
+  secret_ref: string;
+}
+
+export interface BulkRedispatchInput {
+  integration_id: string;
+  event_count: number;
+  rps: number;
+}
+
+export interface BulkRedispatchResult {
+  integration_id: string;
+  event_count: number;
+  rps: number;
+  estimated_drain_seconds: number;
+}
+
+export interface DeliveryLog {
+  id: number;
+  integration_id: string;
+  payment_intent_id: string;
+  event_id: string;
+  attempt: number;
+  scheduled_at: string;
+  dispatched_at: string | null;
+  response_status: number | null;
+  next_retry_at: string | null;
+  dead_letter: boolean;
+}
+
 export function fetchMerchants() {
   return adminFetch<AdminPage<Merchant>>('/api/admin/merchants');
 }
@@ -110,6 +192,62 @@ export function archiveChannel(id: string) {
 
 export function verifyChannelBinding(id: string) {
   return adminFetch<VerifyBindingResult>(`/api/admin/channels/${encodeURIComponent(id)}/verify-binding`, { method: 'POST' });
+}
+
+export function fetchPaymentIntents() {
+  return adminFetch<AdminPage<PaymentIntent>>('/api/admin/payment-intents');
+}
+
+export function fetchPaymentIntent(id: string) {
+  return adminFetch<PaymentIntent>(`/api/admin/payment-intents/${encodeURIComponent(id)}`);
+}
+
+export function createPaymentIntent(input: PaymentIntentCreateInput) {
+  return adminFetch<PaymentIntent>('/api/admin/payment-intents', postOptions(input));
+}
+
+export function cancelPaymentIntent(id: string) {
+  return adminFetch<PaymentIntent>(`/api/admin/payment-intents/${encodeURIComponent(id)}/cancel`, { method: 'POST' });
+}
+
+export function fetchRefunds() {
+  return adminFetch<AdminPage<Refund>>('/api/admin/refunds');
+}
+
+export function fetchRefund(id: string) {
+  return adminFetch<Refund>(`/api/admin/refunds/${encodeURIComponent(id)}`);
+}
+
+export function createRefund(input: RefundCreateInput) {
+  return adminFetch<Refund>('/api/admin/refunds', postOptions(input));
+}
+
+export function fetchReconciliationRuns() {
+  return adminFetch<AdminPage<ReconciliationRun>>('/api/admin/reconciliation/runs');
+}
+
+export function ackReconciliationRun(id: number) {
+  return adminFetch<ReconciliationRun>(`/api/admin/reconciliation/runs/${id}/ack`, { method: 'POST' });
+}
+
+export function createWebhookIntegration(input: WebhookIntegrationInput) {
+  return adminFetch('/api/admin/webhook-out/integrations', postOptions(input));
+}
+
+export function bulkRedispatch(input: BulkRedispatchInput) {
+  return adminFetch<BulkRedispatchResult>('/api/admin/webhook-out/bulk-redispatch', jsonOptions('POST', input));
+}
+
+export function fetchDeliveryLogs() {
+  return adminFetch<AdminPage<DeliveryLog>>('/api/admin/webhook-out/delivery-logs');
+}
+
+export function fetchDeliveryLog(id: string | number) {
+  return adminFetch<DeliveryLog>(`/api/admin/webhook-out/delivery-logs/${id}`);
+}
+
+export function redispatchDeliveryLog(id: string | number) {
+  return adminFetch<DeliveryLog>(`/api/admin/webhook-out/delivery-logs/${id}/redispatch`, { method: 'POST' });
 }
 
 async function adminFetch<T>(url: string, init: RequestInit = {}) {
