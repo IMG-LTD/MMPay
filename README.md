@@ -6,10 +6,11 @@ source tree and must remain in its own repository.
 
 ## Status
 
-`v0.8.0` is the P5 audit-recovery preview. It keeps MMPay as an independent
-payment gateway, ships the real Soybean Admin frontend as the product admin
-console, and wires the audit-chain segment restart verifier into the runtime
-`/api/admin/audit/verify` path alongside the v0.7.0 release-governance gates.
+`v0.8.1` is a P5 release-governance hardening patch. It keeps MMPay as an
+independent payment gateway, ships the real Soybean Admin frontend as the
+product admin console, keeps the runtime audit-chain segment restart verifier
+on `/api/admin/audit/verify`, and adds an explicit GA blocker for remote
+`v1.*` tag immutability evidence.
 Live provider execution still defaults to an explicit disabled response until a
 real provider endpoint and external MP-8 evidence are captured.
 
@@ -74,10 +75,10 @@ docker compose -f deploy/docker-compose.yml up --build -d
 ```
 
 For a prebuilt-image deployment after the `MMPay Images` workflow publishes
-`v0.8.0`, use:
+`v0.8.1`, use:
 
 ```text
-ghcr.io/img-ltd/mmpay-app:v0.8.0
+ghcr.io/img-ltd/mmpay-app:v0.8.1
 ```
 
 Runtime credentials must be injected through environment variables, secret

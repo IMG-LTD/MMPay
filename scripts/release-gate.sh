@@ -81,11 +81,14 @@ check_ga_promotion() {
   require_file "docs/release/v1.0.0-image-digest-evidence.md"
   require_file "docs/release/v1.0.0-e2e-evidence.md"
   require_file "docs/release/backup-restore-drill-evidence.md"
+  require_file "docs/release/v1.0.0-v1-tag-ruleset-evidence.md"
   require_file "docs/release/v1.0.0-release-notes.md"
   bash "$ROOT_DIR/scripts/governance/verify-image-digest-evidence.sh" \
     "$ROOT_DIR/docs/release/v1.0.0-image-digest-evidence.md"
   bash "$ROOT_DIR/scripts/validate-e2e-evidence.sh" \
     "$ROOT_DIR/docs/release/v1.0.0-e2e-evidence.md"
+  bash "$ROOT_DIR/scripts/governance/verify-v1-tag-ruleset-evidence.sh" \
+    "$ROOT_DIR/docs/release/v1.0.0-v1-tag-ruleset-evidence.md"
   grep -Fq "Evidence status: completed-external-evidence" \
     "$ROOT_DIR/docs/release/backup-restore-drill-evidence.md" \
     || { echo "backup restore drill evidence is not complete" >&2; exit 1; }

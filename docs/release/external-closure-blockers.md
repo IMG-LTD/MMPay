@@ -14,7 +14,7 @@ upstream repository systems outside this source tree.
 | MP8-BACKUP-RESTORE | Backup-restore drill | blocked-external | release-gate-blocking | `docs/release/backup-restore-drill-evidence.md` with `Evidence status: completed-external-evidence` and valid operator PGP proof | `scripts/release-gate.sh --ga` |
 | MP8-VENDOR-BINDING | Vendor license relay binding approval | blocked-external | release-gate-blocking | `docs/release/vendor-binding/v1.0.0-BINDING_OK.asc` signed by the vendor key pinned in `governance/vendor-keys.yaml` | `scripts/release-gate.sh --ga` |
 | MP8-UPSTREAM-FLIP | MMMail companion flip proof | blocked-external | upstream-flip-blocking | `governance/mmpay-binding.yaml` in the upstream MMMail repository, pinned to the MMPay `v1.0.0` GA SHA and re-validating all GA evidence files | `docs/integrations/upstream-evidence-flip-contract.md` |
-| MP8-V1-TAG-RULESET | Remote v1 tag immutability proof | blocked-external | release-gate-blocking | GitHub ruleset or mirror evidence proving `governance/github-rulesets/v1-tags.json` is installed and v1 tag deletion/non-fast-forward updates are denied | `docs/ops/install.md` and remote repository settings evidence |
+| MP8-V1-TAG-RULESET | Remote v1 tag immutability proof | blocked-external | release-gate-blocking | `docs/release/v1.0.0-v1-tag-ruleset-evidence.md` proving `governance/github-rulesets/v1-tags.json` is installed and v1 tag deletion/non-fast-forward updates are denied | `scripts/governance/verify-v1-tag-ruleset-evidence.sh` |
 
 ## Legacy MP-8 Evidence Anchors
 
