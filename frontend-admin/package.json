@@ -1,7 +1,7 @@
 {
   "name": "mmpay-frontend-admin",
-  "version": "0.2.0",
-  "description": "MMPay admin frontend rebased on soybean-admin with Vue3, Vite, TypeScript, Naive UI and UnoCSS.",
+  "version": "0.3.0",
+  "description": "MMPay payment operations console with Vue3, Vite, TypeScript, Naive UI and UnoCSS.",
   "keywords": [
     "TypeScript",
     "UnoCSS",
@@ -12,18 +12,18 @@
     "naive-ui-admin",
     "vue-admin-template"
   ],
-  "homepage": "https://github.com/soybeanjs/soybean-admin",
+  "homepage": "https://github.com/IMG-LTD/MMPay",
   "bugs": {
-    "url": "https://github.com/soybeanjs/soybean-admin/issues"
+    "url": "https://github.com/IMG-LTD/MMPay/issues"
   },
   "license": "MIT",
   "author": {
-    "name": "Soybean",
-    "email": "soybeanjs@outlook.com",
-    "url": "https://github.com/soybeanjs"
+    "name": "IMG-LTD",
+    "email": "replace-with-maintainer@example.invalid",
+    "url": "https://github.com/IMG-LTD"
   },
   "repository": {
-    "url": "https://github.com/soybeanjs/soybean-admin.git"
+    "url": "https://github.com/IMG-LTD/MMPay.git"
   },
   "type": "module",
   "scripts": {
@@ -36,10 +36,10 @@
     "dev:prod": "vite --mode prod",
     "fmt": "oxfmt",
     "gen-route": "sa gen-route",
-    "lint": "node scripts/mmpay-soybean-contract.mjs",
+    "lint": "node scripts/mmpay-frontend-contract.mjs",
     "preview": "vite preview",
     "release": "sa release",
-    "test": "node scripts/mmpay-soybean-contract.mjs",
+    "test": "node scripts/mmpay-frontend-contract.mjs",
     "typecheck": "vue-tsc --noEmit --skipLibCheck",
     "update-pkg": "sa update-pkg"
   },
@@ -103,5 +103,5 @@
     "node": ">=20.19.0",
     "pnpm": ">=10.5.0"
   },
-  "website": "https://admin.soybeanjs.cn"
+  "website": "https://github.com/IMG-LTD/MMPay"
 }

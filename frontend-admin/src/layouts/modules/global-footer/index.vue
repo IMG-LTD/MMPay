@@ -7,7 +7,7 @@ defineOptions({
 <template>
   <DarkModeContainer class="h-full flex-center">
     <a href="https://github.com/IMG-LTD/MMPay" target="_blank" rel="noopener noreferrer">
-      MMPay Admin · UI based on soybean-admin
+      MMPay Admin
     </a>
   </DarkModeContainer>
 </template>

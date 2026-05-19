@@ -14,6 +14,7 @@
   <modules>
     <module>mmpay-bom</module>
     <module>mmpay-common</module>
+    <module>mmpay-iam</module>
     <module>mmpay-gateway-core</module>
     <module>mmpay-adapter-spi</module>
     <module>mmpay-adapter-huifu</module>
@@ -28,8 +29,6 @@
     <junit.jupiter.version>5.11.4</junit.jupiter.version>
     <jackson.version>2.17.3</jackson.version>
     <spring.boot.version>3.2.7</spring.boot.version>
-    <spring.cloud.version>2023.0.3</spring.cloud.version>
-    <spring.cloud.alibaba.version>2023.0.3.3</spring.cloud.alibaba.version>
     <maven.compiler.release>${java.version}</maven.compiler.release>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
@@ -40,20 +39,6 @@
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-dependencies</artifactId>
         <version>${spring.boot.version}</version>
-        <type>pom</type>
-        <scope>import</scope>
-      </dependency>
-      <dependency>
-        <groupId>org.springframework.cloud</groupId>
-        <artifactId>spring-cloud-dependencies</artifactId>
-        <version>${spring.cloud.version}</version>
-        <type>pom</type>
-        <scope>import</scope>
-      </dependency>
-      <dependency>
-        <groupId>com.alibaba.cloud</groupId>
-        <artifactId>spring-cloud-alibaba-dependencies</artifactId>
-        <version>${spring.cloud.alibaba.version}</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>

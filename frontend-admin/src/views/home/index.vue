@@ -56,7 +56,7 @@ onMounted(loadDashboard);
         </div>
         <NSpace>
           <NButton :loading="loading" type="primary" @click="loadDashboard">刷新</NButton>
-          <NTag type="warning" :bordered="false">Pig auth pending</NTag>
+          <NTag type="warning" :bordered="false">Foundation pending</NTag>
         </NSpace>
       </div>
     </NCard>

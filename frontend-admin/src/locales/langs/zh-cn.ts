@@ -95,7 +95,7 @@ const local: App.I18n.Schema = {
         applySuccess: '预设应用成功',
         default: {
           name: '默认预设',
-          desc: 'Soybean 默认主题预设'
+          desc: 'MMPay 默认主题预设'
         },
         dark: {
           name: '暗色预设',
@@ -105,9 +105,9 @@ const local: App.I18n.Schema = {
           name: '紧凑型',
           desc: '适用于小屏幕的紧凑布局预设'
         },
-        azir: {
-          name: 'Azir的预设',
-          desc: '是 Azir 比较喜欢的莫兰迪色系冷淡风'
+        presetA: {
+          name: '运营预设',
+          desc: '适用于支付运营控制台的均衡配色'
         }
       }
     },
@@ -225,7 +225,11 @@ const local: App.I18n.Schema = {
     404: '页面不存在',
     500: '服务器错误',
     'iframe-page': '外链页面',
-    home: '支付控制台'
+    home: '支付控制台',
+    merchants: '商户管理',
+    'merchant-detail': '商户详情',
+    'merchant-channel-new': '新建通道',
+    'channel-detail': '通道详情'
   },
   page: {
     login: {
@@ -295,11 +299,11 @@ const local: App.I18n.Schema = {
       projectNews: {
         title: '项目动态',
         moreNews: '更多动态',
-        desc1: 'Soybean 在2021年5月28日创建了开源项目 soybean-admin!',
-        desc2: 'Yanbowe 向 soybean-admin 提交了一个bug，多标签栏不会自适应。',
-        desc3: 'Soybean 准备为 soybean-admin 的发布做充分的准备工作!',
-        desc4: 'Soybean 正在忙于为soybean-admin写项目说明文档！',
-        desc5: 'Soybean 刚才把工作台页面随便写了一些，凑合能看了！'
+        desc1: 'MMPay foundation 已准备支付运营控制台。',
+        desc2: '凭据引用保持在源码之外。',
+        desc3: '审计链验证保护运营证据。',
+        desc4: '支付适配器显式暴露运行状态。',
+        desc5: '真实外部运行完成前，发布证据保持阻断。'
       },
       creativity: '创意'
     }

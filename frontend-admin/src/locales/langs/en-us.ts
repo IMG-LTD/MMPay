@@ -105,9 +105,9 @@ const local: App.I18n.Schema = {
           name: 'Compact Preset',
           desc: 'Compact layout preset for small screens'
         },
-        azir: {
-          name: "Azir's Preset",
-          desc: 'It is a cold and elegant preset that Azir likes'
+        presetA: {
+          name: 'Operations Preset',
+          desc: 'Balanced control-room colors for payment operations'
         }
       }
     },
@@ -229,7 +229,11 @@ const local: App.I18n.Schema = {
     404: 'Page Not Found',
     500: 'Server Error',
     'iframe-page': 'Iframe',
-    home: 'Payments Console'
+    home: 'Payments Console',
+    merchants: 'Merchants',
+    'merchant-detail': 'Merchant Detail',
+    'merchant-channel-new': 'New Channel',
+    'channel-detail': 'Channel Detail'
   },
   page: {
     login: {
@@ -299,11 +303,11 @@ const local: App.I18n.Schema = {
       projectNews: {
         title: 'Project News',
         moreNews: 'More News',
-        desc1: 'Soybean created the open source project soybean-admin on May 28, 2021!',
-        desc2: 'Yanbowe submitted a bug to soybean-admin, the multi-tab bar will not adapt.',
-        desc3: 'Soybean is ready to do sufficient preparation for the release of soybean-admin!',
-        desc4: 'Soybean is busy writing project documentation for soybean-admin!',
-        desc5: 'Soybean just wrote some of the workbench pages casually, and it was enough to see!'
+        desc1: 'MMPay foundation work prepared the payment operations console.',
+        desc2: 'Credential references stay outside source control.',
+        desc3: 'Audit chain verification protects operational evidence.',
+        desc4: 'Provider adapters expose explicit runtime status.',
+        desc5: 'Release evidence remains blocked until real external runs exist.'
       },
       creativity: 'Creativity'
     }

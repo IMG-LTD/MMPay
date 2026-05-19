@@ -1,18 +1,17 @@
 # MMPay Frontend Admin
 
-This app is the MMPay admin frontend rebased on the real soybean-admin project.
+This app is the MMPay admin console for self-hosted payment operations.
+It owns the shipped product routes, locale catalogs, validation contracts,
+and operator-facing UI for this repository.
 
-## Upstream
-
-- Source: <https://github.com/soybeanjs/soybean-admin>
-- Commit: `eba49504280a2866de3a61c65c3401e1453771ce`
-- Local record: `UPSTREAM.md`
+Upstream attribution is recorded only in `UPSTREAM.md`.
 
 ## MMPay Adaptation
 
 - The home view renders the MMPay dashboard and calls `/api/admin/dashboard`.
-- The route is temporarily public because Pig auth is not wired into MMPay yet.
-- The validation contract is `scripts/mmpay-soybean-contract.mjs`.
+- Merchant and channel views use the upstream admin router, Pinia auth state,
+  and Naive UI components for P2 admin operations.
+- The validation contract is `scripts/mmpay-frontend-contract.mjs`.
 
 ## Commands
 

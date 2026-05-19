@@ -1,0 +1,25 @@
+literal_categories:
+  attribution_files:
+    paths:
+      - LICENSE
+      - NOTICE
+      - frontend-admin/UPSTREAM.md
+      - frontend-admin/LICENSE
+    rationale: required upstream attribution artifacts
+  workspace_dep_names:
+    paths:
+      - frontend-admin/package.json
+      - frontend-admin/pnpm-lock.yaml
+      - frontend-admin/uno.config.ts
+      - frontend-admin/eslint.config.js
+      - frontend-admin/packages/**
+    rationale: dependency package names and internal imported package APIs
+  integration_docs:
+    paths:
+      - docs/integrations/**
+      - docs/release/**
+      - README.md
+      - docs/architecture/**
+      - docs/ops/**
+      - docs/commercial/**
+    rationale: product integration and trademark references are not default-screen text

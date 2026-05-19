@@ -6,7 +6,6 @@ import { transformElegantRoutesToVueRoutes } from '../elegant/transform';
 /**
  * custom routes
  *
- * @link https://github.com/soybeanjs/elegant-router?tab=readme-ov-file#custom-route
  */
 const customRoutes: CustomRoute[] = [];
 

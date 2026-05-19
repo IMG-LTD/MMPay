@@ -1,0 +1,16 @@
+spring:
+  datasource:
+    hikari:
+      connection-init-sql:
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,env,configprops,metrics
+  endpoint:
+    health:
+      probes:
+        enabled: true
+    info:
+      enabled: true

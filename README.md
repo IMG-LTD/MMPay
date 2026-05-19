@@ -6,17 +6,18 @@ source tree and must remain in its own repository.
 
 ## Status
 
-`v0.2.0` is the public MP-8 preparation release for deploying MMPay to a public
-test server, opening the bundled admin UI, wiring Huifu sandbox callbacks, and
-collecting external evidence for MMMail subscription and license relay flows. It
-is not a full payment-closure or GA evidence release.
+`v0.3.0` is the Soybean Admin and Pig-aligned rescue release. It keeps MMPay as
+an independent payment gateway, ships the real Soybean Admin frontend as the
+product admin console, and adds the first merchant/channel management foundation
+needed before Huifu live execution. It is not a full payment-closure or GA
+evidence release.
 
 This repository has the MP-0 through MP-7 scaffold in place:
 
 - Backend foundation: Pig backend migration is tracked against upstream
   `log4j/pig` commit `28ef625701ebe047984661a61589330b9360d43e`. The current
-  runtime remains the MMPay Spring Boot payment app until Pig auth, gateway,
-  common, upms, and database bootstrap are wired with tests.
+  runtime remains the MMPay Spring Boot payment app, with Pig-aligned security,
+  IAM, setup, audit, and gateway module boundaries wired through tests.
 - Payment domain: payment intent, transaction, refund, reconciliation, and
   Flyway migration contracts.
 - Provider adapter: Huifu reconciliation mapping plus signed create, query, and
@@ -24,11 +25,13 @@ This repository has the MP-0 through MP-7 scaffold in place:
   a real endpoint is wired and evidenced.
 - Outbound webhook: MMMail-compatible HMAC signature contract.
 - License boundary: relay-only delivery; no license signing module exists here.
+- Merchant/channel admin: P2 now has real admin APIs and Soybean Admin pages for
+  merchant creation, list/detail, channel creation/detail, role checks,
+  idempotency replay, credential environment references, and audit emission.
 - Admin surface: `frontend-admin` is rebased on the real soybean-admin upstream
   commit `eba49504280a2866de3a61c65c3401e1453771ce`, including Soybean layout,
-  router, store, package workspace, UnoCSS and Naive UI integration. The home
-  page is adapted to MMPay and calls `/api/admin/dashboard`; runtime tables
-  remain empty until a real provider connection exists.
+  router, store, package workspace, UnoCSS and Naive UI integration. The home,
+  merchant, and channel pages are adapted to MMPay and use Naive UI components.
 - Deployment: Docker Compose and an app-only Helm chart exist for the runnable
   baseline. The Docker image bundles the Spring Boot API and built
   `frontend-admin` static assets, so `/` serves the admin UI while `/api/*` and
@@ -59,10 +62,10 @@ docker compose -f deploy/docker-compose.yml up --build -d
 ```
 
 For a prebuilt-image deployment after the `MMPay Images` workflow publishes
-`v0.2.0`, use:
+`v0.3.0`, use:
 
 ```text
-ghcr.io/img-ltd/mmpay-app:v0.2.0
+ghcr.io/img-ltd/mmpay-app:v0.3.0
 ```
 
 Runtime credentials must be injected through environment variables, secret

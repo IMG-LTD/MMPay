@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en" th:lang="${copy.lang()}" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title th:text="${copy.title()}">MMPay setup</title>
+    <style>
+      body {
+        background: #f7f9fc;
+        color: #172033;
+        font-family: Arial, sans-serif;
+        margin: 0;
+      }
+
+      main {
+        margin: 64px auto;
+        max-width: 420px;
+        padding: 0 20px;
+      }
+
+      form {
+        display: grid;
+        gap: 14px;
+      }
+
+      input,
+      select,
+      button {
+        box-sizing: border-box;
+        font: inherit;
+        min-height: 40px;
+        width: 100%;
+      }
+
+      button {
+        background: #165dff;
+        border: 0;
+        color: #ffffff;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1 th:text="${copy.heading()}">MMPay setup</h1>
+      <form th:action="@{/setup}" method="post" autocomplete="off">
+        <label for="username" th:text="${copy.usernameLabel()}">Username</label>
+        <input id="username" name="username" minlength="3" maxlength="64" pattern="^[a-z][a-z0-9._-]{2,63}$" required>
+
+        <label for="password" th:text="${copy.passwordLabel()}">Password</label>
+        <input id="password" name="password" type="password" minlength="8" maxlength="128" required>
+
+        <label for="passwordConfirm" th:text="${copy.passwordConfirmLabel()}">Confirm password</label>
+        <input id="passwordConfirm" name="passwordConfirm" type="password" minlength="8" maxlength="128" required>
+
+        <label for="initialLocale" th:text="${copy.initialLocaleLabel()}">Initial locale</label>
+        <select id="initialLocale" name="initialLocale" required>
+          <option value="zh-CN">zh-CN</option>
+          <option value="en-US">en-US</option>
+        </select>
+
+        <button type="submit" th:text="${copy.submitLabel()}">Create admin</button>
+      </form>
+    </main>
+  </body>
+</html>

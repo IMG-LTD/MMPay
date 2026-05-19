@@ -9,6 +9,7 @@ const root = path.resolve(import.meta.dirname, '..');
 const requiredBackendModules = [
   'mmpay-bom',
   'mmpay-common',
+  'mmpay-iam',
   'mmpay-gateway-core',
   'mmpay-adapter-spi',
   'mmpay-adapter-huifu',
@@ -38,7 +39,8 @@ describe('MP-1 repository scaffold contract', () => {
     await fileExists('deploy/helm/mmpay/values.yaml');
     await fileExists('deploy/helm/mmpay/templates/deployment.yaml');
     await fileExists('docs/release/external-closure-blockers.md');
-    await fileExists('backend/mmpay-gateway-core/src/main/resources/db/migration/V001__create_payment_core.sql');
+    await fileExists('backend/mmpay-gateway-core/src/main/resources/db/migration/gateway/V001__create_payment_core.sql');
+    await fileExists('tests/p1-foundation-contract.test.mjs');
     await fileExists('scripts/check-migration-naming.sh');
     await fileExists('scripts/validate-helm-chart.sh');
     await fileExists('scripts/render-e2e-evidence.sh');
@@ -68,9 +70,15 @@ describe('MP-1 repository scaffold contract', () => {
     assert.match(validateLocal, /mmpay-license-relay/);
     assert.match(validateLocal, /AdminDashboardControllerTest/);
     assert.match(validateLocal, /MmpayApplicationContractTest/);
+    assert.match(validateLocal, /AuditFoundationTest/);
+    assert.match(validateLocal, /ReferenceResolverFoundationTest/);
+    assert.match(validateLocal, /SetupFoundationTest/);
     assert.match(validateLocal, /e2e-evidence-contract\.test\.mjs/);
+    assert.match(validateLocal, /p1-foundation-contract\.test\.mjs/);
     assert.match(validateLocal, /check-migration-naming\.sh/);
     assert.match(validateLocal, /security-secret-scan\.sh/);
+    assert.match(validateLocal, /brand-neutrality-scan\.sh/);
+    assert.match(validateLocal, /webhook-out-five-field-scan\.sh/);
     assert.match(validateLocal, /validate-helm-chart\.sh/);
     assert.match(validateLocal, /render-e2e-evidence\.sh/);
     assert.match(validateLocal, /validate-ci\.sh/);
@@ -102,7 +110,7 @@ describe('MP-1 repository scaffold contract', () => {
 });
 
 describe('MMPay open-source framework contract', () => {
-  it('anchors the backend on the Pig Spring Cloud Alibaba foundation', async () => {
+  it('anchors the backend on the P1 trimmed Spring Boot foundation', async () => {
     const backendPom = await readFile(path.join(root, 'backend/pom.xml'), 'utf8');
     const appPom = await readFile(path.join(root, 'backend/mmpay-app/pom.xml'), 'utf8');
     const appClass = await readFile(
@@ -113,34 +121,40 @@ describe('MMPay open-source framework contract', () => {
       path.join(root, 'backend/mmpay-app/src/main/resources/application.yml'),
       'utf8',
     );
-    const readme = await readFile(path.join(root, 'README.md'), 'utf8');
-    const pigAlignment = await readFile(path.join(root, 'docs/architecture/pig-backend-alignment.md'), 'utf8');
+    const auditHasher = await readFile(
+      path.join(root, 'backend/mmpay-app/src/main/java/com/imgltd/mmpay/audit/AuditHasher.java'),
+      'utf8',
+    );
+    const appAudit = await readFile(
+      path.join(root, 'backend/mmpay-app/src/main/java/com/imgltd/mmpay/audit/AuditChain.java'),
+      'utf8',
+    );
+    const resolver = await readFile(
+      path.join(root, 'backend/mmpay-app/src/main/java/com/imgltd/mmpay/credentials/EnvironmentReferenceResolver.java'),
+      'utf8',
+    );
 
     assert.match(backendPom, /spring-boot-dependencies/);
-    assert.match(backendPom, /spring-cloud-dependencies/);
-    assert.match(backendPom, /spring-cloud-alibaba-dependencies/);
+    assert.match(backendPom, /<module>mmpay-iam<\/module>/);
+    assert.doesNotMatch(backendPom, /spring-cloud|alibaba|nacos|sentinel|gateway-server|feign/i);
     assert.match(appPom, /spring-boot-starter-web/);
     assert.match(appPom, /spring-boot-starter-actuator/);
-    assert.match(appPom, /spring-cloud-starter-alibaba-nacos-discovery/);
+    assert.doesNotMatch(appPom, /spring-cloud|alibaba|nacos|sentinel|gateway-server|feign/i);
     assert.match(appClass, /@SpringBootApplication/);
     assert.match(appConfig, /spring:\n  application:\n    name: mmpay-app/);
-    assert.match(readme, /Pig backend migration is tracked against upstream/);
-    assert.match(readme, /not fully migrated/);
-    assert.match(pigAlignment, /https:\/\/gitee\.com\/log4j\/pig/);
-    assert.match(pigAlignment, /28ef625701ebe047984661a61589330b9360d43e/);
-    assert.match(pigAlignment, /pig-register/);
-    assert.match(pigAlignment, /pig-gateway/);
-    assert.match(pigAlignment, /pig-auth/);
-    assert.match(pigAlignment, /pig-upms/);
+    assert.match(appConfig, /classpath:db\/migration\/iam/);
+    assert.match(appConfig, /SET ROLE mmpay_app_role/);
+    assert.match(appAudit, /AuditHasher/);
+    assert.match(auditHasher, /HmacSHA256/);
+    assert.match(resolver, /ENV_REFERENCE/);
   });
 
-  it('rebases the admin frontend on the real soybean-admin project', async () => {
+  it('keeps the admin frontend on the MMPay foundation contract', async () => {
     const packageJson = JSON.parse(await readFile(path.join(root, 'frontend-admin/package.json'), 'utf8'));
     const mainTs = await readFile(path.join(root, 'frontend-admin/src/main.ts'), 'utf8');
     const homeView = await readFile(path.join(root, 'frontend-admin/src/views/home/index.vue'), 'utf8');
     const routes = await readFile(path.join(root, 'frontend-admin/src/router/elegant/routes.ts'), 'utf8');
-    const upstream = await readFile(path.join(root, 'frontend-admin/UPSTREAM.md'), 'utf8');
-    const notice = await readFile(path.join(root, 'NOTICE'), 'utf8');
+    const appEnv = await readFile(path.join(root, 'frontend-admin/.env'), 'utf8');
 
     await fileExists('frontend-admin/pnpm-workspace.yaml');
     await fileExists('frontend-admin/packages/axios/package.json');
@@ -159,12 +173,11 @@ describe('MMPay open-source framework contract', () => {
     assert.match(mainTs, /from 'vue'/);
     assert.match(homeView, /MMPay Admin/);
     assert.match(homeView, /fetch\('\/api\/admin\/dashboard'/);
-    assert.match(homeView, /Pig auth pending/);
+    assert.match(homeView, /Foundation pending/);
     assert.match(routes, /constant: true/);
-    assert.match(upstream, /https:\/\/github\.com\/soybeanjs\/soybean-admin/);
-    assert.match(upstream, /eba49504280a2866de3a61c65c3401e1453771ce/);
-    assert.match(notice, /Pig/);
-    assert.match(notice, /soybean-admin/);
+    assert.match(appEnv, /VITE_APP_DESC=MMPay payment operations console/);
+    assert.doesNotMatch(packageJson.scripts.lint, /soybean/);
+    assert.doesNotMatch(packageJson.scripts.test, /soybean/);
   });
 
   it('documents dg-payment-skills as review-only Huifu guidance', async () => {
@@ -294,7 +307,7 @@ describe('MMPay open-source framework contract', () => {
 
   it('keeps the core schema aligned with merchant, channel, and idempotency domains', async () => {
     const migration = await readFile(
-      path.join(root, 'backend/mmpay-gateway-core/src/main/resources/db/migration/V001__create_payment_core.sql'),
+      path.join(root, 'backend/mmpay-gateway-core/src/main/resources/db/migration/gateway/V001__create_payment_core.sql'),
       'utf8',
     );
     const dataModel = await readFile(path.join(root, 'docs/architecture/data-model.md'), 'utf8');
