@@ -1,0 +1,7 @@
+operator_keys:
+  - fingerprint: SHA256:operator-public-key-required-before-ga
+    key_id: operator-restore-attestation
+    role: restore-attestation
+    valid_from: 2026-05-19
+    valid_to: 2027-05-19
+    public_key_path: governance/operator-public-keys/operator-restore-attestation.asc

@@ -56,7 +56,8 @@ replay: ${MMPAY_EVIDENCE_REPLAY}
 
 ## Boundary Notes
 
-- This evidence file was rendered from external sandbox or live run facts.
+- This evidence file was rendered from external sandbox-with-real-money or live
+  run facts.
 - It must not contain merchant credentials, provider private keys, webhook
   secrets, or license signing private keys.
 EOF

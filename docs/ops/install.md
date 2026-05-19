@@ -17,6 +17,19 @@ repository.
 bash scripts/validate-local.sh
 ```
 
+## v1 Tag Immutability For Mirrors
+
+GitHub canonical releases use the checked-in
+`governance/github-rulesets/v1-tags.json` ruleset. Self-hosted mirrors must
+also reject tag deletion and non-fast-forward updates:
+
+```bash
+git config receive.denyDeletes=true
+git config receive.denyNonFastForwards=true
+```
+
+Do not mirror `v1.*` tags to a server that allows tag rewrites.
+
 ## Build The Local Image
 
 ```bash

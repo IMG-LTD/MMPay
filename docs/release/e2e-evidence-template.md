@@ -2,7 +2,7 @@
 
 Evidence status: completed-external-evidence
 Payment provider: huifu
-Provider environment: sandbox
+Provider environment: sandbox-with-real-money
 MMPay repository commit SHA: <40-char MMPay commit SHA>
 MMMail public release commit SHA: <40-char MMMail v2.2.0-public commit SHA>
 Provider event ID: <redacted Huifu sandbox provider event ID>
@@ -30,6 +30,7 @@ replay: <duplicate event ID evidence; duplicate rejected and state unchanged>
 ## Rendering Helper
 
 Prefer rendering the final file through `scripts/render-e2e-evidence.sh` after
-collecting the real external run facts. The helper requires all scenario fields
-as environment variables and runs `scripts/validate-e2e-evidence.sh` before it
-prints the completed evidence document.
+collecting the real external sandbox-with-real-money or live run facts. The
+helper requires all scenario fields as environment variables and runs
+`scripts/validate-e2e-evidence.sh` before it prints the completed evidence
+document.

@@ -1,0 +1,12 @@
+vendor_keys:
+  - fingerprint: SHA256:vendor-public-key-required-before-ga
+    key_id: vendor-ga-binding-key
+    role: binding-sign
+    valid_from: 2026-05-19
+    valid_to: 2027-05-19
+    rotation_window_days: 30
+    public_key_path: governance/vendor-public-keys/vendor-ga-binding-key.asc
+    signed_by_root: SHA256:vendor-root-required-before-ga
+    revocation_feed_url: https://vendor.example.invalid/mmpay/revocations.txt
+    signing_sla_business_days: 5
+    sub_keys: []

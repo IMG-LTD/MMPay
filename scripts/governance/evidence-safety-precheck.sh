@@ -22,8 +22,8 @@ if [[ "${MMPAY_EVIDENCE_PROVIDER}" != "huifu" ]]; then
   exit 1
 fi
 
-if [[ "${MMPAY_EVIDENCE_ENVIRONMENT}" != "sandbox" && "${MMPAY_EVIDENCE_ENVIRONMENT}" != "live" ]]; then
-  echo "Provider environment must be sandbox or live" >&2
+if [[ "${MMPAY_EVIDENCE_ENVIRONMENT}" != "sandbox-with-real-money" && "${MMPAY_EVIDENCE_ENVIRONMENT}" != "live" ]]; then
+  echo "Provider environment must be sandbox-with-real-money or live" >&2
   exit 1
 fi
 

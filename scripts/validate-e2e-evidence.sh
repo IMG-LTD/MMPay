@@ -55,8 +55,8 @@ require_pattern "MMPay repository commit SHA" '^MMPay repository commit SHA: [0-
 require_pattern "MMMail public release commit SHA" '^MMMail public release commit SHA: [0-9a-f]{40}$'
 require_pattern "Run finished at timestamp" '^Run finished at: [0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$'
 
-if ! grep -Eq '^Provider environment: (sandbox|live)$' "$EVIDENCE_FILE"; then
-  echo "Provider environment must be sandbox or live" >&2
+if ! grep -Eq '^Provider environment: (sandbox-with-real-money|live)$' "$EVIDENCE_FILE"; then
+  echo "Provider environment must be sandbox-with-real-money or live" >&2
   exit 1
 fi
 

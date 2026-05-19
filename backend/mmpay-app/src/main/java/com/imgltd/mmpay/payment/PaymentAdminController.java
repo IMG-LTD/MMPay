@@ -3,6 +3,7 @@ package com.imgltd.mmpay.payment;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.imgltd.mmpay.merchant.ListResponse;
+import com.imgltd.mmpay.system.DegradedModeGuard;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -20,12 +21,17 @@ public class PaymentAdminController {
   private final PaymentService service;
   private final ProviderCallbackVerifier callbackVerifier;
   private final ObjectMapper objectMapper;
+  private final DegradedModeGuard degradedModeGuard;
 
   public PaymentAdminController(
-      PaymentService service, ProviderCallbackVerifier callbackVerifier, ObjectMapper objectMapper) {
+      PaymentService service,
+      ProviderCallbackVerifier callbackVerifier,
+      ObjectMapper objectMapper,
+      DegradedModeGuard degradedModeGuard) {
     this.service = service;
     this.callbackVerifier = callbackVerifier;
     this.objectMapper = objectMapper;
+    this.degradedModeGuard = degradedModeGuard;
   }
 
   @PostMapping("/api/admin/payment-intents")
@@ -58,6 +64,7 @@ public class PaymentAdminController {
   @PostMapping("/api/admin/refunds")
   @PreAuthorize("hasAnyRole('ADMIN','OPS')")
   ResponseEntity<RefundResponse> createRefund(@RequestBody RefundCreateRequest request, Authentication auth) {
+    degradedModeGuard.requireWriteAllowed("refund");
     return ResponseEntity.status(HttpStatus.CREATED).body(service.createRefund(request, actor(auth)));
   }
 
@@ -95,6 +102,7 @@ public class PaymentAdminController {
   @PostMapping("/api/admin/webhook-out/bulk-redispatch")
   @PreAuthorize("hasAnyRole('ADMIN','OPS')")
   BulkRedispatchResponse bulkRedispatch(@RequestBody BulkRedispatchRequest request, Authentication auth) {
+    degradedModeGuard.requireWriteAllowed("bulk-redispatch");
     return service.bulkRedispatch(request, actor(auth));
   }
 

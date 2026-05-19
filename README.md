@@ -6,13 +6,12 @@ source tree and must remain in its own repository.
 
 ## Status
 
-`v0.5.0` is the P3 payment lifecycle preview release. It keeps MMPay as an
-independent payment gateway, ships the real Soybean Admin frontend as the
-product admin console, and adds admin-managed payment intents, refunds,
-provider callback intake, reconciliation runs, and webhook-out delivery
-operations on top of the P2 merchant/channel lifecycle. Live provider execution
-still defaults to an explicit disabled response until a real provider endpoint
-and external MP-8 evidence are captured.
+`v0.7.0` is the P5 release-closure preview. It keeps MMPay as an independent
+payment gateway, ships the real Soybean Admin frontend as the product admin
+console, and adds the release governance, evidence validation, degraded startup,
+and audit recovery controls needed before the v1.0.0 RC/GA path. Live provider
+execution still defaults to an explicit disabled response until a real provider
+endpoint and external MP-8 evidence are captured.
 
 This repository has the MP-0 through MP-7 scaffold in place:
 
@@ -37,6 +36,10 @@ This repository has the MP-0 through MP-7 scaffold in place:
   creation, payment detail/cancel, refund creation/detail, reconciliation
   acknowledgement, webhook-out integration creation, delivery-log detail, single
   redispatch, and guarded bulk redispatch. All pages use Naive UI components.
+- Release closure: P5 adds RC/GA release gates, image digest evidence templates,
+  external evidence validators, vendor/operator governance records, degraded
+  startup blocking for payment mutation surfaces, and audit-chain segment
+  recovery verification.
 - Admin surface: `frontend-admin` is rebased on the real soybean-admin upstream
   commit `eba49504280a2866de3a61c65c3401e1453771ce`, including Soybean layout,
   router, store, package workspace, UnoCSS and Naive UI integration. The home,
@@ -71,10 +74,10 @@ docker compose -f deploy/docker-compose.yml up --build -d
 ```
 
 For a prebuilt-image deployment after the `MMPay Images` workflow publishes
-`v0.5.0`, use:
+`v0.7.0`, use:
 
 ```text
-ghcr.io/img-ltd/mmpay-app:v0.5.0
+ghcr.io/img-ltd/mmpay-app:v0.7.0
 ```
 
 Runtime credentials must be injected through environment variables, secret

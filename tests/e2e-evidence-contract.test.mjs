@@ -30,7 +30,7 @@ describe('MP-8 redacted evidence contract', () => {
     assert.match(templateText, /replay:/);
   });
 
-  it('accepts a redacted sandbox evidence file with real identifiers', async () => {
+  it('accepts a redacted sandbox-with-real-money evidence file with real identifiers', async () => {
     const evidenceFile = await writeEvidenceFile(validEvidence());
 
     const result = await execFileAsync('bash', [validator, evidenceFile]);
@@ -43,7 +43,7 @@ describe('MP-8 redacted evidence contract', () => {
 
     await assert.rejects(
       execFileAsync('bash', [validator, evidenceFile]),
-      /Provider environment must be sandbox or live|Missing required marker: replay:/,
+      /Provider environment must be sandbox-with-real-money or live|Missing required marker: replay:/,
     );
   });
 
@@ -80,7 +80,7 @@ function validEvidence() {
 
 Evidence status: completed-external-evidence
 Payment provider: huifu
-Provider environment: sandbox
+Provider environment: sandbox-with-real-money
 MMPay repository commit SHA: 0123456789abcdef0123456789abcdef01234567
 MMMail public release commit SHA: 89abcdef0123456789abcdef0123456789abcdef
 Provider event ID: hf_evt_redacted_001
@@ -98,14 +98,14 @@ replay: event evt_replay_redacted duplicate rejected
 
 function invalidMockEvidence() {
   return validEvidence()
-    .replace('Provider environment: sandbox', 'Provider environment: mock')
+    .replace('Provider environment: sandbox-with-real-money', 'Provider environment: mock')
     .replace('replay: event evt_replay_redacted duplicate rejected', '');
 }
 
 function validRenderEnv() {
   return {
     MMPAY_EVIDENCE_PROVIDER: 'huifu',
-    MMPAY_EVIDENCE_ENVIRONMENT: 'sandbox',
+    MMPAY_EVIDENCE_ENVIRONMENT: 'sandbox-with-real-money',
     MMPAY_EVIDENCE_MMMAIL_SHA: '89abcdef0123456789abcdef0123456789abcdef',
     MMPAY_EVIDENCE_PROVIDER_EVENT_ID: 'hf_evt_redacted_001',
     MMPAY_EVIDENCE_MMMAIL_WEBHOOK_EVENT_ID: 'wh_evt_redacted_001',

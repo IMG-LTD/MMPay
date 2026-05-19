@@ -1,0 +1,17 @@
+{
+  "name": "v1-tags",
+  "target": "tag",
+  "enforcement": "active",
+  "conditions": {
+    "ref_name": {
+      "include": ["refs/tags/v1.*"],
+      "exclude": []
+    }
+  },
+  "rules": [
+    { "type": "deletion" },
+    { "type": "non_fast_forward" },
+    { "type": "creation" }
+  ],
+  "bypass_actors": []
+}

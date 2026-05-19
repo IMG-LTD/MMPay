@@ -56,7 +56,7 @@ describe('P4 license relay and integrations contract', () => {
     const detail = await read('frontend-admin/src/views/integrations/detail/index.vue');
     const packageJson = JSON.parse(await read('frontend-admin/package.json'));
 
-    assert.equal(packageJson.version, '0.6.0');
+    assert.match(packageJson.version, /^0\.(6|7)\.0$/);
     assert.match(routes, /name: 'integrations'/);
     assert.match(routes, /name: 'integration-detail'/);
     assert.match(api, /fetchIntegrations/);

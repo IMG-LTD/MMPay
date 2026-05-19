@@ -20,6 +20,7 @@
     <module>mmpay-adapter-huifu</module>
     <module>mmpay-webhook-out</module>
     <module>mmpay-license-relay</module>
+    <module>mmpay-audit-verifier</module>
     <module>mmpay-admin-api</module>
     <module>mmpay-app</module>
   </modules>

@@ -2,6 +2,7 @@ package com.imgltd.mmpay.app.evidence;
 
 import com.imgltd.mmpay.app.integrations.IntegrationService;
 import com.imgltd.mmpay.merchant.AdminProblemException;
+import com.imgltd.mmpay.system.DegradedModeGuard;
 import java.time.Clock;
 import java.util.Map;
 import org.springframework.http.HttpStatus;
@@ -13,15 +14,19 @@ import org.springframework.web.bind.annotation.RestController;
 public class EvidenceSnapshotController {
   private final IntegrationService integrationService;
   private final Clock clock;
+  private final DegradedModeGuard degradedModeGuard;
 
-  public EvidenceSnapshotController(IntegrationService integrationService, Clock clock) {
+  public EvidenceSnapshotController(
+      IntegrationService integrationService, Clock clock, DegradedModeGuard degradedModeGuard) {
     this.integrationService = integrationService;
     this.clock = clock;
+    this.degradedModeGuard = degradedModeGuard;
   }
 
   @PostMapping("/api/admin/evidence/snapshot")
   @PreAuthorize("hasAnyRole('ADMIN','AUDITOR')")
   Map<String, Object> snapshot() {
+    degradedModeGuard.requireWriteAllowed("evidence-snapshot");
     long forwarded = integrationService.successfulRelayForwardCount();
     if (forwarded == 0) {
       throw new AdminProblemException(

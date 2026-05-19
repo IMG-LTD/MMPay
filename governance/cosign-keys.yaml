@@ -1,0 +1,7 @@
+keys:
+  - fingerprint: SHA256:github-actions-oidc
+    role: image-attestation
+    issuer: https://token.actions.githubusercontent.com
+    workflow: .github/workflows/images.yml
+    valid_from: 2026-05-19
+    valid_to: 2027-05-19

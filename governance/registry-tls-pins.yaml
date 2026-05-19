@@ -1,0 +1,4 @@
+registries:
+  - host: ghcr.io
+    spki_sha256: SHA256:external-registry-pin-required-before-ga
+    rotation_window_days: 30
