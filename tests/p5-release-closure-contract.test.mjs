@@ -56,6 +56,7 @@ describe('P5 release closure contract', () => {
     assert.match(verifier, /registry-tls-pins\.yaml/);
     assert.match(verifier, /cosign-keys\.yaml/);
     assert.match(verifier, /registry_immutability_proof/);
+    assert.match(releaseGate, /verify-backup-restore-drill-evidence\.sh/);
     assert.match(releaseGate, /verify-vendor-binding-evidence\.sh/);
     assert.match(releaseGate, /v1\.0\.0-BINDING_OK\.asc/);
   });

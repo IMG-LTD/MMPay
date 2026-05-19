@@ -5,3 +5,5 @@ operator_keys:
     valid_from: 2026-05-19
     valid_to: 2027-05-19
     public_key_path: governance/operator-public-keys/operator-restore-attestation.asc
+    evidence_key_fingerprint: SHA256:evidence-signing-key-required-before-ga
+    evidence_public_key_path: governance/operator-public-keys/evidence-ed25519-public.pem

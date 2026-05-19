@@ -74,6 +74,12 @@ check_vendor_binding() {
     "$ROOT_DIR/docs/release/vendor-binding/v1.0.0-BINDING_OK.asc"
 }
 
+check_backup_restore_drill() {
+  require_file "docs/release/backup-restore-drill-evidence.md"
+  bash "$ROOT_DIR/scripts/governance/verify-backup-restore-drill-evidence.sh" \
+    "$ROOT_DIR/docs/release/backup-restore-drill-evidence.md"
+}
+
 check_ga_promotion() {
   require_file "docs/release/v1.0.0-image-digest-evidence.md"
   require_file "docs/release/v1.0.0-e2e-evidence.md"
@@ -86,12 +92,7 @@ check_ga_promotion() {
     "$ROOT_DIR/docs/release/v1.0.0-e2e-evidence.md"
   bash "$ROOT_DIR/scripts/governance/verify-v1-tag-ruleset-evidence.sh" \
     "$ROOT_DIR/docs/release/v1.0.0-v1-tag-ruleset-evidence.md"
-  grep -Fq "Evidence status: completed-external-evidence" \
-    "$ROOT_DIR/docs/release/backup-restore-drill-evidence.md" \
-    || { echo "backup restore drill evidence is not complete" >&2; exit 1; }
-  grep -Fq "Operator PGP signature: valid" \
-    "$ROOT_DIR/docs/release/backup-restore-drill-evidence.md" \
-    || { echo "backup restore drill evidence lacks operator PGP proof" >&2; exit 1; }
+  check_backup_restore_drill
   check_vendor_binding
 }
 

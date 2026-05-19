@@ -28,6 +28,15 @@ Back up and restore:
 9. Sign the drill evidence with `MMPAY_EVIDENCE_SIGNING_KEY` and an
    operator PGP key listed in `governance/operator-keys.yaml`.
 
+## Evidence Gate
+
+`scripts/governance/verify-backup-restore-drill-evidence.sh` validates the GA
+evidence file. The gate requires deterministic canonical JSON, the
+`MMPAY_EVIDENCE_SIGNING_KEY` Ed25519 signature, an operator PGP detached
+signature, a restore nonce committed under `governance/restore-nonces/`, a
+matching e2e evidence hash, RTO no greater than 8 hours, and drill completion no
+older than 90 days at the candidate date.
+
 ## RTO
 
 The target RTO is 8 hours from backup ingest to signed drill evidence.
