@@ -134,8 +134,28 @@ public final class PaymentService {
       audit(actor, "webhook_out.bulk_redispatch", "webhook_integration", request.integrationId(), rejected("too_large"));
       throw PaymentProblems.unprocessable(PaymentProblems.BULK_TOO_LARGE, "bulk redispatch exceeds max events");
     }
-    int drainSeconds = (int) Math.ceil((double) request.eventCount() / Math.max(1, rps));
-    return new BulkRedispatchResponse(request.integrationId(), request.eventCount(), rps, drainSeconds);
+    var now = Instant.now(clock);
+    // Look back 7 days by default; spec §5.3 lets the operator supply a time range, but for the
+    // current admin surface (single-integration ack), use a fixed window. P5 spec defers
+    // operator-supplied range to v1.x.
+    var from = now.minus(java.time.Duration.ofDays(7));
+    var batchId = java.util.UUID.randomUUID();
+    int inserted;
+    try {
+      inserted =
+          repository.bulkRedispatchDeadLetters(request.integrationId(), from, now, request.eventCount(), now, batchId);
+    } catch (RuntimeException exception) {
+      audit(actor, "webhook_out.bulk_redispatch", "webhook_integration", request.integrationId(), rejected("in_flight"));
+      throw exception;
+    }
+    int drainSeconds = (int) Math.ceil((double) Math.max(1, inserted) / Math.max(1, rps));
+    audit(
+        actor,
+        "webhook_out.bulk_redispatch",
+        "webhook_integration",
+        request.integrationId(),
+        details("result", ACCEPTED, "inserted", inserted, "batch_id", batchId.toString(), "rps", rps));
+    return new BulkRedispatchResponse(request.integrationId(), inserted, rps, drainSeconds);
   }
 
   public ListResponse<DeliveryLogResponse> listDeliveryLogs() {

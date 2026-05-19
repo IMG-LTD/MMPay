@@ -208,6 +208,12 @@ public final class PaymentRepository {
 
   DeliveryLogRow redispatchDeliveryLog(long id, Instant now) {
     var source = requireDeliveryLog(id);
+    // Cancel any in-flight backoff rows for the same event_id so we don't double-fire.
+    jdbcTemplate.update(
+        "UPDATE delivery_logs SET dead_letter = TRUE "
+            + "WHERE tenant_id = ? AND event_id = ? AND dispatched_at IS NULL AND dead_letter = FALSE",
+        TENANT_ID,
+        source.eventId());
     jdbcTemplate.update(
         "INSERT INTO delivery_logs (integration_id, payment_intent_id, event_id, attempt, scheduled_at, tenant_id) "
             + "VALUES (?, ?, ?, 1, ?, ?)",
@@ -218,6 +224,63 @@ public final class PaymentRepository {
         TENANT_ID);
     return newestDeliveryLog(source.eventId(), now);
   }
+
+  /**
+   * Bulk re-dispatch: spec §1.1.5 / §5.3 — acquire advisory lock per integration, snapshot rows
+   * matching the filter, mark in-flight back-off as dead_letter, then insert attempt=1 rows for
+   * each matched event_id. Returns the number of new rows actually inserted.
+   */
+  int bulkRedispatchDeadLetters(
+      String integrationId, Instant from, Instant to, int maxRows, Instant now, UUID batchId) {
+    int lockKey = bulkRedispatchLockKey(integrationId);
+    // Try-lock for blast-radius isolation; competing bulks abort.
+    Boolean acquired =
+        jdbcTemplate.queryForObject("SELECT pg_try_advisory_lock(?)", Boolean.class, lockKey);
+    if (Boolean.FALSE.equals(acquired)) {
+      throw PaymentProblems.conflict(
+          PaymentProblems.STATE_TRANSITION_ILLEGAL, "bulk_redispatch_in_flight");
+    }
+    try {
+      var eventIds =
+          jdbcTemplate.query(
+              "SELECT DISTINCT event_id, integration_id, payment_intent_id FROM delivery_logs "
+                  + "WHERE tenant_id = ? AND integration_id = ? AND dead_letter = TRUE "
+                  + "AND scheduled_at BETWEEN ? AND ? LIMIT ?",
+              (rs, n) ->
+                  new BulkRedispatchTarget(
+                      rs.getString("event_id"),
+                      rs.getString("integration_id"),
+                      rs.getString("payment_intent_id")),
+              TENANT_ID,
+              integrationId,
+              Timestamp.from(from),
+              Timestamp.from(to),
+              maxRows);
+      int inserted = 0;
+      for (var target : eventIds) {
+        jdbcTemplate.update(
+            "INSERT INTO delivery_logs (integration_id, payment_intent_id, event_id, attempt, "
+                + "scheduled_at, bulk_redispatch_batch_id, tenant_id) VALUES (?, ?, ?, 1, ?, ?, ?)",
+            target.integrationId(),
+            target.paymentIntentId(),
+            target.eventId(),
+            Timestamp.from(now),
+            batchId,
+            TENANT_ID);
+        inserted++;
+      }
+      return inserted;
+    } finally {
+      jdbcTemplate.queryForObject("SELECT pg_advisory_unlock(?)", Boolean.class, lockKey);
+    }
+  }
+
+  private static int bulkRedispatchLockKey(String integrationId) {
+    // Deterministic 32-bit key per integration so the advisory lock id is stable.
+    return Math.abs(("bulk_redispatch_" + integrationId).hashCode());
+  }
+
+  private record BulkRedispatchTarget(String eventId, String integrationId, String paymentIntentId) {}
 
   private ReconciliationRunRow requireReconciliationRun(long id) {
     try {

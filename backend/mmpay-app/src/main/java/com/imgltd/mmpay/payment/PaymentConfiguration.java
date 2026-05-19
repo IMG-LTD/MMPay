@@ -4,11 +4,14 @@ import com.imgltd.mmpay.audit.AuditWriter;
 import com.imgltd.mmpay.credentials.EnvironmentReferenceResolver;
 import java.time.Clock;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
 @Configuration
+@EnableScheduling
 public class PaymentConfiguration {
   @Bean
   @ConditionalOnMissingBean
@@ -35,5 +38,16 @@ public class PaymentConfiguration {
   @Bean
   ProviderCallbackVerifier providerCallbackVerifier(org.springframework.core.env.Environment env, Clock clock) {
     return new ProviderCallbackVerifier(env.getProperty("mmpay.provider-callback-secret", ""), clock);
+  }
+
+  /**
+   * Reconciliation runner is wired by default. Tests / dev environments may set
+   * {@code mmpay.reconciliation.enabled=false} to disable the scheduled tick.
+   */
+  @Bean
+  @ConditionalOnProperty(name = "mmpay.reconciliation.enabled", havingValue = "true", matchIfMissing = true)
+  ReconciliationRunner reconciliationRunner(
+      JdbcTemplate jdbcTemplate, AuditWriter auditWriter, Clock clock) {
+    return new ReconciliationRunner(jdbcTemplate, auditWriter, clock);
   }
 }
