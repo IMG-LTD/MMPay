@@ -34,6 +34,7 @@ node --test "$ROOT_DIR/tests/p5-release-closure-contract.test.mjs"
 node --test "$ROOT_DIR/tests/p5-external-closure-blockers-contract.test.mjs"
 node --test "$ROOT_DIR/tests/p5-backup-restore-drill-evidence-contract.test.mjs"
 node --test "$ROOT_DIR/tests/p5-vendor-binding-evidence-contract.test.mjs"
+node --test "$ROOT_DIR/tests/locale-contract.test.mjs"
 pnpm --dir "$ROOT_DIR/frontend-admin" install --frozen-lockfile
 pnpm --dir "$ROOT_DIR/frontend-admin" typecheck
 pnpm --dir "$ROOT_DIR/frontend-admin" lint
