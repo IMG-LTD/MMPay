@@ -46,11 +46,14 @@ class AuditSegmentVerifierTest {
   }
 
   private static AuditSegmentVerifier verifier() {
-    return new AuditSegmentVerifier(Set.of("nonce-1"), Set.of(), signature -> "valid-signature".equals(signature));
+    return new AuditSegmentVerifier(
+        new AuditSegmentVerifierOptions(
+            Set.of("nonce-1"), Set.of(), details -> true, (signature, payload) -> "valid-signature".equals(signature)));
   }
 
   private static AuditSegmentVerifier verifierWithConsumedNonce() {
-    return new AuditSegmentVerifier(Set.of("nonce-1"), Set.of("nonce-1"), signature -> true);
+    return new AuditSegmentVerifier(
+        new AuditSegmentVerifierOptions(Set.of("nonce-1"), Set.of("nonce-1"), details -> true, (signature, payload) -> true));
   }
 
   private static List<AuditRow> rows(AuditRow... rows) {

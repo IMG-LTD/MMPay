@@ -17,13 +17,14 @@ public final class AuditSegmentVerifier {
 
   private final Set<String> knownNonces;
   private final Set<String> consumedNonces;
+  private final RestoreAttestationVerifier restoreAttestationVerifier;
   private final OperatorPgpVerifier pgpVerifier;
 
-  public AuditSegmentVerifier(
-      Set<String> knownNonces, Set<String> consumedNonces, OperatorPgpVerifier pgpVerifier) {
-    this.knownNonces = Set.copyOf(knownNonces);
-    this.consumedNonces = Set.copyOf(consumedNonces);
-    this.pgpVerifier = pgpVerifier;
+  public AuditSegmentVerifier(AuditSegmentVerifierOptions options) {
+    this.knownNonces = options.knownNonces();
+    this.consumedNonces = options.consumedNonces();
+    this.restoreAttestationVerifier = options.restoreAttestationVerifier();
+    this.pgpVerifier = options.operatorPgpVerifier();
   }
 
   public AuditSegmentVerifyResult verify(List<AuditRow> rows) {
@@ -59,6 +60,9 @@ public final class AuditSegmentVerifier {
     if (consumedNonces.contains(nonce)) {
       return "nonce_replay";
     }
+    if (!restoreAttestationVerifier.verify(row.details())) {
+      return "attestation_hmac_invalid";
+    }
     return verifyOperatorSignature(row.details());
   }
 
@@ -67,7 +71,8 @@ public final class AuditSegmentVerifier {
     if (signature == null || signature.isBlank()) {
       return "operator_pgp_required";
     }
-    return pgpVerifier.verify(signature) ? null : "operator_pgp_invalid";
+    var payload = RestoreAttestationHmacVerifier.payload(details);
+    return pgpVerifier.verify(signature, payload) ? null : "operator_pgp_invalid";
   }
 
   private static boolean missingRequiredAttestation(Map<String, String> details) {

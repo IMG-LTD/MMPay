@@ -96,7 +96,9 @@ describe('P5 release closure contract', () => {
     assert.match(validateLocal, /p5-release-closure-contract\.test\.mjs/);
     assert.match(validateLocal, /P5ReleaseClosureContractTest/);
     assert.match(validateLocal, /AuditSegmentVerifierTest/);
+    assert.match(validateLocal, /AuditVerifySegmentRestartContractTest/);
     assert.match(validateLocal, /verify-image-digest-evidence\.sh/);
     assert.match(releaseGate, /verify-image-digest-evidence\.sh/);
+    assert.equal(exists('scripts/governance/audit-chain-verify-cli.sh'), true);
   });
 });
