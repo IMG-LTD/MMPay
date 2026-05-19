@@ -2,6 +2,7 @@ package com.imgltd.mmpay.credentials;
 
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
+import java.util.Base64;
 import java.util.HexFormat;
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -9,6 +10,7 @@ import java.util.regex.Pattern;
 public final class EnvironmentReferenceResolver {
   private static final int MAX_VALUE_BYTES = 64 * 1024;
   private static final Pattern ENV_REFERENCE = Pattern.compile("^env://([A-Z][A-Z0-9_]*)$");
+  private static final Pattern ENV_B64_REFERENCE = Pattern.compile("^env-b64://([A-Z][A-Z0-9_]*)$");
   private final Map<String, String> environment;
 
   public EnvironmentReferenceResolver(Map<String, String> environment) {
@@ -19,31 +21,50 @@ public final class EnvironmentReferenceResolver {
     if (uri.startsWith("kms://")) {
       throw failure(ReferenceResolutionFailure.KMS_NO_RESOLVER, uri);
     }
-    var matcher = ENV_REFERENCE.matcher(uri);
-    if (!matcher.matches()) {
-      throw failure(ReferenceResolutionFailure.SCHEME_INVALID, uri);
+    var envMatcher = ENV_REFERENCE.matcher(uri);
+    if (envMatcher.matches()) {
+      return resolveEnv(uri, envMatcher.group(1), false);
     }
-    return resolveEnv(uri, matcher.group(1));
+    var b64Matcher = ENV_B64_REFERENCE.matcher(uri);
+    if (b64Matcher.matches()) {
+      return resolveEnv(uri, b64Matcher.group(1), true);
+    }
+    throw failure(ReferenceResolutionFailure.SCHEME_INVALID, uri);
   }
 
-  private ResolvedCredentialReference resolveEnv(String uri, String name) {
-    var value = environment.get(name);
-    if (value == null) {
+  /**
+   * Resolve an env-backed reference. When {@code base64Decode} is true, decode the env value as
+   * base64 (multi-line PEM tolerant; spec P4 §1.1.2 calls this out for vendor mTLS CA bundles
+   * that YAML strips newlines from).
+   */
+  private ResolvedCredentialReference resolveEnv(String uri, String name, boolean base64Decode) {
+    var raw = environment.get(name);
+    if (raw == null) {
       throw failure(ReferenceResolutionFailure.ENV_UNSET, uri);
     }
-    var trimmed = value.stripTrailing();
+    var trimmed = raw.stripTrailing();
     if (trimmed.isBlank()) {
       throw failure(ReferenceResolutionFailure.EMPTY_BYTES, uri);
     }
-    if (trimmed.getBytes(StandardCharsets.UTF_8).length > MAX_VALUE_BYTES) {
+    byte[] bytes;
+    if (base64Decode) {
+      try {
+        bytes = Base64.getDecoder().decode(trimmed);
+      } catch (IllegalArgumentException exception) {
+        throw failure(ReferenceResolutionFailure.SCHEME_INVALID, uri);
+      }
+    } else {
+      bytes = trimmed.getBytes(StandardCharsets.UTF_8);
+    }
+    if (bytes.length > MAX_VALUE_BYTES) {
       throw failure(ReferenceResolutionFailure.VALUE_TOO_LARGE, uri);
     }
-    return new ResolvedCredentialReference(uri, fingerprint(trimmed));
+    return new ResolvedCredentialReference(uri, fingerprint(bytes));
   }
 
-  private String fingerprint(String value) {
+  private String fingerprint(byte[] bytes) {
     try {
-      var digest = MessageDigest.getInstance("SHA-256").digest(value.getBytes(StandardCharsets.UTF_8));
+      var digest = MessageDigest.getInstance("SHA-256").digest(bytes);
       return HexFormat.of().formatHex(digest).substring(0, 8);
     } catch (Exception exception) {
       throw new IllegalStateException("credential fingerprint failed", exception);
