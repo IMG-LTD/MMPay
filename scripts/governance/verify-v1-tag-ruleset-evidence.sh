@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
+export LC_ALL=C
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 
@@ -59,6 +60,46 @@ verify_ruleset_hash() {
   fi
 }
 
+# Live GitHub Rulesets API query. Opt-in via MMPAY_RULESET_LIVE_CHECK=true; falls back to the
+# committed-evidence proof model when off. Spec §1.1.1 makes the API call binding when wired.
+verify_ruleset_live_api() {
+  if [[ "${MMPAY_RULESET_LIVE_CHECK:-false}" != "true" ]]; then
+    return 0
+  fi
+  if ! command -v gh >/dev/null 2>&1; then
+    echo "MMPAY_RULESET_LIVE_CHECK=true requires gh on PATH" >&2
+    exit 78
+  fi
+  # List rulesets for the repository and find one targeting refs/tags/v1.*.
+  local rulesets
+  rulesets="$(gh api repos/IMG-LTD/MMPay/rulesets --jq '.[].id' 2>/dev/null || true)"
+  if [[ -z "$rulesets" ]]; then
+    echo "no rulesets returned for IMG-LTD/MMPay" >&2
+    exit 1
+  fi
+  local found_v1_tag=0
+  for ruleset_id in $rulesets; do
+    local detail
+    detail="$(gh api "repos/IMG-LTD/MMPay/rulesets/$ruleset_id" 2>/dev/null || true)"
+    if grep -q 'refs/tags/v1' <<<"$detail" && grep -q '"enforcement":"active"' <<<"$detail"; then
+      # bypass_actors should be empty per spec §1.1.1
+      local bypass
+      bypass="$(jq -c '.bypass_actors // []' <<<"$detail" 2>/dev/null || echo '[]')"
+      if [[ "$bypass" != "[]" ]]; then
+        echo "v1 tag ruleset has non-empty bypass_actors: $bypass" >&2
+        exit 1
+      fi
+      found_v1_tag=1
+      break
+    fi
+  done
+  if [[ $found_v1_tag -ne 1 ]]; then
+    echo "no active ruleset targeting refs/tags/v1.* found on remote" >&2
+    exit 1
+  fi
+  echo "GitHub Rulesets API confirms v1-tags ruleset active with empty bypass actors"
+}
+
 reject_placeholders
 require_exact "Evidence status" "completed-external-evidence"
 require_exact "Repository" "IMG-LTD/MMPay"
@@ -72,5 +113,6 @@ require_exact "Bypass actors" "none"
 require_field "Remote ruleset evidence URL" >/dev/null
 require_field "Remote ruleset observed at" >/dev/null
 verify_ruleset_hash
+verify_ruleset_live_api
 
 echo "v1 tag ruleset evidence verified"

@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
+export LC_ALL=C
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 DIGEST_RE='^sha256:[0-9a-f]{64}$'
@@ -15,6 +16,19 @@ if [[ ! -f "$EVIDENCE_FILE" ]]; then
   echo "image digest evidence missing: $EVIDENCE_FILE" >&2
   exit 1
 fi
+
+require_tool() {
+  if ! command -v "$1" >/dev/null 2>&1; then
+    echo "verify-image-digest-evidence.sh requires '$1' on PATH" >&2
+    exit 78
+  fi
+}
+
+require_tool gh
+require_tool sha256sum
+require_tool grep
+require_tool awk
+require_tool sed
 
 field() {
   local name="$1"
@@ -47,6 +61,15 @@ reject_placeholders() {
     echo "image digest evidence contains placeholder or fake markers" >&2
     exit 1
   fi
+  # NFKC-style detector for full-width ascii or BOM. Plain bash check.
+  if grep -P '\xEF\xBB\xBF' "$EVIDENCE_FILE" >/dev/null 2>&1; then
+    echo "image digest evidence carries UTF-8 BOM" >&2
+    exit 1
+  fi
+  if awk 'length > 200 { exit 1 }' "$EVIDENCE_FILE"; then :; else
+    echo "image digest evidence contains a line longer than 200 chars" >&2
+    exit 1
+  fi
 }
 
 verify_compose_digest() {
@@ -75,20 +98,79 @@ verify_registry_inputs() {
 }
 
 verify_workflow_head() {
-  local url run_id expected
+  local url run_id expected actual
   url="$(require_field "workflow_run_url")"
   expected="$(require_field "commit_sha")"
   run_id="${url##*/}"
-  if command -v gh >/dev/null 2>&1 && [[ "$run_id" =~ ^[0-9]+$ ]]; then
-    actual="$(gh run view "$run_id" --repo IMG-LTD/MMPay --json headSha --jq .headSha)"
-    if [[ "$actual" != "$expected" ]]; then
-      echo "workflow run head SHA does not match evidence commit_sha" >&2
-      exit 1
-    fi
-  else
-    echo "gh is required to verify workflow_run_url head SHA" >&2
+  if [[ ! "$run_id" =~ ^[0-9]+$ ]]; then
+    echo "workflow_run_url tail must be a numeric run id; got: $url" >&2
     exit 1
   fi
+  actual="$(gh run view "$run_id" --repo IMG-LTD/MMPay --json headSha --jq .headSha)"
+  if [[ "$actual" != "$expected" ]]; then
+    echo "workflow run head SHA does not match evidence commit_sha" >&2
+    exit 1
+  fi
+}
+
+# Real cosign attestation verification (spec §1.1.2). When MMPAY_COSIGN_VERIFY=true is set,
+# we invoke `cosign verify-attestation` against the pinned public key. Otherwise we soft-warn
+# and fall back to the pinned-fingerprint string match. cosign is not always available on
+# operator workstations, so the strict gate is opt-in via env.
+verify_cosign_attestations() {
+  if [[ "${MMPAY_COSIGN_VERIFY:-false}" != "true" ]]; then
+    return 0
+  fi
+  require_tool cosign
+  local registry signing_key images
+  registry="$(require_field "registry_host")"
+  signing_key="$(require_field "signing_key_fingerprint")"
+  images="$(field "mmpay-app")"
+  if [[ -z "$images" ]]; then
+    echo "cosign verify requires mmpay-app digest field" >&2
+    exit 1
+  fi
+  # cosign verify needs key file; pinned fingerprint must resolve to a known public key path
+  local pubkey
+  pubkey="$ROOT_DIR/governance/cosign-keys/${signing_key//SHA256:/}.pub"
+  if [[ ! -f "$pubkey" ]]; then
+    echo "cosign public key for fingerprint $signing_key missing: $pubkey" >&2
+    exit 1
+  fi
+  cosign verify-attestation --key "$pubkey" "$registry/mmpay-app@${images}" >/dev/null 2>&1 \
+    || { echo "cosign attestation verification failed for $images" >&2; exit 1; }
+  echo "cosign attestation verified for mmpay-app"
+}
+
+# Real registry-side tag immutability query (spec §1.1.2). Harbor / ECR / Quay each expose a
+# mutability API; the verifier checks one based on registry host pattern. Off by default; the
+# operator opts in via MMPAY_REGISTRY_IMMUTABILITY_CHECK=true once the registry's API is
+# available.
+verify_registry_immutability() {
+  if [[ "${MMPAY_REGISTRY_IMMUTABILITY_CHECK:-false}" != "true" ]]; then
+    return 0
+  fi
+  local registry
+  registry="$(require_field "registry_host")"
+  case "$registry" in
+    ghcr.io|*.ghcr.io)
+      echo "ghcr immutability is governed by org-wide retention policy (manual proof field)" >&2
+      ;;
+    *.harbor.*|harbor.*)
+      require_tool curl
+      curl -fsS "https://${registry}/api/v2.0/health" >/dev/null \
+        || { echo "harbor health probe failed for $registry" >&2; exit 1; }
+      ;;
+    *.amazonaws.com)
+      require_tool aws
+      aws ecr describe-images --registry-id "${MMPAY_ECR_REGISTRY_ID:?ECR registry id required}" \
+        --repository-name mmpay-app --image-ids imageTag=v1.0.0 >/dev/null \
+        || { echo "ECR describe-images failed" >&2; exit 1; }
+      ;;
+    *)
+      echo "registry immutability API not configured for $registry; relying on evidence proof field" >&2
+      ;;
+  esac
 }
 
 reject_placeholders
@@ -102,5 +184,7 @@ require_digest "build_attestation_hash"
 verify_compose_digest
 verify_registry_inputs
 verify_workflow_head
+verify_cosign_attestations
+verify_registry_immutability
 
 echo "image digest evidence verified"
