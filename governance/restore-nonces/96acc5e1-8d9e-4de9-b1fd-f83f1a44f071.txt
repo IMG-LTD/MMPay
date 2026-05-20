@@ -1,0 +1,3 @@
+restore_nonce: 96acc5e1-8d9e-4de9-b1fd-f83f1a44f071
+drill_id: 56a911b3-44de-4f5f-a99b-88de2192497b
+sealed_at: 2026-05-20T05:38:01Z
