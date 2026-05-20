@@ -49,8 +49,21 @@ and upms become the active runtime.
 Source-based local deployment:
 
 ```bash
+export MMPAY_AUDIT_HMAC_KEY="$(openssl rand -base64 32)"
 docker compose -f deploy/docker-compose.yml up --build -d
 ```
+
+Run the compose smoke when validating a fresh local deployment:
+
+```bash
+bash scripts/smoke-docker-compose.sh
+```
+
+Do not start the app image with bare `docker run` unless you also provide
+`SPRING_DATASOURCE_URL`, `SPRING_DATASOURCE_USERNAME`,
+`SPRING_DATASOURCE_PASSWORD`, and `MMPAY_AUDIT_HMAC_KEY`. The Docker image
+intentionally fails before Spring Boot starts when those runtime values are
+missing.
 
 Published v1.0.0 images:
 

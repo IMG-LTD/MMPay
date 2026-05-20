@@ -6,14 +6,14 @@ services:
       POSTGRES_USER: mmpay
       POSTGRES_PASSWORD: replace-with-local-password
     ports:
-      - "5432:5432"
+      - "${MMPAY_POSTGRES_PORT:-5432}:5432"
     volumes:
       - ./postgres/init:/docker-entrypoint-initdb.d:ro
 
   redis:
     image: redis:7
     ports:
-      - "6379:6379"
+      - "${MMPAY_REDIS_PORT:-6379}:6379"
 
   mmpay-app:
     image: mmpay-app:local
@@ -21,7 +21,7 @@ services:
       - postgres
       - redis
     ports:
-      - "8080:8080"
+      - "${MMPAY_HTTP_PORT:-8080}:8080"
     environment:
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/mmpay
       SPRING_DATASOURCE_USERNAME: mmpay

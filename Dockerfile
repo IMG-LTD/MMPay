@@ -34,8 +34,11 @@ WORKDIR /app
 RUN groupadd --system mmpay && useradd --system --gid mmpay --home-dir /app mmpay
 
 COPY --from=backend-build /workspace/backend/mmpay-app/target/mmpay-app-1.0.0.jar /app/mmpay-app.jar
+COPY deploy/docker-entrypoint.sh /app/docker-entrypoint.sh
+RUN chmod 0555 /app/docker-entrypoint.sh
 
 EXPOSE 8080
 USER mmpay
 
-ENTRYPOINT ["java", "-jar", "/app/mmpay-app.jar"]
+ENTRYPOINT ["/app/docker-entrypoint.sh"]
+CMD ["java", "-jar", "/app/mmpay-app.jar"]

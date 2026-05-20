@@ -272,9 +272,11 @@ describe('MMPay open-source framework contract', () => {
   it('provides a root Docker build path for the MMPay app image', async () => {
     const dockerfile = await readFile(path.join(root, 'Dockerfile'), 'utf8');
     const dockerignore = await readFile(path.join(root, '.dockerignore'), 'utf8');
+    const entrypoint = await readFile(path.join(root, 'deploy/docker-entrypoint.sh'), 'utf8');
     const appPom = await readFile(path.join(root, 'backend/mmpay-app/pom.xml'), 'utf8');
     const compose = await readFile(path.join(root, 'deploy/docker-compose.yml'), 'utf8');
     const minimalCompose = await readFile(path.join(root, 'deploy/docker-compose.minimal.yml'), 'utf8');
+    const smokeScript = await readFile(path.join(root, 'scripts/smoke-docker-compose.sh'), 'utf8');
     const postgresInit = await readFile(path.join(root, 'deploy/postgres/init/001-mmpay-app-role.sql'), 'utf8');
     const installDoc = await readFile(path.join(root, 'docs/ops/install.md'), 'utf8');
 
@@ -288,10 +290,20 @@ describe('MMPay open-source framework contract', () => {
     assert.match(dockerfile, /FROM eclipse-temurin:21-jre/);
     assert.match(dockerfile, /mvn -f backend\/pom\.xml -pl mmpay-app -am -DskipTests package/);
     assert.match(dockerfile, /USER mmpay/);
+    assert.match(dockerfile, /COPY deploy\/docker-entrypoint\.sh \/app\/docker-entrypoint\.sh/);
+    assert.match(dockerfile, /ENTRYPOINT \["\/app\/docker-entrypoint\.sh"\]/);
+    assert.match(dockerfile, /CMD \["java", "-jar", "\/app\/mmpay-app\.jar"\]/);
+    assert.match(entrypoint, /SPRING_DATASOURCE_URL/);
+    assert.match(entrypoint, /SPRING_DATASOURCE_USERNAME/);
+    assert.match(entrypoint, /SPRING_DATASOURCE_PASSWORD/);
+    assert.match(entrypoint, /MMPAY_AUDIT_HMAC_KEY/);
+    assert.match(entrypoint, /startup configuration error/);
     assert.match(dockerignore, /\*\*\/node_modules/);
     assert.match(dockerignore, /\*\*\/dist/);
     assert.match(dockerignore, /\*\*\/target/);
-    assert.match(compose, /"8080:8080"/);
+    assert.match(compose, /\$\{MMPAY_HTTP_PORT:-8080\}:8080/);
+    assert.match(compose, /\$\{MMPAY_POSTGRES_PORT:-5432\}:5432/);
+    assert.match(compose, /\$\{MMPAY_REDIS_PORT:-6379\}:6379/);
     assert.match(compose, /build:\n      context: \.\./);
     assert.match(compose, /SPRING_DATASOURCE_URL: jdbc:postgresql:\/\/postgres:5432\/mmpay/);
     assert.match(compose, /SPRING_DATASOURCE_USERNAME: mmpay/);
@@ -304,6 +316,7 @@ describe('MMPay open-source framework contract', () => {
     assert.match(minimalCompose, /SPRING_DATASOURCE_URL: jdbc:postgresql:\/\/postgres:5432\/mmpay/);
     assert.match(minimalCompose, /SPRING_DATASOURCE_USERNAME: mmpay/);
     assert.match(minimalCompose, /SPRING_DATASOURCE_PASSWORD: replace-with-local-password/);
+    assert.match(minimalCompose, /\$\{MMPAY_HTTP_PORT:-8080\}:8080/);
     assert.match(minimalCompose, /MMPAY_AUDIT_HMAC_KEY: \$\{MMPAY_AUDIT_HMAC_KEY:\?/);
     assert.match(minimalCompose, /\.\/postgres\/init:\/docker-entrypoint-initdb\.d:ro/);
     assert.doesNotMatch(minimalCompose, /MMPAY_DATASOURCE_URL/);
@@ -316,6 +329,11 @@ describe('MMPay open-source framework contract', () => {
     assert.match(installDoc, /docker build -t mmpay-app:local \./);
     assert.match(installDoc, /docker compose -f deploy\/docker-compose\.yml up --build/);
     assert.match(installDoc, /docker compose -f deploy\/docker-compose\.minimal\.yml up/);
+    assert.match(installDoc, /scripts\/smoke-docker-compose\.sh/);
+    assert.match(installDoc, /Do not use bare `docker run mmpay-app:local`/);
+    assert.match(smokeScript, /MMPAY_SMOKE_HTTP_PORT:-18080/);
+    assert.match(smokeScript, /SPRING_DATASOURCE_URL=jdbc:postgresql:\/\/postgres:5432\/mmpay/);
+    assert.match(smokeScript, /Failed to determine a suitable driver class/);
     assert.doesNotMatch(installDoc, /not installable yet/);
     assert.match(appPom, /<groupId>org\.postgresql<\/groupId>\s*<artifactId>postgresql<\/artifactId>/);
     assert.doesNotMatch(appPom, /<artifactId>postgresql<\/artifactId>\s*<scope>test<\/scope>/);

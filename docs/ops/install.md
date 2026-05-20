@@ -17,6 +17,13 @@ repository.
 bash scripts/validate-local.sh
 ```
 
+To verify the Docker quick start itself, run the isolated compose smoke. It
+uses temporary Docker Compose volumes and non-default host ports:
+
+```bash
+bash scripts/smoke-docker-compose.sh
+```
+
 ## v1 Tag Immutability For Mirrors
 
 GitHub canonical releases use the checked-in
@@ -61,6 +68,11 @@ want the smallest runtime stack:
 ```bash
 docker compose -f deploy/docker-compose.minimal.yml up
 ```
+
+Do not use bare `docker run mmpay-app:local` for the quick start. The image
+requires `SPRING_DATASOURCE_URL`, `SPRING_DATASOURCE_USERNAME`,
+`SPRING_DATASOURCE_PASSWORD`, and `MMPAY_AUDIT_HMAC_KEY`; Docker Compose injects
+those values and starts PostgreSQL and Redis on the same network.
 
 If an older failed local database was created before this bootstrap script was
 mounted, reset only the local Compose data and start again:
