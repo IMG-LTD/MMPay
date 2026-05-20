@@ -11,7 +11,7 @@ Computes sha256 over the three GA evidence files (image-digest, e2e,
 backup-restore drill), assembles the canonical vendor-binding JSON in the
 field order required by scripts/governance/verify-vendor-binding-evidence.mjs,
 PGP-signs it with the supplied vendor key, and writes
-docs/release/v1.0.0-BINDING_OK.asc.
+docs/release/vendor-binding/v1.0.0-BINDING_OK.asc.
 
 Environment overrides for evidence file paths:
   MMPAY_IMAGE_DIGEST_EVIDENCE_FILE  default docs/release/v1.0.0-image-digest-evidence.md
@@ -77,7 +77,8 @@ PY
 
 gpg --batch --yes --local-user "$VENDOR_FP" --armor --detach-sign --output "$SIGNATURE" "$CANONICAL"
 
-OUT="$ROOT_DIR/docs/release/v1.0.0-BINDING_OK.asc"
+OUT="$ROOT_DIR/docs/release/vendor-binding/v1.0.0-BINDING_OK.asc"
+mkdir -p "$(dirname "$OUT")"
 canonical_body=$(cat "$CANONICAL")
 sig_body=$(cat "$SIGNATURE")
 
