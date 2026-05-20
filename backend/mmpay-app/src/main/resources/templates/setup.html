@@ -5,58 +5,164 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title th:text="${copy.title()}">MMPay setup</title>
     <style>
+      :root {
+        --brand: #165dff;
+        --brand-dark: #0e4ad6;
+        --bg: #f5f7fb;
+        --surface: #ffffff;
+        --text: #172033;
+        --muted: #6b7588;
+        --border: #e5e8ef;
+        --error-bg: #fff1f0;
+        --error-border: #ffccc7;
+        --error-text: #cf1322;
+      }
+
+      * { box-sizing: border-box; }
+
       body {
-        background: #f7f9fc;
-        color: #172033;
-        font-family: Arial, sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", Roboto, Helvetica, Arial, sans-serif;
         margin: 0;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 24px;
       }
 
       main {
-        margin: 64px auto;
-        max-width: 420px;
-        padding: 0 20px;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        box-shadow: 0 12px 32px rgba(20, 36, 64, 0.08);
+        max-width: 480px;
+        padding: 36px 36px 32px;
+        width: 100%;
+      }
+
+      h1 {
+        font-size: 24px;
+        margin: 0 0 6px;
+      }
+
+      p.subheading {
+        color: var(--muted);
+        margin: 0 0 24px;
+      }
+
+      .alert {
+        background: var(--error-bg);
+        border: 1px solid var(--error-border);
+        border-radius: 8px;
+        color: var(--error-text);
+        font-size: 14px;
+        margin-bottom: 18px;
+        padding: 10px 12px;
       }
 
       form {
         display: grid;
-        gap: 14px;
+        gap: 16px;
+      }
+
+      label {
+        display: block;
+        font-size: 14px;
+        font-weight: 500;
+        margin-bottom: 6px;
+      }
+
+      .help {
+        color: var(--muted);
+        font-size: 12px;
+        margin: 4px 0 0;
       }
 
       input,
       select,
       button {
-        box-sizing: border-box;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        color: inherit;
         font: inherit;
         min-height: 40px;
+        padding: 0 12px;
         width: 100%;
       }
 
+      input:focus,
+      select:focus {
+        border-color: var(--brand);
+        outline: 2px solid rgba(22, 93, 255, 0.16);
+        outline-offset: 0;
+      }
+
+      .field-error input,
+      .field-error select {
+        border-color: var(--error-border);
+      }
+
+      .field-error .help {
+        color: var(--error-text);
+      }
+
       button {
-        background: #165dff;
+        background: var(--brand);
         border: 0;
         color: #ffffff;
+        cursor: pointer;
+        font-weight: 600;
+        margin-top: 6px;
       }
+
+      button:hover { background: var(--brand-dark); }
     </style>
   </head>
   <body>
     <main>
       <h1 th:text="${copy.heading()}">MMPay setup</h1>
+      <p class="subheading" th:text="${copy.subheading()}">Create the first administrator to finish provisioning.</p>
+
+      <div class="alert" th:if="${errors != null and errors['setupToken'] != null}" th:text="${copy.invalidTokenError()}">
+        Invalid setup token.
+      </div>
+
       <form th:action="@{/setup}" method="post" autocomplete="off">
-        <label for="username" th:text="${copy.usernameLabel()}">Username</label>
-        <input id="username" name="username" minlength="3" maxlength="64" pattern="^[a-z][a-z0-9._-]{2,63}$" required>
+        <div th:classappend="${errors != null and errors['setupToken'] != null} ? ' field-error' : ''">
+          <label for="setupToken" th:text="${copy.tokenLabel()}">Setup token</label>
+          <input id="setupToken" name="setupToken" autocomplete="off" required>
+          <p class="help" th:text="${copy.tokenHelp()}">Paste the token printed in the container logs.</p>
+        </div>
 
-        <label for="password" th:text="${copy.passwordLabel()}">Password</label>
-        <input id="password" name="password" type="password" minlength="8" maxlength="128" required>
+        <div th:classappend="${errors != null and errors['username'] != null} ? ' field-error' : ''">
+          <label for="username" th:text="${copy.usernameLabel()}">Username</label>
+          <input id="username" name="username" minlength="3" maxlength="64" pattern="^[a-z][a-z0-9._-]{2,63}$" required>
+          <p class="help" th:text="${(errors != null and errors['username'] != null) ? copy.usernameError() : copy.usernameHelp()}">Lowercase, 3-64 chars.</p>
+        </div>
 
-        <label for="passwordConfirm" th:text="${copy.passwordConfirmLabel()}">Confirm password</label>
-        <input id="passwordConfirm" name="passwordConfirm" type="password" minlength="8" maxlength="128" required>
+        <div th:classappend="${errors != null and errors['password'] != null} ? ' field-error' : ''">
+          <label for="password" th:text="${copy.passwordLabel()}">Password</label>
+          <input id="password" name="password" type="password" minlength="8" maxlength="128" required>
+          <p class="help" th:text="${(errors != null and errors['password'] != null) ? copy.passwordError() : copy.passwordHelp()}">At least 8 characters.</p>
+        </div>
 
-        <label for="initialLocale" th:text="${copy.initialLocaleLabel()}">Initial locale</label>
-        <select id="initialLocale" name="initialLocale" required>
-          <option value="zh-CN">zh-CN</option>
-          <option value="en-US">en-US</option>
-        </select>
+        <div th:classappend="${errors != null and errors['passwordConfirm'] != null} ? ' field-error' : ''">
+          <label for="passwordConfirm" th:text="${copy.passwordConfirmLabel()}">Confirm password</label>
+          <input id="passwordConfirm" name="passwordConfirm" type="password" minlength="8" maxlength="128" required>
+          <p class="help" th:if="${errors != null and errors['passwordConfirm'] != null}" th:text="${copy.passwordConfirmError()}">Passwords do not match.</p>
+        </div>
+
+        <div th:classappend="${errors != null and errors['initialLocale'] != null} ? ' field-error' : ''">
+          <label for="initialLocale" th:text="${copy.initialLocaleLabel()}">Initial locale</label>
+          <select id="initialLocale" name="initialLocale" required>
+            <option value="zh-CN">zh-CN</option>
+            <option value="en-US">en-US</option>
+          </select>
+          <p class="help" th:if="${errors != null and errors['initialLocale'] != null}" th:text="${copy.initialLocaleError()}">Invalid locale.</p>
+        </div>
 
         <button type="submit" th:text="${copy.submitLabel()}">Create admin</button>
       </form>
