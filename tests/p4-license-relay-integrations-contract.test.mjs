@@ -7,11 +7,11 @@ const read = path => readFile(new URL(`../${path}`, import.meta.url), 'utf8');
 const exists = path => existsSync(new URL(`../${path}`, import.meta.url));
 
 describe('P4 license relay and integrations contract', () => {
-  it('ships upgrade-safe relay migrations after V109', async () => {
-    const v110 = await read('backend/mmpay-gateway-core/src/main/resources/db/migration/gateway/V110__license_relay_targets.sql');
-    const v111 = await read('backend/mmpay-gateway-core/src/main/resources/db/migration/gateway/V111__license_relay_logs.sql');
-    const v112 = await read('backend/mmpay-gateway-core/src/main/resources/db/migration/gateway/V112__webhook_integrations_kind_slug.sql');
-    const v113 = await read('backend/mmpay-gateway-core/src/main/resources/db/migration/gateway/V113__license_relay_append_only.sql');
+  it('ships upgrade-safe relay migrations after V129', async () => {
+    const v110 = await read('backend/mmpay-gateway-core/src/main/resources/db/migration/gateway/V130__license_relay_targets.sql');
+    const v111 = await read('backend/mmpay-gateway-core/src/main/resources/db/migration/gateway/V131__license_relay_logs.sql');
+    const v112 = await read('backend/mmpay-gateway-core/src/main/resources/db/migration/gateway/V132__webhook_integrations_kind_slug.sql');
+    const v113 = await read('backend/mmpay-gateway-core/src/main/resources/db/migration/gateway/V133__license_relay_append_only.sql');
 
     assert.match(v110, /CREATE TABLE IF NOT EXISTS license_relay_targets/);
     assert.match(v110, /status IN \('active','suspended','archived'\)/);

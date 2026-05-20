@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.sql.Types;
 import java.time.Clock;
 import java.time.Instant;
@@ -69,7 +70,7 @@ public class JdbcAuditEventStore implements AuditEventStore {
         "INSERT INTO audit_event (id, ts, actor_kind, actor_id, action, target_kind, target_id, details_json, "
             + "prev_row_hmac, row_hmac, tenant_id, chain_anchor) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'default', FALSE)",
         event.id(),
-        event.timestamp(),
+        Timestamp.from(event.timestamp()),
         event.actorKind(),
         event.actorId(),
         event.action(),

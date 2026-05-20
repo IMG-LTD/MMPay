@@ -9,6 +9,7 @@ services:
       - "5432:5432"
     volumes:
       - mmpay-postgres-data:/var/lib/postgresql/data
+      - ./postgres/init:/docker-entrypoint-initdb.d:ro
 
   redis:
     image: redis:7
@@ -28,10 +29,11 @@ services:
     ports:
       - "8080:8080"
     environment:
-      MMPAY_DATASOURCE_URL: jdbc:postgresql://postgres:5432/mmpay
-      MMPAY_DATASOURCE_USERNAME: mmpay
-      MMPAY_DATASOURCE_PASSWORD: replace-with-local-password
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/mmpay
+      SPRING_DATASOURCE_USERNAME: mmpay
+      SPRING_DATASOURCE_PASSWORD: replace-with-local-password
       MMPAY_REDIS_URL: redis://redis:6379
+      MMPAY_AUDIT_HMAC_KEY: ${MMPAY_AUDIT_HMAC_KEY:?Set MMPAY_AUDIT_HMAC_KEY to a base64-encoded 32-byte key}
       HUIFU_SYS_ID_FILE: /run/secrets/replace-with-huifu-sys-id
       HUIFU_PRODUCT_ID_FILE: /run/secrets/replace-with-huifu-product-id
       HUIFU_RSA_PUBLIC_KEY_FILE: /run/secrets/replace-with-huifu-rsa-public-key

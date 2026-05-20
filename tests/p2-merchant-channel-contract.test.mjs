@@ -6,12 +6,12 @@ import path from 'node:path';
 const root = path.resolve(import.meta.dirname, '..');
 
 describe('P2 merchant channel contract', () => {
-  it('ships additive gateway migrations V100 through V103 without rewriting V001', async () => {
+  it('ships additive gateway migrations V120 through V123 without rewriting V001', async () => {
     const v001 = await read('backend/mmpay-gateway-core/src/main/resources/db/migration/gateway/V001__create_payment_core.sql');
-    const v100 = await read('backend/mmpay-gateway-core/src/main/resources/db/migration/gateway/V100__merchants_extend_binding.sql');
-    const v101 = await read('backend/mmpay-gateway-core/src/main/resources/db/migration/gateway/V101__channels_extend_binding.sql');
-    const v102 = await read('backend/mmpay-gateway-core/src/main/resources/db/migration/gateway/V102__archive_terminal_trigger.sql');
-    const v103 = await read('backend/mmpay-gateway-core/src/main/resources/db/migration/gateway/V103__partial_unique_active_id.sql');
+    const v100 = await read('backend/mmpay-gateway-core/src/main/resources/db/migration/gateway/V120__merchants_extend_binding.sql');
+    const v101 = await read('backend/mmpay-gateway-core/src/main/resources/db/migration/gateway/V121__channels_extend_binding.sql');
+    const v102 = await read('backend/mmpay-gateway-core/src/main/resources/db/migration/gateway/V122__archive_terminal_trigger.sql');
+    const v103 = await read('backend/mmpay-gateway-core/src/main/resources/db/migration/gateway/V123__partial_unique_active_id.sql');
 
     assert.match(v001, /credential_handle VARCHAR\(256\) NOT NULL/);
     assert.match(v100, /credential_ref VARCHAR\(256\) NULL/);

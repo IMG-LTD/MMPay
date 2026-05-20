@@ -7,6 +7,8 @@ services:
       POSTGRES_PASSWORD: replace-with-local-password
     ports:
       - "5432:5432"
+    volumes:
+      - ./postgres/init:/docker-entrypoint-initdb.d:ro
 
   redis:
     image: redis:7
@@ -21,7 +23,8 @@ services:
     ports:
       - "8080:8080"
     environment:
-      MMPAY_DATASOURCE_URL: jdbc:postgresql://postgres:5432/mmpay
-      MMPAY_DATASOURCE_USERNAME: mmpay
-      MMPAY_DATASOURCE_PASSWORD: replace-with-local-password
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/mmpay
+      SPRING_DATASOURCE_USERNAME: mmpay
+      SPRING_DATASOURCE_PASSWORD: replace-with-local-password
       MMPAY_REDIS_URL: redis://redis:6379
+      MMPAY_AUDIT_HMAC_KEY: ${MMPAY_AUDIT_HMAC_KEY:?Set MMPAY_AUDIT_HMAC_KEY to a base64-encoded 32-byte key}

@@ -38,8 +38,18 @@ docker build -t mmpay-app:local .
 
 ## Start Services
 
+Generate a local audit-chain key before starting the app. The value must stay
+outside source control and be reused for the lifetime of the local database:
+
+```bash
+export MMPAY_AUDIT_HMAC_KEY="$(openssl rand -base64 32)"
+```
+
 Use the standard local compose profile when you want Docker Compose to build the
-app image and keep database/cache data in named volumes:
+app image and keep database/cache data in named volumes. The local PostgreSQL
+container runs `deploy/postgres/init/001-mmpay-app-role.sql` on first database
+initialization so the app can apply its `SET ROLE mmpay_app_role` connection
+guard before Flyway starts:
 
 ```bash
 docker compose -f deploy/docker-compose.yml up --build
@@ -52,6 +62,13 @@ want the smallest runtime stack:
 docker compose -f deploy/docker-compose.minimal.yml up
 ```
 
+If an older failed local database was created before this bootstrap script was
+mounted, reset only the local Compose data and start again:
+
+```bash
+docker compose -f deploy/docker-compose.minimal.yml down --volumes --remove-orphans
+```
+
 The bundled admin UI is served from `http://localhost:8080/`. The backend
 exposes Spring Boot actuator health on `http://localhost:8080/actuator/health`.
 
@@ -59,13 +76,15 @@ exposes Spring Boot actuator health on `http://localhost:8080/actuator/health`.
 
 The optional Helm chart is app-only. It deploys `mmpay-app` and expects the
 operator to provide PostgreSQL, Redis, and a Kubernetes Secret that contains
-provider credential values. The chart never creates Huifu credentials or MMMail
-license signing material.
+provider credential values. Provision the PostgreSQL `mmpay_app_role` and grant
+it to the configured datasource user before starting the pod, because the app
+sets that role when opening JDBC connections. The chart never creates Huifu
+credentials or MMMail license signing material.
 
 For Huifu sandbox preparation, store these keys in the external Secret instead
-of source files: `HUIFU_SYS_ID`, `HUIFU_PRODUCT_ID`, `HUIFU_RSA_PUBLIC_KEY`,
-`HUIFU_RSA_PRIVATE_KEY`, `HUIFU_SKILL_SOURCE`, `HUIFU_MERCHANT_ID`,
-`HUIFU_NOTIFY_URL`, and `HUIFU_WEBHOOK_ENDPOINT_KEY`.
+of source files: `MMPAY_AUDIT_HMAC_KEY`, `HUIFU_SYS_ID`, `HUIFU_PRODUCT_ID`,
+`HUIFU_RSA_PUBLIC_KEY`, `HUIFU_RSA_PRIVATE_KEY`, `HUIFU_SKILL_SOURCE`,
+`HUIFU_MERCHANT_ID`, `HUIFU_NOTIFY_URL`, and `HUIFU_WEBHOOK_ENDPOINT_KEY`.
 
 Validate the chart structure before using it:
 

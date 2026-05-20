@@ -4,7 +4,6 @@ import com.imgltd.mmpay.setup.BootstrapAdminProperties;
 import com.imgltd.mmpay.setup.MmpayActuatorSanitizer;
 import com.imgltd.mmpay.setup.SetupTokenService;
 import java.security.SecureRandom;
-import java.time.Clock;
 import java.util.UUID;
 import java.util.function.Supplier;
 import org.springframework.boot.actuate.endpoint.SanitizableData;
@@ -39,11 +38,6 @@ public class SetupConfiguration {
   @Bean
   Supplier<String> setupAdminIdSource() {
     return () -> UUID.randomUUID().toString();
-  }
-
-  @Bean
-  Clock setupClock() {
-    return Clock.systemUTC();
   }
 
   @Bean

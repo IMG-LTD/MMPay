@@ -13,7 +13,7 @@ DO $$
 DECLARE
   runtime_user TEXT := COALESCE(current_setting('mmpay.runtime_user', TRUE), 'mmpay');
 BEGIN
-  IF EXISTS (SELECT 1 FROM pg_roles WHERE rolname = runtime_user) THEN
+  IF current_user <> 'mmpay_app_role' AND EXISTS (SELECT 1 FROM pg_roles WHERE rolname = runtime_user) THEN
     EXECUTE format('GRANT mmpay_app_role TO %I', runtime_user);
   END IF;
 END$$;

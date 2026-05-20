@@ -44,11 +44,16 @@ spec:
           env:
             - name: JAVA_TOOL_OPTIONS
               value: {{ .Values.app.javaToolOptions | quote }}
-            - name: MMPAY_DATASOURCE_PASSWORD
+            - name: SPRING_DATASOURCE_PASSWORD
               valueFrom:
                 secretKeyRef:
                   name: {{ required "secrets.existingSecret is required" .Values.secrets.existingSecret }}
                   key: {{ .Values.secrets.keys.datasourcePassword }}
+            - name: MMPAY_AUDIT_HMAC_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ required "secrets.existingSecret is required" .Values.secrets.existingSecret }}
+                  key: {{ .Values.secrets.keys.auditHmacKey }}
             - name: HUIFU_SYS_ID
               valueFrom:
                 secretKeyRef:

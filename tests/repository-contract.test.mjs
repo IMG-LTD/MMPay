@@ -1,6 +1,6 @@
 import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
-import { access, readFile } from 'node:fs/promises';
+import { access, readFile, readdir } from 'node:fs/promises';
 import { constants } from 'node:fs';
 import path from 'node:path';
 
@@ -21,6 +21,17 @@ const requiredBackendModules = [
 
 async function fileExists(relativePath) {
   await access(path.join(root, relativePath), constants.F_OK);
+}
+
+async function listFiles(directory) {
+  const entries = await readdir(directory, { withFileTypes: true });
+  const nestedFiles = await Promise.all(
+    entries.map(entry => {
+      const entryPath = path.join(directory, entry.name);
+      return entry.isDirectory() ? listFiles(entryPath) : [entryPath];
+    }),
+  );
+  return nestedFiles.flat();
 }
 
 describe('MP-1 repository scaffold contract', () => {
@@ -107,6 +118,24 @@ describe('MP-1 repository scaffold contract', () => {
     assert.match(dependabotConfig, /package-ecosystem: "npm"/);
     assert.match(dependabotConfig, /directory: "\/frontend-admin"/);
   });
+
+  it('keeps Flyway migration versions globally unique for the app runtime', async () => {
+    const migrationFiles = (await listFiles(path.join(root, 'backend')))
+      .filter(filePath => filePath.includes(`${path.sep}src${path.sep}main${path.sep}resources${path.sep}db${path.sep}migration${path.sep}`))
+      .filter(filePath => /V\d+__.*\.sql$/.test(path.basename(filePath)));
+    const seenVersions = new Map();
+    const duplicates = [];
+
+    for (const filePath of migrationFiles) {
+      const version = path.basename(filePath).match(/^V(\d+)__/)[1];
+      if (seenVersions.has(version)) {
+        duplicates.push([seenVersions.get(version), filePath].map(file => path.relative(root, file)));
+      }
+      seenVersions.set(version, filePath);
+    }
+
+    assert.deepEqual(duplicates, []);
+  });
 });
 
 describe('MMPay open-source framework contract', () => {
@@ -121,12 +150,32 @@ describe('MMPay open-source framework contract', () => {
       path.join(root, 'backend/mmpay-app/src/main/resources/application.yml'),
       'utf8',
     );
+    const testAppConfig = await readFile(
+      path.join(root, 'backend/mmpay-app/src/test/resources/application.yml'),
+      'utf8',
+    );
+    const paymentConfiguration = await readFile(
+      path.join(root, 'backend/mmpay-app/src/main/java/com/imgltd/mmpay/payment/PaymentConfiguration.java'),
+      'utf8',
+    );
+    const setupConfiguration = await readFile(
+      path.join(root, 'backend/mmpay-app/src/main/java/com/imgltd/mmpay/app/SetupConfiguration.java'),
+      'utf8',
+    );
     const auditHasher = await readFile(
       path.join(root, 'backend/mmpay-app/src/main/java/com/imgltd/mmpay/audit/AuditHasher.java'),
       'utf8',
     );
     const appAudit = await readFile(
       path.join(root, 'backend/mmpay-app/src/main/java/com/imgltd/mmpay/audit/AuditChain.java'),
+      'utf8',
+    );
+    const auditEventStore = await readFile(
+      path.join(root, 'backend/mmpay-app/src/main/java/com/imgltd/mmpay/audit/JdbcAuditEventStore.java'),
+      'utf8',
+    );
+    const auditRoleMigration = await readFile(
+      path.join(root, 'backend/mmpay-app/src/main/resources/db/migration/audit/V201__audit_role_grants.sql'),
       'utf8',
     );
     const resolver = await readFile(
@@ -144,7 +193,12 @@ describe('MMPay open-source framework contract', () => {
     assert.match(appConfig, /spring:\n  application:\n    name: mmpay-app/);
     assert.match(appConfig, /classpath:db\/migration\/iam/);
     assert.match(appConfig, /SET ROLE mmpay_app_role/);
+    assert.match(testAppConfig, /flyway:\n    enabled: false/);
+    assert.match(paymentConfiguration, /Clock mmpayClock\(\)/);
+    assert.doesNotMatch(setupConfiguration, /Clock setupClock\(\)/);
+    assert.match(auditRoleMigration, /current_user <> 'mmpay_app_role'/);
     assert.match(appAudit, /AuditHasher/);
+    assert.match(auditEventStore, /Timestamp\.from\(event\.timestamp\(\)\)/);
     assert.match(auditHasher, /HmacSHA256/);
     assert.match(resolver, /ENV_REFERENCE/);
   });
@@ -221,6 +275,7 @@ describe('MMPay open-source framework contract', () => {
     const appPom = await readFile(path.join(root, 'backend/mmpay-app/pom.xml'), 'utf8');
     const compose = await readFile(path.join(root, 'deploy/docker-compose.yml'), 'utf8');
     const minimalCompose = await readFile(path.join(root, 'deploy/docker-compose.minimal.yml'), 'utf8');
+    const postgresInit = await readFile(path.join(root, 'deploy/postgres/init/001-mmpay-app-role.sql'), 'utf8');
     const installDoc = await readFile(path.join(root, 'docs/ops/install.md'), 'utf8');
 
     assert.match(dockerfile, /FROM maven:3\.9\.9-eclipse-temurin-21 AS backend-build/);
@@ -238,12 +293,34 @@ describe('MMPay open-source framework contract', () => {
     assert.match(dockerignore, /\*\*\/target/);
     assert.match(compose, /"8080:8080"/);
     assert.match(compose, /build:\n      context: \.\./);
+    assert.match(compose, /SPRING_DATASOURCE_URL: jdbc:postgresql:\/\/postgres:5432\/mmpay/);
+    assert.match(compose, /SPRING_DATASOURCE_USERNAME: mmpay/);
+    assert.match(compose, /SPRING_DATASOURCE_PASSWORD: replace-with-local-password/);
+    assert.match(compose, /MMPAY_AUDIT_HMAC_KEY: \$\{MMPAY_AUDIT_HMAC_KEY:\?/);
+    assert.match(compose, /\.\/postgres\/init:\/docker-entrypoint-initdb\.d:ro/);
+    assert.doesNotMatch(compose, /MMPAY_DATASOURCE_URL/);
     assert.match(compose, /replace-with-huifu-merchant-id/);
     assert.match(minimalCompose, /image: mmpay-app:local/);
+    assert.match(minimalCompose, /SPRING_DATASOURCE_URL: jdbc:postgresql:\/\/postgres:5432\/mmpay/);
+    assert.match(minimalCompose, /SPRING_DATASOURCE_USERNAME: mmpay/);
+    assert.match(minimalCompose, /SPRING_DATASOURCE_PASSWORD: replace-with-local-password/);
+    assert.match(minimalCompose, /MMPAY_AUDIT_HMAC_KEY: \$\{MMPAY_AUDIT_HMAC_KEY:\?/);
+    assert.match(minimalCompose, /\.\/postgres\/init:\/docker-entrypoint-initdb\.d:ro/);
+    assert.doesNotMatch(minimalCompose, /MMPAY_DATASOURCE_URL/);
+    assert.match(postgresInit, /CREATE ROLE mmpay_app_role NOLOGIN/);
+    assert.match(postgresInit, /GRANT mmpay_app_role TO mmpay/);
+    assert.match(postgresInit, /GRANT USAGE, CREATE ON SCHEMA public TO mmpay_app_role/);
+    assert.match(installDoc, /MMPAY_AUDIT_HMAC_KEY="\$\(openssl rand -base64 32\)"/);
+    assert.match(installDoc, /mmpay_app_role/);
+    assert.match(installDoc, /down --volumes --remove-orphans/);
     assert.match(installDoc, /docker build -t mmpay-app:local \./);
     assert.match(installDoc, /docker compose -f deploy\/docker-compose\.yml up --build/);
     assert.match(installDoc, /docker compose -f deploy\/docker-compose\.minimal\.yml up/);
     assert.doesNotMatch(installDoc, /not installable yet/);
+    assert.match(appPom, /<groupId>org\.postgresql<\/groupId>\s*<artifactId>postgresql<\/artifactId>/);
+    assert.doesNotMatch(appPom, /<artifactId>postgresql<\/artifactId>\s*<scope>test<\/scope>/);
+    assert.match(appPom, /<groupId>org\.flywaydb<\/groupId>\s*<artifactId>flyway-core<\/artifactId>/);
+    assert.doesNotMatch(appPom, /<artifactId>flyway-core<\/artifactId>\s*<scope>test<\/scope>/);
     assert.match(appPom, /spring-boot-maven-plugin/);
     assert.match(appPom, /<version>\$\{spring\.boot\.version\}<\/version>/);
     assert.match(appPom, /<goal>repackage<\/goal>/);
@@ -264,9 +341,15 @@ describe('MMPay open-source framework contract', () => {
     assert.match(values, /\/actuator\/health\/readiness/);
     assert.match(values, /\/actuator\/health\/liveness/);
     assert.match(deployment, /secretKeyRef:/);
+    assert.match(deployment, /SPRING_DATASOURCE_PASSWORD/);
+    assert.doesNotMatch(deployment, /MMPAY_DATASOURCE_PASSWORD/);
+    assert.match(deployment, /MMPAY_AUDIT_HMAC_KEY/);
     assert.match(deployment, /HUIFU_RSA_PRIVATE_KEY/);
     assert.match(deployment, /HUIFU_WEBHOOK_ENDPOINT_KEY/);
-    assert.match(configMap, /MMPAY_DATASOURCE_URL/);
+    assert.match(configMap, /SPRING_DATASOURCE_URL/);
+    assert.match(configMap, /SPRING_DATASOURCE_USERNAME/);
+    assert.doesNotMatch(configMap, /MMPAY_DATASOURCE_URL/);
+    assert.match(values, /auditHmacKey: "audit-hmac-key"/);
     assert.match(installDoc, /bash scripts\/validate-helm-chart\.sh/);
     assert.doesNotMatch(values, /apiKey: "[^"]+"/);
     assert.doesNotMatch(values, /password: "[^"]+"/);

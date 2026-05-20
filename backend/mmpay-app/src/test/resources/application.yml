@@ -2,6 +2,8 @@ spring:
   datasource:
     hikari:
       connection-init-sql:
+  flyway:
+    enabled: false
 
 management:
   endpoints:

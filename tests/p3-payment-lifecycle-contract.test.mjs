@@ -7,13 +7,13 @@ import path from 'node:path';
 const root = path.resolve(import.meta.dirname, '..');
 
 describe('P3 payment lifecycle contract', () => {
-  it('ships v0.4.0-upgrade-safe payment lifecycle migrations after V103', async () => {
-    const v104 = await read('backend/mmpay-gateway-core/src/main/resources/db/migration/gateway/V104__payment_lifecycle_alter.sql');
-    const v105 = await read('backend/mmpay-gateway-core/src/main/resources/db/migration/gateway/V105__provider_events.sql');
-    const v106 = await read('backend/mmpay-gateway-core/src/main/resources/db/migration/gateway/V106__webhook_integrations.sql');
-    const v107 = await read('backend/mmpay-gateway-core/src/main/resources/db/migration/gateway/V107__delivery_logs.sql');
-    const v108 = await read('backend/mmpay-gateway-core/src/main/resources/db/migration/gateway/V108__reconciliation_runs.sql');
-    const v109 = await read('backend/mmpay-gateway-core/src/main/resources/db/migration/gateway/V109__payment_lifecycle_constraints.sql');
+  it('ships v0.4.0-upgrade-safe payment lifecycle migrations after V123', async () => {
+    const v104 = await read('backend/mmpay-gateway-core/src/main/resources/db/migration/gateway/V124__payment_lifecycle_alter.sql');
+    const v105 = await read('backend/mmpay-gateway-core/src/main/resources/db/migration/gateway/V125__provider_events.sql');
+    const v106 = await read('backend/mmpay-gateway-core/src/main/resources/db/migration/gateway/V126__webhook_integrations.sql');
+    const v107 = await read('backend/mmpay-gateway-core/src/main/resources/db/migration/gateway/V127__delivery_logs.sql');
+    const v108 = await read('backend/mmpay-gateway-core/src/main/resources/db/migration/gateway/V128__reconciliation_runs.sql');
+    const v109 = await read('backend/mmpay-gateway-core/src/main/resources/db/migration/gateway/V129__payment_lifecycle_constraints.sql');
 
     assert.match(v104, /ADD COLUMN IF NOT EXISTS merchant_id VARCHAR\(64\)/);
     assert.match(v104, /version BIGINT NOT NULL DEFAULT 0/);

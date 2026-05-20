@@ -5,7 +5,7 @@ metadata:
   labels:
     {{- include "mmpay.labels" . | nindent 4 }}
 data:
-  MMPAY_DATASOURCE_URL: {{ required "app.datasource.url is required" .Values.app.datasource.url | quote }}
-  MMPAY_DATASOURCE_USERNAME: {{ required "app.datasource.username is required" .Values.app.datasource.username | quote }}
+  SPRING_DATASOURCE_URL: {{ required "app.datasource.url is required" .Values.app.datasource.url | quote }}
+  SPRING_DATASOURCE_USERNAME: {{ required "app.datasource.username is required" .Values.app.datasource.username | quote }}
   MMPAY_REDIS_URL: {{ required "app.redis.url is required" .Values.app.redis.url | quote }}
   SPRING_CLOUD_NACOS_DISCOVERY_ENABLED: {{ .Values.app.nacosDiscoveryEnabled | quote }}
