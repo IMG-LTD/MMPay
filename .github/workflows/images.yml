@@ -77,12 +77,37 @@ jobs:
           sbom: true
 
       - name: Sign images with cosign keyless OIDC
+        id: cosign-sign
         env:
           COSIGN_EXPERIMENTAL: '1'
         run: |
           cosign sign --yes ghcr.io/img-ltd/mmpay-app@${{ steps.build-app.outputs.digest }}
           cosign sign --yes ghcr.io/img-ltd/mmpay-frontend-admin@${{ steps.build-frontend.outputs.digest }}
           cosign sign --yes ghcr.io/img-ltd/mmpay-app-debug-symbols@${{ steps.build-debug.outputs.digest }}
+
+      - name: Resolve cosign signature manifest digests
+        id: sig-digests
+        run: |
+          set -euo pipefail
+          app_sig_tag="$(echo '${{ steps.build-app.outputs.digest }}' | sed 's/sha256:/sha256-/').sig"
+          fe_sig_tag="$(echo '${{ steps.build-frontend.outputs.digest }}' | sed 's/sha256:/sha256-/').sig"
+          dbg_sig_tag="$(echo '${{ steps.build-debug.outputs.digest }}' | sed 's/sha256:/sha256-/').sig"
+          token="$(curl -fsSL -u "${{ github.actor }}:${{ secrets.GITHUB_TOKEN }}" \
+            'https://ghcr.io/token?scope=repository:img-ltd/mmpay-app:pull&service=ghcr.io' \
+            | python3 -c 'import sys,json;print(json.load(sys.stdin)["token"])')"
+          fetch_sig() {
+            local repo="$1" tag="$2"
+            curl -fsSIL -H "Authorization: Bearer $token" \
+              -H 'Accept: application/vnd.oci.image.manifest.v1+json' \
+              "https://ghcr.io/v2/${repo}/manifests/${tag}" \
+              | tr -d '\r' | awk -F': ' 'tolower($1) == "docker-content-digest" { print $2; exit }'
+          }
+          app_sig="$(fetch_sig img-ltd/mmpay-app "$app_sig_tag")"
+          fe_sig="$(fetch_sig img-ltd/mmpay-frontend-admin "$fe_sig_tag")"
+          dbg_sig="$(fetch_sig img-ltd/mmpay-app-debug-symbols "$dbg_sig_tag")"
+          echo "app_sig=$app_sig" >> "$GITHUB_OUTPUT"
+          echo "fe_sig=$fe_sig" >> "$GITHUB_OUTPUT"
+          echo "dbg_sig=$dbg_sig" >> "$GITHUB_OUTPUT"
 
       - name: Generate image-digest evidence draft
         run: |
@@ -96,4 +121,7 @@ jobs:
             echo "mmpay-app: ${{ steps.build-app.outputs.digest }}"
             echo "mmpay-frontend-admin: ${{ steps.build-frontend.outputs.digest }}"
             echo "mmpay-app-debug-symbols: ${{ steps.build-debug.outputs.digest }}"
+            echo "mmpay-app-cosign-signature: ${{ steps.sig-digests.outputs.app_sig }}"
+            echo "mmpay-frontend-admin-cosign-signature: ${{ steps.sig-digests.outputs.fe_sig }}"
+            echo "mmpay-app-debug-symbols-cosign-signature: ${{ steps.sig-digests.outputs.dbg_sig }}"
           } >> "$GITHUB_STEP_SUMMARY"
