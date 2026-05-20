@@ -50,7 +50,7 @@ Source-based local deployment:
 
 ```bash
 export MMPAY_AUDIT_HMAC_KEY="$(openssl rand -base64 32)"
-docker compose -f deploy/docker-compose.yml up --build -d
+docker compose -f deploy/docker-compose.yml up --build --force-recreate -d
 ```
 
 Run the compose smoke when validating a fresh local deployment:
@@ -64,6 +64,10 @@ Do not start the app image with bare `docker run` unless you also provide
 `SPRING_DATASOURCE_PASSWORD`, and `MMPAY_AUDIT_HMAC_KEY`. The Docker image
 intentionally fails before Spring Boot starts when those runtime values are
 missing.
+
+If logs show `Failed to configure a DataSource`, rebuild through Docker Compose
+with `--build --force-recreate`; that message means the app was started without
+the Compose-injected JDBC environment or from an old local image.
 
 Published v1.0.0 images:
 

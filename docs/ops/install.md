@@ -59,20 +59,31 @@ initialization so the app can apply its `SET ROLE mmpay_app_role` connection
 guard before Flyway starts:
 
 ```bash
-docker compose -f deploy/docker-compose.yml up --build
+docker compose -f deploy/docker-compose.yml up --build --force-recreate
 ```
 
-Use the minimal profile when the `mmpay-app:local` image already exists and you
-want the smallest runtime stack:
+Use the minimal profile when you want the smallest runtime stack. It can build
+the same `mmpay-app:local` image and then start only PostgreSQL, Redis, and the
+app:
 
 ```bash
-docker compose -f deploy/docker-compose.minimal.yml up
+docker compose -f deploy/docker-compose.minimal.yml up --build --force-recreate
 ```
 
 Do not use bare `docker run mmpay-app:local` for the quick start. The image
 requires `SPRING_DATASOURCE_URL`, `SPRING_DATASOURCE_USERNAME`,
 `SPRING_DATASOURCE_PASSWORD`, and `MMPAY_AUDIT_HMAC_KEY`; Docker Compose injects
 those values and starts PostgreSQL and Redis on the same network.
+
+If the app logs `Failed to configure a DataSource`, stop the stack and rebuild
+from the checked-out repository. That error means Spring Boot started without
+the Compose-injected datasource environment, usually because an old local image
+or a non-Compose command was used:
+
+```bash
+docker compose -f deploy/docker-compose.minimal.yml down --volumes --remove-orphans
+docker compose -f deploy/docker-compose.minimal.yml up --build --force-recreate
+```
 
 If an older failed local database was created before this bootstrap script was
 mounted, reset only the local Compose data and start again:

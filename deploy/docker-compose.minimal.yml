@@ -16,6 +16,9 @@ services:
       - "${MMPAY_REDIS_PORT:-6379}:6379"
 
   mmpay-app:
+    build:
+      context: ..
+      dockerfile: Dockerfile
     image: mmpay-app:local
     depends_on:
       - postgres

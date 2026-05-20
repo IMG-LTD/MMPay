@@ -332,8 +332,12 @@ describe('MMPay open-source framework contract', () => {
     assert.match(installDoc, /scripts\/smoke-docker-compose\.sh/);
     assert.match(installDoc, /Do not use bare `docker run mmpay-app:local`/);
     assert.match(smokeScript, /MMPAY_SMOKE_HTTP_PORT:-18080/);
+    assert.match(smokeScript, /docker-compose\.minimal\.yml/);
+    assert.match(smokeScript, /docker run --rm mmpay-app:local/);
+    assert.match(smokeScript, /startup configuration error/);
     assert.match(smokeScript, /SPRING_DATASOURCE_URL=jdbc:postgresql:\/\/postgres:5432\/mmpay/);
     assert.match(smokeScript, /Failed to determine a suitable driver class/);
+    assert.match(smokeScript, /bare image startup unexpectedly reached Spring datasource auto-configuration/);
     assert.doesNotMatch(installDoc, /not installable yet/);
     assert.match(appPom, /<groupId>org\.postgresql<\/groupId>\s*<artifactId>postgresql<\/artifactId>/);
     assert.doesNotMatch(appPom, /<artifactId>postgresql<\/artifactId>\s*<scope>test<\/scope>/);
