@@ -1,9 +1,9 @@
 operator_keys:
-  - fingerprint: SHA256:operator-public-key-required-before-ga
+  - fingerprint: A6C8440257C31B12658DB7B2E9628EEE0AB308B9
     key_id: operator-restore-attestation
     role: restore-attestation
     valid_from: 2026-05-19
-    valid_to: 2027-05-19
+    valid_to: 2028-05-19
     public_key_path: governance/operator-public-keys/operator-restore-attestation.asc
-    evidence_key_fingerprint: SHA256:evidence-signing-key-required-before-ga
+    evidence_key_fingerprint: 1c177d4a58732b7a7e8c05dda3c4b7c626c4fc4fa90b76d245285583b352b41b
     evidence_public_key_path: governance/operator-public-keys/evidence-ed25519-public.pem

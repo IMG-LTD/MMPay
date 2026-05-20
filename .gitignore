@@ -9,6 +9,7 @@ coverage/
 !.env.example
 secrets/
 *.pem
+!governance/operator-public-keys/*.pem
 *.key
 *.p12
 *.jks
@@ -17,3 +18,4 @@ secrets/
 docs/security/private-key.asc
 docs/security/revocation-certificate.asc
 docs/l1/
+drill-out/
