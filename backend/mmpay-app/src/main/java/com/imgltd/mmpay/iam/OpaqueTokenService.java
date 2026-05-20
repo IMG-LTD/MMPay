@@ -16,6 +16,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 @Service
 public class OpaqueTokenService {
+  static final String ADMIN_CONSOLE_CLIENT_ID = "admin-console";
   private static final Duration HUMAN_ACCESS_TOKEN_TTL = Duration.ofMinutes(30);
   private static final Duration REFRESH_TOKEN_TTL = Duration.ofDays(7);
   private static final Duration SERVICE_TOKEN_TTL = Duration.ofHours(1);
@@ -39,6 +40,29 @@ public class OpaqueTokenService {
       case "refresh_token" -> refresh(client, form);
       default -> throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "unsupported_grant_type");
     };
+  }
+
+  public TokenResponse loginAdminConsole(String username, String password) {
+    if (username == null || username.isBlank() || password == null || password.isBlank()) {
+      throw invalidGrant();
+    }
+    var user = repository.findUser(username).orElseThrow(this::invalidGrant);
+    if (!"user".equals(user.kind()) || !passwordEncoder.matches(password, user.passwordHash())) {
+      throw invalidGrant();
+    }
+    return issueAdminConsoleTokens(user.username(), user.role());
+  }
+
+  public TokenResponse refreshAdminConsole(String refreshToken) {
+    if (refreshToken == null || refreshToken.isBlank()) {
+      throw invalidGrant();
+    }
+    var token = repository.findRefreshToken(refreshToken, Instant.now(clock)).orElseThrow(this::invalidGrant);
+    if (!ADMIN_CONSOLE_CLIENT_ID.equals(token.registeredClientId())) {
+      throw invalidGrant();
+    }
+    repository.consumeRefreshToken(token.refreshToken());
+    return issueAdminConsoleTokens(token.principalName(), token.role());
   }
 
   public Optional<ServicePrincipalAuthentication> authenticate(String accessToken) {
@@ -94,6 +118,28 @@ public class OpaqueTokenService {
         new TokenRecord(
             UUID.randomUUID().toString(),
             client.id(),
+            principalName,
+            "password",
+            scopes,
+            accessToken,
+            now,
+            now.plus(HUMAN_ACCESS_TOKEN_TTL),
+            refreshToken,
+            now,
+            now.plus(REFRESH_TOKEN_TTL)));
+    return new TokenResponse(accessToken, "Bearer", HUMAN_ACCESS_TOKEN_TTL.toSeconds(), String.join(" ", scopes), refreshToken);
+  }
+
+  private TokenResponse issueAdminConsoleTokens(String principalName, String role) {
+    IamRole.requireUserRole(role);
+    var now = Instant.now(clock);
+    var scopes = Set.of("role:" + role);
+    var accessToken = randomSecret();
+    var refreshToken = randomSecret();
+    repository.saveAuthorization(
+        new TokenRecord(
+            UUID.randomUUID().toString(),
+            ADMIN_CONSOLE_CLIENT_ID,
             principalName,
             "password",
             scopes,

@@ -45,7 +45,6 @@ export const generatedRoutes: GeneratedRoute[] = [
     meta: {
       title: 'home',
       i18nKey: 'route.home',
-      constant: true,
       icon: 'mdi:monitor-dashboard',
       order: 1
     }
@@ -57,7 +56,6 @@ export const generatedRoutes: GeneratedRoute[] = [
     meta: {
       title: 'merchants',
       i18nKey: 'route.merchants',
-      constant: true,
       icon: 'mdi:store-cog',
       order: 2
     }
@@ -70,8 +68,8 @@ export const generatedRoutes: GeneratedRoute[] = [
     meta: {
       title: 'merchant-detail',
       i18nKey: 'route.merchant-detail',
-      constant: true,
-      hideInMenu: true
+      hideInMenu: true,
+      activeMenu: 'merchants'
     }
   },
   {
@@ -82,8 +80,8 @@ export const generatedRoutes: GeneratedRoute[] = [
     meta: {
       title: 'merchant-channel-new',
       i18nKey: 'route.merchant-channel-new',
-      constant: true,
       hideInMenu: true,
+      activeMenu: 'merchants',
       roles: ['ADMIN', 'admin', 'R_ADMIN']
     }
   },
@@ -95,8 +93,8 @@ export const generatedRoutes: GeneratedRoute[] = [
     meta: {
       title: 'channel-detail',
       i18nKey: 'route.channel-detail',
-      constant: true,
-      hideInMenu: true
+      hideInMenu: true,
+      activeMenu: 'merchants'
     }
   },
   {
@@ -106,7 +104,6 @@ export const generatedRoutes: GeneratedRoute[] = [
     meta: {
       title: 'payments',
       i18nKey: 'route.payments',
-      constant: true,
       icon: 'mdi:credit-card-outline',
       order: 3
     }
@@ -119,8 +116,8 @@ export const generatedRoutes: GeneratedRoute[] = [
     meta: {
       title: 'payment-detail',
       i18nKey: 'route.payment-detail',
-      constant: true,
-      hideInMenu: true
+      hideInMenu: true,
+      activeMenu: 'payments'
     }
   },
   {
@@ -130,7 +127,6 @@ export const generatedRoutes: GeneratedRoute[] = [
     meta: {
       title: 'refunds',
       i18nKey: 'route.refunds',
-      constant: true,
       icon: 'mdi:cash-refund',
       order: 4
     }
@@ -143,8 +139,8 @@ export const generatedRoutes: GeneratedRoute[] = [
     meta: {
       title: 'refund-detail',
       i18nKey: 'route.refund-detail',
-      constant: true,
-      hideInMenu: true
+      hideInMenu: true,
+      activeMenu: 'refunds'
     }
   },
   {
@@ -154,8 +150,8 @@ export const generatedRoutes: GeneratedRoute[] = [
     meta: {
       title: 'refund-new',
       i18nKey: 'route.refund-new',
-      constant: true,
-      hideInMenu: true
+      hideInMenu: true,
+      activeMenu: 'refunds'
     }
   },
   {
@@ -165,7 +161,6 @@ export const generatedRoutes: GeneratedRoute[] = [
     meta: {
       title: 'reconciliation',
       i18nKey: 'route.reconciliation',
-      constant: true,
       icon: 'mdi:clipboard-check-outline',
       order: 5
     }
@@ -178,8 +173,8 @@ export const generatedRoutes: GeneratedRoute[] = [
     meta: {
       title: 'reconciliation-detail',
       i18nKey: 'route.reconciliation-detail',
-      constant: true,
-      hideInMenu: true
+      hideInMenu: true,
+      activeMenu: 'reconciliation'
     }
   },
   {
@@ -189,7 +184,6 @@ export const generatedRoutes: GeneratedRoute[] = [
     meta: {
       title: 'webhook-out',
       i18nKey: 'route.webhook-out',
-      constant: true,
       icon: 'mdi:webhook',
       order: 6
     }
@@ -202,8 +196,8 @@ export const generatedRoutes: GeneratedRoute[] = [
     meta: {
       title: 'webhook-out-delivery-log-detail',
       i18nKey: 'route.webhook-out-delivery-log-detail',
-      constant: true,
-      hideInMenu: true
+      hideInMenu: true,
+      activeMenu: 'webhook-out'
     }
   },
   {
@@ -213,7 +207,6 @@ export const generatedRoutes: GeneratedRoute[] = [
     meta: {
       title: 'integrations',
       i18nKey: 'route.integrations',
-      constant: true,
       icon: 'mdi:connection',
       order: 7
     }
@@ -226,8 +219,8 @@ export const generatedRoutes: GeneratedRoute[] = [
     meta: {
       title: 'integration-detail',
       i18nKey: 'route.integration-detail',
-      constant: true,
-      hideInMenu: true
+      hideInMenu: true,
+      activeMenu: 'integrations'
     }
   },
   {
