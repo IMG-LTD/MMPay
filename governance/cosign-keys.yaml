@@ -1,7 +1,8 @@
 keys:
-  - fingerprint: SHA256:github-actions-oidc
+  - fingerprint: SHA256:github-actions-oidc-img-ltd-mmpay-images
     role: image-attestation
     issuer: https://token.actions.githubusercontent.com
     workflow: .github/workflows/images.yml
+    subject: https://github.com/IMG-LTD/MMPay/.github/workflows/images.yml@refs/tags/v1.0.0
     valid_from: 2026-05-19
     valid_to: 2027-05-19

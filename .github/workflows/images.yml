@@ -9,16 +9,26 @@ on:
 permissions:
   contents: read
   packages: write
+  id-token: write
 
 jobs:
-  mmpay-app:
+  images:
     runs-on: ubuntu-latest
+    outputs:
+      mmpay_app_digest: ${{ steps.build-app.outputs.digest }}
+      mmpay_frontend_admin_digest: ${{ steps.build-frontend.outputs.digest }}
+      mmpay_app_debug_symbols_digest: ${{ steps.build-debug.outputs.digest }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
+
+      - name: Install cosign
+        uses: sigstore/cosign-installer@v3
+        with:
+          cosign-release: v2.4.1
 
       - name: Log in to GHCR
         uses: docker/login-action@v3
@@ -27,7 +37,8 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Build and publish mmpay-app
+      - name: Build and push mmpay-app
+        id: build-app
         uses: docker/build-push-action@v6
         with:
           context: .
@@ -36,3 +47,53 @@ jobs:
           tags: |
             ghcr.io/img-ltd/mmpay-app:${{ github.ref_name }}
             ghcr.io/img-ltd/mmpay-app:${{ github.sha }}
+          provenance: true
+          sbom: true
+
+      - name: Build and push mmpay-frontend-admin
+        id: build-frontend
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: deploy/frontend-admin.Dockerfile
+          push: true
+          tags: |
+            ghcr.io/img-ltd/mmpay-frontend-admin:${{ github.ref_name }}
+            ghcr.io/img-ltd/mmpay-frontend-admin:${{ github.sha }}
+          provenance: true
+          sbom: true
+
+      - name: Build and push mmpay-app-debug-symbols
+        id: build-debug
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: deploy/debug-symbols.Dockerfile
+          push: true
+          tags: |
+            ghcr.io/img-ltd/mmpay-app-debug-symbols:${{ github.ref_name }}
+            ghcr.io/img-ltd/mmpay-app-debug-symbols:${{ github.sha }}
+          provenance: true
+          sbom: true
+
+      - name: Sign images with cosign keyless OIDC
+        env:
+          COSIGN_EXPERIMENTAL: '1'
+        run: |
+          cosign sign --yes ghcr.io/img-ltd/mmpay-app@${{ steps.build-app.outputs.digest }}
+          cosign sign --yes ghcr.io/img-ltd/mmpay-frontend-admin@${{ steps.build-frontend.outputs.digest }}
+          cosign sign --yes ghcr.io/img-ltd/mmpay-app-debug-symbols@${{ steps.build-debug.outputs.digest }}
+
+      - name: Generate image-digest evidence draft
+        run: |
+          {
+            echo "## MMPay v1 image digest evidence"
+            echo ""
+            echo "tag: ${{ github.ref_name }}"
+            echo "commit_sha: ${{ github.sha }}"
+            echo "workflow_run_url: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+            echo "registry_host: ghcr.io"
+            echo "mmpay-app: ${{ steps.build-app.outputs.digest }}"
+            echo "mmpay-frontend-admin: ${{ steps.build-frontend.outputs.digest }}"
+            echo "mmpay-app-debug-symbols: ${{ steps.build-debug.outputs.digest }}"
+          } >> "$GITHUB_STEP_SUMMARY"

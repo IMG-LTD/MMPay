@@ -1,4 +1,6 @@
 registries:
   - host: ghcr.io
-    spki_sha256: SHA256:external-registry-pin-required-before-ga
+    spki_sha256: SHA256:I6K5s+LstRL/SzSqCNYn+CBURXi0uge/Be/C9c3hGO4=
     rotation_window_days: 30
+    captured_at: 2026-05-20
+    captured_by: imgltd-release

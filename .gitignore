@@ -16,3 +16,4 @@ secrets/
 .tmp/
 docs/security/private-key.asc
 docs/security/revocation-certificate.asc
+docs/l1/
