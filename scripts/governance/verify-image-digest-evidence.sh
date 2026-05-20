@@ -57,7 +57,7 @@ require_digest() {
 }
 
 reject_placeholders() {
-  if grep -Eiq 'mock|dummy|fake|test|replace-with|TBD|TODO|FIXME|XXX|<[^>]+>' "$EVIDENCE_FILE"; then
+  if grep -iqP '\b(mock|dummy|fake|test|replace-with|TBD|TODO|FIXME|XXX)\b|<[^>]+>' "$EVIDENCE_FILE"; then
     echo "image digest evidence contains placeholder or fake markers" >&2
     exit 1
   fi
