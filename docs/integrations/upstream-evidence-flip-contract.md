@@ -1,11 +1,11 @@
 # Upstream Evidence Flip Contract
 
 This contract defines what an upstream consumer verifies after MMPay
-v1.0.0 GA. The upstream repository pins the MMPay GA commit SHA in
+v1.0.0 GA. The upstream repository pins the MMPay GA evidence commit SHA in
 `governance/mmpay-binding.yaml` and fetches evidence files through:
 
 ```text
-gh api repos/IMG-LTD/MMPay/contents/<path>?ref=<MMPay v1.0.0 GA SHA>
+gh api repos/IMG-LTD/MMPay/contents/<path>?ref=<MMPay v1.0.0 GA evidence SHA>
 ```
 
 The upstream verifier re-validates fetched content and does not trust the
@@ -15,7 +15,7 @@ fetch alone.
 
 1. `docs/release/v1.0.0-image-digest-evidence.md` exists at the pinned
    SHA with `Evidence status: completed-external-evidence` and
-   `Tag: v1.0.0`.
+   `tag: v1.0.0`.
 2. `docs/release/v1.0.0-e2e-evidence.md` exists at the pinned SHA with
    `Provider environment: sandbox-with-real-money` or
    `Provider environment: live`.

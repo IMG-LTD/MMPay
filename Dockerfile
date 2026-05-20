@@ -33,7 +33,7 @@ WORKDIR /app
 
 RUN groupadd --system mmpay && useradd --system --gid mmpay --home-dir /app mmpay
 
-COPY --from=backend-build /workspace/backend/mmpay-app/target/mmpay-app-0.1.0-SNAPSHOT.jar /app/mmpay-app.jar
+COPY --from=backend-build /workspace/backend/mmpay-app/target/mmpay-app-1.0.0.jar /app/mmpay-app.jar
 
 EXPOSE 8080
 USER mmpay

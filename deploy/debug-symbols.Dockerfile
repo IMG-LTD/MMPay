@@ -23,7 +23,7 @@ WORKDIR /symbols
 RUN groupadd --system mmpay && useradd --system --gid mmpay --home-dir /symbols mmpay \
     && mkdir -p /symbols/sources
 
-COPY --from=build /workspace/backend/mmpay-app/target/mmpay-app-0.1.0-SNAPSHOT.jar /symbols/mmpay-app.jar
+COPY --from=build /workspace/backend/mmpay-app/target/mmpay-app-1.0.0.jar /symbols/mmpay-app.jar
 COPY --from=build /workspace/backend /symbols/source-tree
 
 RUN find /symbols/source-tree -type d -name target -prune -exec rm -rf {} + 2>/dev/null || true

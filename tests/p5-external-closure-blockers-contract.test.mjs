@@ -15,7 +15,7 @@ function exists(path) {
 }
 
 describe('P5 external closure blockers contract', () => {
-  it('documents every external artifact that blocks v1.0.0 GA', async () => {
+  it('documents every external artifact that closes v1.0.0 GA evidence', async () => {
     const blockers = await read('docs/release/external-closure-blockers.md');
 
     for (const required of [
@@ -30,12 +30,16 @@ describe('P5 external closure blockers contract', () => {
     }
 
     for (const status of [
-      'blocked-external',
-      'release-gate-blocking',
+      'completed-external-evidence',
+      'verified-by-ga-release-gate',
+      'pending-upstream',
       'upstream-flip-blocking'
     ]) {
       assert.match(blockers, new RegExp(status));
     }
+
+    assert.doesNotMatch(blockers, /blocked-external/);
+    assert.doesNotMatch(blockers, /release-gate-blocking/);
   });
 
   it('keeps the blocker register wired into local validation', async () => {

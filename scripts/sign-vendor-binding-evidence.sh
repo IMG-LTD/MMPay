@@ -17,6 +17,9 @@ Environment overrides for evidence file paths:
   MMPAY_IMAGE_DIGEST_EVIDENCE_FILE  default docs/release/v1.0.0-image-digest-evidence.md
   MMPAY_E2E_EVIDENCE_FILE           default docs/release/v1.0.0-e2e-evidence.md
   MMPAY_DRILL_EVIDENCE_FILE         default docs/release/backup-restore-drill-evidence.md
+  MMPAY_VENDOR_BINDING_COMMIT_SHA   default current git HEAD
+  MMPAY_VENDOR_BINDING_TAG          default exact git tag on HEAD, otherwise v1.0.0
+  MMPAY_VENDOR_BINDING_SIGNED_AT    default current UTC timestamp
 
 The supplied fingerprint must match the binding-sign vendor key pinned in
 governance/vendor-keys.yaml. The signing key must be available to the gpg
@@ -48,11 +51,14 @@ done
 img_sha=$(sha256sum "$IMG_FILE" | awk '{print $1}')
 e2e_sha=$(sha256sum "$E2E_FILE" | awk '{print $1}')
 drill_sha=$(sha256sum "$DRILL_FILE" | awk '{print $1}')
-commit_sha=$(git -C "$ROOT_DIR" rev-parse HEAD)
-signed_at=$(date -u +%Y-%m-%dT%H:%M:%SZ)
-tag="v1.0.0-rc.3"
-if git -C "$ROOT_DIR" describe --tags --exact-match HEAD >/dev/null 2>&1; then
-  tag=$(git -C "$ROOT_DIR" describe --tags --exact-match HEAD)
+commit_sha="${MMPAY_VENDOR_BINDING_COMMIT_SHA:-$(git -C "$ROOT_DIR" rev-parse HEAD)}"
+signed_at="${MMPAY_VENDOR_BINDING_SIGNED_AT:-$(date -u +%Y-%m-%dT%H:%M:%SZ)}"
+tag="${MMPAY_VENDOR_BINDING_TAG:-}"
+if [[ -z "$tag" ]]; then
+  tag="v1.0.0"
+  if git -C "$ROOT_DIR" describe --tags --exact-match HEAD >/dev/null 2>&1; then
+    tag=$(git -C "$ROOT_DIR" describe --tags --exact-match HEAD)
+  fi
 fi
 
 WORKDIR="$(mktemp -d)"

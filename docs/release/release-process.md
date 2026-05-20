@@ -23,6 +23,8 @@ references, and actuator probes without embedding provider credentials.
 The `MMPay Release` workflow runs `bash scripts/release-gate.sh` before it
 creates a GitHub Release. It only publishes an existing `v*` tag and uses
 `gh release create --verify-tag`, so a missing or mistyped tag fails explicitly.
+Release notes are loaded from `docs/release/<tag>-release-notes.md`; a missing
+notes file is a hard workflow failure.
 
 ## Image publishing
 
@@ -31,6 +33,10 @@ The `MMPay Images` workflow builds the root `Dockerfile` and publishes:
 ```text
 ghcr.io/img-ltd/mmpay-app:<git-ref>
 ghcr.io/img-ltd/mmpay-app:<commit-sha>
+ghcr.io/img-ltd/mmpay-frontend-admin:<git-ref>
+ghcr.io/img-ltd/mmpay-frontend-admin:<commit-sha>
+ghcr.io/img-ltd/mmpay-app-debug-symbols:<git-ref>
+ghcr.io/img-ltd/mmpay-app-debug-symbols:<commit-sha>
 ```
 
 Tags are only evidence after the remote workflow has completed successfully and
@@ -47,12 +53,13 @@ secret scan when dependency manifests or dependency workflows change.
 ## External release boundary
 
 Huifu sandbox credentials, provider private keys, and license signing keys stay
-outside this repository. A release cannot be called end-to-end complete until the
-external sandbox run and redacted evidence package exist.
+outside this repository. A release cannot be called end-to-end complete until
+the external sandbox run and redacted evidence package exist.
 
-The current blocking items are tracked in
-`docs/release/external-closure-blockers.md`. They must remain blocked until real
-Huifu, MMMail, and vendor-issued license relay evidence exists.
+The v1.0.0 evidence status is tracked in
+`docs/release/external-closure-blockers.md`. Future release evidence items must
+remain incomplete until real Huifu, MMMail, registry, operator, and
+vendor-issued license relay evidence exists.
 
 Use `docs/release/e2e-evidence-template.md` for the redacted MP-8 evidence file.
 After a real sandbox or live run, render the evidence from explicit external

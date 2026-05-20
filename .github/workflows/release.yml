@@ -58,7 +58,12 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           RELEASE_TAG: ${{ steps.release-tag.outputs.tag }}
         run: |
+          NOTES_FILE="docs/release/${RELEASE_TAG}-release-notes.md"
+          if [[ ! -f "$NOTES_FILE" ]]; then
+            echo "missing release notes file: $NOTES_FILE" >&2
+            exit 1
+          fi
           gh release create "${RELEASE_TAG}" \
             --verify-tag \
             --title "MMPay ${RELEASE_TAG}" \
-            --notes "MMPay release ${RELEASE_TAG}. External Huifu sandbox evidence remains separate and must be attached before any end-to-end completion claim."
+            --notes-file "$NOTES_FILE"

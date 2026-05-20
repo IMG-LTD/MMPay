@@ -1,109 +1,104 @@
 # MMPay
 
-MMPay is an independent payment gateway project for self-hosted products. Its
-first integration target is MMMail, but the gateway is not part of the MMMail
-source tree and must remain in its own repository.
+MMPay is an independent payment gateway for self-hosted products. Its first
+supported integration target is MMMail, but MMPay is released, validated, and
+deployed from this standalone repository.
 
-## Status
+## Release Status
 
-`v0.8.4` is a P5 release-governance hardening patch. It keeps MMPay as an
-independent payment gateway, ships the real Soybean Admin frontend as the
-product admin console, keeps the runtime audit-chain segment restart verifier
-on `/api/admin/audit/verify`, and pins the vendor binding PGP public key while
-keeping private and revocation material out of Git.
-Live provider execution still defaults to an explicit disabled response until a
-real provider endpoint and external MP-8 evidence are captured.
+`v1.0.0` is the first GA release. The GitHub Release is published at
+`https://github.com/IMG-LTD/MMPay/releases/tag/v1.0.0`, and the `MMPay Images`
+workflow for tag `v1.0.0` completed successfully on commit
+`ac19a23b4b297cf8bf83ccf5ba749ad78cc3aa22`.
 
-This repository has the MP-0 through MP-7 scaffold in place:
+The GA scope includes:
 
-- Backend foundation: Pig backend migration is tracked against upstream
-  `log4j/pig` commit `28ef625701ebe047984661a61589330b9360d43e`. The current
-  runtime remains the MMPay Spring Boot payment app, with Pig-aligned security,
-  IAM, setup, audit, and gateway module boundaries wired through tests.
-- Payment domain: payment intent creation/list/detail/cancel, transaction
-  recording from verified callbacks, refund bounds, reconciliation ack, and
-  Flyway migration contracts.
-- Provider adapter: Huifu reconciliation mapping plus signed create, query, and
-  refund request preparation. Live provider execution remains unavailable until
-  a real endpoint is wired and evidenced.
-- Outbound webhook: MMMail-compatible HMAC signature contract.
-- License boundary: relay-only delivery; no license signing module exists here.
-- Merchant/channel admin: P2 now has real admin APIs and Soybean Admin pages for
-  merchant creation, list/detail, update, soft archive, channel creation/detail,
-  channel update/archive, role checks, idempotency replay, credential environment
-  references, credential bind/unbind, explicit binding verification, and audit
-  emission.
-- Payment lifecycle admin: P3 adds Soybean Admin pages for payment-intent
-  creation, payment detail/cancel, refund creation/detail, reconciliation
-  acknowledgement, webhook-out integration creation, delivery-log detail, single
-  redispatch, and guarded bulk redispatch. All pages use Naive UI components.
-- Release closure: P5 adds RC/GA release gates, image digest evidence templates,
-  external evidence validators, vendor/operator governance records, degraded
-  startup blocking for payment mutation surfaces, and runtime audit-chain
-  segment recovery verification.
-- Admin surface: `frontend-admin` is rebased on the real soybean-admin upstream
-  commit `eba49504280a2866de3a61c65c3401e1453771ce`, including Soybean layout,
-  router, store, package workspace, UnoCSS and Naive UI integration. The home,
-  merchant, and channel pages are adapted to MMPay and use Naive UI components.
-- Deployment: Docker Compose and an app-only Helm chart exist for the runnable
-  baseline. The Docker image bundles the Spring Boot API and built
-  `frontend-admin` static assets, so `/` serves the admin UI while `/api/*` and
-  `/actuator/*` stay on the backend. The Helm chart expects external
-  PostgreSQL, Redis, and Kubernetes Secret references; it does not create
-  provider credentials.
+- Backend foundation for setup, RBAC, audit chain, IAM boundaries, and degraded
+  startup blocking for payment mutation surfaces.
+- Payment lifecycle APIs for payment intents, provider callbacks, refunds,
+  reconciliation acknowledgement, outbound webhook integrations, delivery logs,
+  redispatch, and guarded bulk redispatch.
+- Huifu adapter request preparation, reconciliation mapping, callback signature
+  verification, and redacted sandbox evidence for the v1.0.0 external run.
+- Merchant, channel, credential reference, credential binding, and binding
+  verification admin workflows.
+- License relay delivery only. MMPay does not issue, generate, or sign MMMail
+  licenses.
+- Soybean Admin based `frontend-admin` console with MMPay pages for operators.
+- Docker Compose, app-only Helm chart, image digest evidence, backup/restore
+  drill evidence, vendor binding evidence, and v1 tag ruleset evidence.
 
-Pig alignment for this phase is documented in
-`docs/architecture/pig-backend-alignment.md`. Public documents must describe the
-backend state as Pig-aligned or Pig migration in progress, not fully migrated,
-until Pig auth, gateway and upms become the active runtime.
+Pig backend alignment remains documented in
+`docs/architecture/pig-backend-alignment.md`. Public documents should describe
+the runtime as Pig-aligned or Pig migration in progress until Pig auth, gateway,
+and upms become the active runtime.
 
 ## Security Boundary
 
-- Merchant credentials, provider private keys, customer secrets, and license
-  signing private keys must never be committed.
-- MMPay emits payment facts. It does not issue, self-sign, or generate MMMail
-  licenses.
-- License issuance remains an IMG-LTD vendor-controlled process outside this
-  repository.
+- Merchant credentials, provider private keys, customer secrets, webhook
+  secrets, and license signing private keys must never be committed.
+- Runtime credentials must come from environment variables, secret files,
+  Kubernetes Secrets, or an external secret manager.
+- MMPay emits payment facts and relays license claims as opaque bytes. License
+  issuance remains an IMG-LTD vendor-controlled process outside this repository.
+- Provider and license failures must remain explicit. The repository must not
+  introduce mock paid states, fake provider success paths, or silent fallbacks.
 
-## Docker Deployment
+## Deployment
 
-For a source-based server deployment, clone this repository and run:
+Source-based local deployment:
 
 ```bash
 docker compose -f deploy/docker-compose.yml up --build -d
 ```
 
-For a prebuilt-image deployment after the `MMPay Images` workflow publishes
-`v0.8.4`, use:
+Published v1.0.0 images:
 
 ```text
-ghcr.io/img-ltd/mmpay-app:v0.8.4
+ghcr.io/img-ltd/mmpay-app:v1.0.0
+ghcr.io/img-ltd/mmpay-frontend-admin:v1.0.0
+ghcr.io/img-ltd/mmpay-app-debug-symbols:v1.0.0
 ```
 
-Runtime credentials must be injected through environment variables, secret
-files, or the Helm chart's external Kubernetes Secret references. Do not place
-Huifu merchant credentials, RSA private keys, webhook secrets, or license
-signing material in this repository.
+The root Docker image bundles the Spring Boot API and built `frontend-admin`
+static assets. `/` serves the admin UI, while `/api/*` and `/actuator/*` remain
+backend routes.
 
-The backend health endpoint is:
+Health check:
 
 ```bash
 curl -fsS http://localhost:8080/actuator/health
 ```
 
-The bundled admin UI is served from:
+Admin UI:
 
 ```text
 http://localhost:8080/
 ```
 
 For Huifu sandbox callbacks, configure `HUIFU_NOTIFY_URL` to a public HTTPS URL
-that reaches the deployed MMPay callback endpoint. A localhost URL cannot
-receive provider callbacks from Huifu.
+that reaches the deployed MMPay callback endpoint. Localhost callback URLs
+cannot receive provider callbacks from Huifu.
 
-## Local Validation
+## Validation And Evidence
+
+Local validation:
 
 ```bash
 bash scripts/validate-local.sh
 ```
+
+GA release gate:
+
+```bash
+bash scripts/release-gate.sh --ga
+```
+
+Release evidence:
+
+- `docs/release/v1.0.0-release-notes.md`
+- `docs/release/v1.0.0-image-digest-evidence.md`
+- `docs/release/v1.0.0-e2e-evidence.md`
+- `docs/release/backup-restore-drill-evidence.md`
+- `docs/release/vendor-binding/v1.0.0-BINDING_OK.asc`
+- `docs/release/v1.0.0-v1-tag-ruleset-evidence.md`
