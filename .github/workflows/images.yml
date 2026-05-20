@@ -39,7 +39,7 @@ jobs:
 
       - name: Build and push mmpay-app
         id: build-app
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: .
           file: Dockerfile
@@ -52,7 +52,7 @@ jobs:
 
       - name: Build and push mmpay-frontend-admin
         id: build-frontend
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: .
           file: deploy/frontend-admin.Dockerfile
@@ -65,7 +65,7 @@ jobs:
 
       - name: Build and push mmpay-app-debug-symbols
         id: build-debug
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: .
           file: deploy/debug-symbols.Dockerfile
