@@ -41,7 +41,7 @@ async function submitMerchant() {
 }
 
 function isAdminRole(role: string) {
-  return ['ADMIN', 'admin', 'R_ADMIN'].includes(role);
+  return role === 'ADMIN';
 }
 
 onMounted(loadMerchants);
@@ -68,7 +68,7 @@ onMounted(loadMerchants);
           <NSpin :show="loading">
             <NEmpty v-if="!merchants.length" :description="isAdmin ? '创建你的第一个商户' : '暂无商户，请联系管理员'">
               <template v-if="isAdmin" #extra>
-                <NTag type="info" :bordered="false">page.merchants.empty.cta</NTag>
+                <NTag type="info" :bordered="false">使用右上角"新建商户"按钮开始</NTag>
               </template>
             </NEmpty>
             <NTable v-else :bordered="false" :single-line="false" size="small">

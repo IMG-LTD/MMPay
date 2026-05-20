@@ -11,7 +11,7 @@ const submitting = ref(false);
 const errorMessage = ref('');
 const form = reactive({ id: '', display_name: '', provider_code: 'huifu', credential_ref: '' });
 const merchantId = computed(() => String(route.params.id));
-const isAdmin = computed(() => authStore.isStaticSuper || authStore.userInfo.roles.some(role => ['ADMIN', 'admin', 'R_ADMIN'].includes(role)));
+const isAdmin = computed(() => authStore.isStaticSuper || authStore.userInfo.roles.includes('ADMIN'));
 
 async function submitChannel() {
   submitting.value = true;

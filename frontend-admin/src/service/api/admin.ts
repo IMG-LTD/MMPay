@@ -1,3 +1,4 @@
+import { localStg } from '@/utils/storage';
 import { getToken } from '@/store/modules/auth/shared';
 
 export interface AdminPage<T> {
@@ -308,8 +309,22 @@ export function redispatchLicenseRelayLog(id: string | number) {
   return adminFetch<LicenseRelayLog>(`/api/admin/license-relay/logs/${id}/redispatch`, { method: 'POST' });
 }
 
-async function adminFetch<T>(url: string, init: RequestInit = {}) {
+async function adminFetch<T>(url: string, init: RequestInit = {}): Promise<T> {
   const response = await fetch(url, { ...init, headers: headers(init.headers) });
+  if (response.status === 401) {
+    const refreshed = await refreshTokenOnce();
+    if (refreshed) {
+      const retry = await fetch(url, { ...init, headers: headers(init.headers) });
+      if (!retry.ok) {
+        if (retry.status === 401) handleAuthExpired();
+        throw await problem(retry);
+      }
+      if (retry.status === 204) return undefined as T;
+      return (await retry.json()) as T;
+    }
+    handleAuthExpired();
+    throw await problem(response);
+  }
   if (!response.ok) {
     throw await problem(response);
   }
@@ -317,6 +332,44 @@ async function adminFetch<T>(url: string, init: RequestInit = {}) {
     return undefined as T;
   }
   return (await response.json()) as T;
+}
+
+let refreshInflight: Promise<boolean> | null = null;
+
+function refreshTokenOnce(): Promise<boolean> {
+  if (refreshInflight) return refreshInflight;
+  refreshInflight = (async () => {
+    const refreshToken = localStg.get('refreshToken');
+    if (!refreshToken) return false;
+    try {
+      const res = await fetch('/auth/refreshToken', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+        body: JSON.stringify({ refreshToken })
+      });
+      if (!res.ok) return false;
+      const body = await res.json();
+      if (body?.code !== '0000' || !body?.data?.token) return false;
+      localStg.set('token', body.data.token);
+      localStg.set('refreshToken', body.data.refreshToken);
+      return true;
+    } catch {
+      return false;
+    } finally {
+      setTimeout(() => {
+        refreshInflight = null;
+      }, 0);
+    }
+  })();
+  return refreshInflight;
+}
+
+function handleAuthExpired() {
+  localStg.remove('token');
+  localStg.remove('refreshToken');
+  if (typeof window !== 'undefined' && window.location.pathname !== '/login') {
+    window.location.assign('/login');
+  }
 }
 
 function postOptions(input: unknown): RequestInit {

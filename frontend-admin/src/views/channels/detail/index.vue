@@ -129,7 +129,7 @@ function clearMessages() {
 }
 
 function isAdminRole(role: string) {
-  return ['ADMIN', 'admin', 'R_ADMIN'].includes(role);
+  return role === 'ADMIN';
 }
 
 onMounted(loadChannel);

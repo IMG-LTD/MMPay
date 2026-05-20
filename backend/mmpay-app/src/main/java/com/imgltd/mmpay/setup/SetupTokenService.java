@@ -1,7 +1,8 @@
 package com.imgltd.mmpay.setup;
 
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
 import java.util.HexFormat;
-import java.util.Objects;
 import java.util.function.Supplier;
 
 public final class SetupTokenService {
@@ -40,7 +41,12 @@ public final class SetupTokenService {
   }
 
   public boolean matches(String submittedToken) {
-    return setupAvailable && token != null && Objects.equals(token, submittedToken);
+    if (!setupAvailable || token == null || submittedToken == null) {
+      return false;
+    }
+    var expected = token.getBytes(StandardCharsets.US_ASCII);
+    var actual = submittedToken.getBytes(StandardCharsets.US_ASCII);
+    return MessageDigest.isEqual(expected, actual);
   }
 
   private static String newToken(Supplier<byte[]> tokenSource) {

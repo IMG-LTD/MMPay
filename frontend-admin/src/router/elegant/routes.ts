@@ -82,7 +82,7 @@ export const generatedRoutes: GeneratedRoute[] = [
       i18nKey: 'route.merchant-channel-new',
       hideInMenu: true,
       activeMenu: 'merchants',
-      roles: ['ADMIN', 'admin', 'R_ADMIN']
+      roles: ['ADMIN']
     }
   },
   {
