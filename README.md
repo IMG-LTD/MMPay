@@ -11,18 +11,19 @@ deployed from this standalone repository.
 workflow for tag `v1.0.0` completed successfully on commit
 `ac19a23b4b297cf8bf83ccf5ba749ad78cc3aa22`.
 
-`v1.0.0-hotfix.1` is the current recommended tag for new operator-driven
-deployments. It folds in the Docker quick-start datasource fix that was
-documented as `v1.0.1` together with payment-callback transactional integrity,
-audit accuracy, and frontend auth resilience fixes from the post-GA hotfix
-audit. The hotfix release is published at
-`https://github.com/IMG-LTD/MMPay/releases/tag/v1.0.0-hotfix.1`, with details in
-`docs/release/v1.0.0-hotfix.1-release-notes.md`.
+`v1.0.1` is the current recommended tag for new operator-driven deployments.
+It folds in the Docker quick-start datasource fix that was originally drafted
+under the `v1.0.1` notes together with the payment-callback transactional
+integrity, audit accuracy, and frontend auth resilience fixes that shipped as
+`v1.0.0-hotfix.1`, plus the admin home `/api/admin/dashboard` Authorization
+header fix recorded in `docs/release/v1.0.1-release-notes.md`. The patch
+release is published at `https://github.com/IMG-LTD/MMPay/releases/tag/v1.0.1`,
+with details in `docs/release/v1.0.1-release-notes.md`.
 
-The `v1.0.0` tag remains immutable. The `v1.0.1` notes
-(`docs/release/v1.0.1-release-notes.md`) are kept for historical reference;
-deployments that previously pinned `v1.0.0` or `v1.0.1` should move to
-`v1.0.0-hotfix.1` for the consolidated set of post-GA fixes.
+The `v1.0.0` and `v1.0.0-hotfix.1` tags remain immutable for audit history.
+Deployments that previously pinned `v1.0.0`, `v1.0.0-hotfix.1`, or any earlier
+draft of `v1.0.1` should move to the published `v1.0.1` images for the
+consolidated set of post-GA fixes.
 
 The GA scope includes:
 
@@ -82,13 +83,20 @@ If logs show `Failed to configure a DataSource`, rebuild through Docker Compose
 with `--build --force-recreate`; that message means the app was started without
 the Compose-injected JDBC environment or from an old local image. The immutable
 `v1.0.0` image was cut before this Docker quick-start patch, so use the current
-checkout or the published `v1.0.0-hotfix.1` image for this path.
+checkout or the published `v1.0.1` image for this path.
 
 Published images:
 
 ```text
-# Recommended (post-GA hotfix consolidating the v1.0.1 datasource fix and the
-# v1.0.0-hotfix.1 audit findings):
+# Recommended (post-GA patch consolidating the v1.0.0-hotfix.1 audit findings,
+# the original v1.0.1 datasource fix, and the admin dashboard Authorization
+# header fix):
+ghcr.io/img-ltd/mmpay-app:v1.0.1
+ghcr.io/img-ltd/mmpay-frontend-admin:v1.0.1
+ghcr.io/img-ltd/mmpay-app-debug-symbols:v1.0.1
+
+# Prior post-GA hotfix tag (kept immutable for audit history; superseded by
+# v1.0.1):
 ghcr.io/img-ltd/mmpay-app:v1.0.0-hotfix.1
 ghcr.io/img-ltd/mmpay-frontend-admin:v1.0.0-hotfix.1
 ghcr.io/img-ltd/mmpay-app-debug-symbols:v1.0.0-hotfix.1
