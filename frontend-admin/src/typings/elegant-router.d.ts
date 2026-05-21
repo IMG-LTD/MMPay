@@ -1,7 +1,6 @@
 /* eslint-disable */
 /* prettier-ignore */
 // Manually maintained — elegant-router plugin is disabled.
-// Read more: https://github.com/soybeanjs/elegant-router
 
 declare module "@elegant-router/types" {
   type ElegantConstRoute = import('@elegant-router/vue').ElegantConstRoute;
