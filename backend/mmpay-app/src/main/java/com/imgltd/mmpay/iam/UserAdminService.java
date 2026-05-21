@@ -32,7 +32,7 @@ public class UserAdminService {
   public UserResponse createUser(UserCreateRequest request) {
     validateUsername(request.username());
     validatePassword(request.password());
-    var role = IamRole.requireUserRole(request.role());
+    var role = requireRole(request.role());
     if (repository.findUser(request.username()).isPresent()) {
       throw new ResponseStatusException(HttpStatus.CONFLICT, "username_taken");
     }
@@ -50,7 +50,7 @@ public class UserAdminService {
       throw new ResponseStatusException(HttpStatus.NOT_FOUND, "user_not_found");
     }
     if (request.role() != null) {
-      var role = IamRole.requireUserRole(request.role());
+      var role = requireRole(request.role());
       repository.updateUserRole(username, role);
     }
     if (request.password() != null) {
@@ -81,6 +81,14 @@ public class UserAdminService {
   private void validatePassword(String password) {
     if (password == null || password.length() < PASSWORD_MIN || password.length() > PASSWORD_MAX) {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "password_invalid");
+    }
+  }
+
+  private String requireRole(String role) {
+    try {
+      return IamRole.requireUserRole(role);
+    } catch (IllegalArgumentException e) {
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "role_invalid");
     }
   }
 }

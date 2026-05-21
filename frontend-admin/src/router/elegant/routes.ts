@@ -81,7 +81,8 @@ export const generatedRoutes: GeneratedRoute[] = [
       title: 'merchants',
       i18nKey: 'route.merchants',
       icon: 'mdi:store-cog',
-      order: 2
+      order: 2,
+      roles: ['ADMIN', 'OPS']
     }
   },
   {
@@ -93,7 +94,8 @@ export const generatedRoutes: GeneratedRoute[] = [
       title: 'merchant-detail',
       i18nKey: 'route.merchant-detail',
       hideInMenu: true,
-      activeMenu: 'merchants'
+      activeMenu: 'merchants',
+      roles: ['ADMIN', 'OPS']
     }
   },
   {
@@ -105,7 +107,8 @@ export const generatedRoutes: GeneratedRoute[] = [
       title: 'merchant-channel-new',
       i18nKey: 'route.merchant-channel-new',
       hideInMenu: true,
-      activeMenu: 'merchants'
+      activeMenu: 'merchants',
+      roles: ['ADMIN', 'OPS']
     }
   },
   {
@@ -117,7 +120,8 @@ export const generatedRoutes: GeneratedRoute[] = [
       title: 'channel-detail',
       i18nKey: 'route.channel-detail',
       hideInMenu: true,
-      activeMenu: 'merchants'
+      activeMenu: 'merchants',
+      roles: ['ADMIN', 'OPS']
     }
   },
   {
@@ -128,7 +132,8 @@ export const generatedRoutes: GeneratedRoute[] = [
       title: 'payments',
       i18nKey: 'route.payments',
       icon: 'mdi:credit-card-outline',
-      order: 3
+      order: 3,
+      roles: ['ADMIN', 'OPS', 'FINANCE']
     }
   },
   {
@@ -140,7 +145,8 @@ export const generatedRoutes: GeneratedRoute[] = [
       title: 'payment-detail',
       i18nKey: 'route.payment-detail',
       hideInMenu: true,
-      activeMenu: 'payments'
+      activeMenu: 'payments',
+      roles: ['ADMIN', 'OPS', 'FINANCE']
     }
   },
   {
@@ -151,7 +157,8 @@ export const generatedRoutes: GeneratedRoute[] = [
       title: 'refunds',
       i18nKey: 'route.refunds',
       icon: 'mdi:cash-refund',
-      order: 4
+      order: 4,
+      roles: ['ADMIN', 'OPS', 'FINANCE']
     }
   },
   {
@@ -163,7 +170,8 @@ export const generatedRoutes: GeneratedRoute[] = [
       title: 'refund-detail',
       i18nKey: 'route.refund-detail',
       hideInMenu: true,
-      activeMenu: 'refunds'
+      activeMenu: 'refunds',
+      roles: ['ADMIN', 'OPS', 'FINANCE']
     }
   },
   {
@@ -174,7 +182,8 @@ export const generatedRoutes: GeneratedRoute[] = [
       title: 'refund-new',
       i18nKey: 'route.refund-new',
       hideInMenu: true,
-      activeMenu: 'refunds'
+      activeMenu: 'refunds',
+      roles: ['ADMIN', 'OPS', 'FINANCE']
     }
   },
   {
@@ -185,7 +194,8 @@ export const generatedRoutes: GeneratedRoute[] = [
       title: 'reconciliation',
       i18nKey: 'route.reconciliation',
       icon: 'mdi:clipboard-check-outline',
-      order: 5
+      order: 5,
+      roles: ['ADMIN', 'OPS', 'FINANCE']
     }
   },
   {
@@ -197,7 +207,8 @@ export const generatedRoutes: GeneratedRoute[] = [
       title: 'reconciliation-detail',
       i18nKey: 'route.reconciliation-detail',
       hideInMenu: true,
-      activeMenu: 'reconciliation'
+      activeMenu: 'reconciliation',
+      roles: ['ADMIN', 'OPS', 'FINANCE']
     }
   },
   {
@@ -208,7 +219,8 @@ export const generatedRoutes: GeneratedRoute[] = [
       title: 'webhook-out',
       i18nKey: 'route.webhook-out',
       icon: 'mdi:webhook',
-      order: 6
+      order: 6,
+      roles: ['ADMIN', 'OPS']
     }
   },
   {
@@ -220,7 +232,8 @@ export const generatedRoutes: GeneratedRoute[] = [
       title: 'webhook-out-delivery-log-detail',
       i18nKey: 'route.webhook-out-delivery-log-detail',
       hideInMenu: true,
-      activeMenu: 'webhook-out'
+      activeMenu: 'webhook-out',
+      roles: ['ADMIN', 'OPS']
     }
   },
   {
@@ -231,7 +244,8 @@ export const generatedRoutes: GeneratedRoute[] = [
       title: 'integrations',
       i18nKey: 'route.integrations',
       icon: 'mdi:connection',
-      order: 7
+      order: 7,
+      roles: ['ADMIN']
     }
   },
   {
@@ -243,7 +257,8 @@ export const generatedRoutes: GeneratedRoute[] = [
       title: 'integration-detail',
       i18nKey: 'route.integration-detail',
       hideInMenu: true,
-      activeMenu: 'integrations'
+      activeMenu: 'integrations',
+      roles: ['ADMIN']
     }
   },
   {
@@ -254,7 +269,8 @@ export const generatedRoutes: GeneratedRoute[] = [
       title: 'system',
       i18nKey: 'route.system',
       icon: 'mdi:cog-outline',
-      order: 8
+      order: 8,
+      roles: ['ADMIN']
     }
   }
 ];
