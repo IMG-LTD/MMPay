@@ -5,6 +5,11 @@ on:
     tags:
       - 'v*'
   workflow_dispatch:
+    inputs:
+      version_tag:
+        description: Version tag to apply to images (e.g. v1.0.3). Defaults to branch/tag ref name.
+        required: false
+        type: string
 
 permissions:
   contents: read
@@ -21,6 +26,15 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Resolve image tag
+        id: image-tag
+        run: |
+          if [[ -n "${{ inputs.version_tag }}" ]]; then
+            echo "tag=${{ inputs.version_tag }}" >> "$GITHUB_OUTPUT"
+          else
+            echo "tag=${{ github.ref_name }}" >> "$GITHUB_OUTPUT"
+          fi
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
@@ -45,7 +59,7 @@ jobs:
           file: Dockerfile
           push: true
           tags: |
-            ghcr.io/img-ltd/mmpay-app:${{ github.ref_name }}
+            ghcr.io/img-ltd/mmpay-app:${{ steps.image-tag.outputs.tag }}
             ghcr.io/img-ltd/mmpay-app:${{ github.sha }}
           provenance: true
           sbom: true
@@ -58,7 +72,7 @@ jobs:
           file: deploy/frontend-admin.Dockerfile
           push: true
           tags: |
-            ghcr.io/img-ltd/mmpay-frontend-admin:${{ github.ref_name }}
+            ghcr.io/img-ltd/mmpay-frontend-admin:${{ steps.image-tag.outputs.tag }}
             ghcr.io/img-ltd/mmpay-frontend-admin:${{ github.sha }}
           provenance: true
           sbom: true
@@ -71,7 +85,7 @@ jobs:
           file: deploy/debug-symbols.Dockerfile
           push: true
           tags: |
-            ghcr.io/img-ltd/mmpay-app-debug-symbols:${{ github.ref_name }}
+            ghcr.io/img-ltd/mmpay-app-debug-symbols:${{ steps.image-tag.outputs.tag }}
             ghcr.io/img-ltd/mmpay-app-debug-symbols:${{ github.sha }}
           provenance: true
           sbom: true
@@ -114,7 +128,7 @@ jobs:
           {
             echo "## MMPay v1 image digest evidence"
             echo ""
-            echo "tag: ${{ github.ref_name }}"
+            echo "tag: ${{ steps.image-tag.outputs.tag }}"
             echo "commit_sha: ${{ github.sha }}"
             echo "workflow_run_url: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
             echo "registry_host: ghcr.io"
