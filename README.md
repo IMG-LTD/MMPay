@@ -153,3 +153,6 @@ Release evidence:
 - `docs/release/v1.0.0-hotfix.1-release-notes.md`
 - `docs/release/v1.0.0-hotfix.1-image-digest-evidence.md`
 - `docs/release/v1.0.0-hotfix.1-v1-tag-ruleset-evidence.md`
+- `docs/release/v1.0.1-release-notes.md`
+- `docs/release/v1.0.1-image-digest-evidence.md`
+- `docs/release/v1.0.1-v1-tag-ruleset-evidence.md`
