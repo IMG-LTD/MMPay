@@ -37,6 +37,7 @@ declare module "@elegant-router/types" {
     "webhook-out-delivery-log-detail": "/webhook-out/delivery-logs/:id";
     "integrations": "/integrations";
     "integration-detail": "/integrations/:id";
+    "system": "/system";
   };
 
   /**

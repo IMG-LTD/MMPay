@@ -240,7 +240,8 @@ const local: App.I18n.Schema = {
     'webhook-out': 'Webhook 投递',
     'webhook-out-delivery-log-detail': '投递日志',
     integrations: '集成上游',
-    'integration-detail': '集成详情'
+    'integration-detail': '集成详情',
+    system: '系统管理'
   },
   page: {
     login: {

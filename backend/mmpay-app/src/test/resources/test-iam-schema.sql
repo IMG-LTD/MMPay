@@ -62,7 +62,8 @@ CREATE TABLE sys_user (
   kind VARCHAR(16) NOT NULL,
   password_hash VARCHAR(128),
   role VARCHAR(32) NOT NULL,
-  secret_fingerprint VARCHAR(64)
+  secret_fingerprint VARCHAR(64),
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE sys_user_role (

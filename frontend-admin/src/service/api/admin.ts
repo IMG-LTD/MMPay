@@ -337,6 +337,40 @@ export function redispatchLicenseRelayLog(id: string | number) {
   return adminFetch<LicenseRelayLog>(`/api/admin/license-relay/logs/${id}/redispatch`, { method: 'POST' });
 }
 
+export interface AdminUser {
+  username: string;
+  kind: string;
+  role: string;
+  created_at: string | null;
+}
+
+export interface UserCreateInput {
+  username: string;
+  password: string;
+  role: string;
+}
+
+export interface UserPatchInput {
+  role?: string;
+  password?: string;
+}
+
+export function fetchUsers() {
+  return adminFetch<AdminUser[]>('/api/admin/users');
+}
+
+export function createUser(input: UserCreateInput) {
+  return adminFetch<AdminUser>('/api/admin/users', jsonOptions('POST', input));
+}
+
+export function updateUser(username: string, input: UserPatchInput) {
+  return adminFetch<AdminUser>(`/api/admin/users/${encodeURIComponent(username)}`, jsonOptions('PATCH', input));
+}
+
+export function deleteUser(username: string) {
+  return adminFetch<void>(`/api/admin/users/${encodeURIComponent(username)}`, { method: 'DELETE' });
+}
+
 async function adminFetch<T>(url: string, init: RequestInit = {}): Promise<T> {
   const response = await fetch(url, { ...init, headers: headers(init.headers) });
   if (response.status === 401) {

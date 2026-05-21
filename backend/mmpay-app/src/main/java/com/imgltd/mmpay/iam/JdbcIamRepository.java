@@ -5,6 +5,7 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -118,6 +119,45 @@ public class JdbcIamRepository {
         "UPDATE oauth2_authorization SET refresh_token_value = NULL WHERE refresh_token_value = ?", refreshToken);
   }
 
+  public List<IamUserRecord> listHumanUsers() {
+    return jdbcTemplate.query(
+        "SELECT * FROM sys_user WHERE kind = 'user' ORDER BY created_at ASC", this::user);
+  }
+
+  public void createHumanUser(String id, String username, String passwordHash, String role) {
+    jdbcTemplate.update(
+        "INSERT INTO sys_user (id, username, kind, password_hash, role) VALUES (?, ?, 'user', ?, ?)",
+        id, username, passwordHash, role);
+    jdbcTemplate.update("INSERT INTO sys_user_role (user_id, role) VALUES (?, ?)", id, role);
+  }
+
+  public boolean updateUserRole(String username, String role) {
+    int rows = jdbcTemplate.update(
+        "UPDATE sys_user SET role = ? WHERE username = ? AND kind = 'user'", role, username);
+    if (rows > 0) {
+      jdbcTemplate.update("DELETE FROM sys_user_role WHERE user_id = (SELECT id FROM sys_user WHERE username = ?)", username);
+      jdbcTemplate.update(
+          "INSERT INTO sys_user_role (user_id, role) SELECT id, ? FROM sys_user WHERE username = ?", role, username);
+    }
+    return rows > 0;
+  }
+
+  public boolean updateUserPassword(String username, String passwordHash) {
+    int rows = jdbcTemplate.update(
+        "UPDATE sys_user SET password_hash = ? WHERE username = ? AND kind = 'user'", passwordHash, username);
+    return rows > 0;
+  }
+
+  public boolean deleteHumanUser(String username) {
+    jdbcTemplate.update(
+        "DELETE FROM sys_user_role WHERE user_id = (SELECT id FROM sys_user WHERE username = ? AND kind = 'user')", username);
+    jdbcTemplate.update(
+        "DELETE FROM oauth2_authorization WHERE principal_name = ?", username);
+    int rows = jdbcTemplate.update(
+        "DELETE FROM sys_user WHERE username = ? AND kind = 'user'", username);
+    return rows > 0;
+  }
+
   private RegisteredClientRecord registeredClient(ResultSet resultSet, int rowNumber) throws SQLException {
     return new RegisteredClientRecord(
         resultSet.getString("id"),
@@ -135,11 +175,13 @@ public class JdbcIamRepository {
   }
 
   private IamUserRecord user(ResultSet resultSet, int rowNumber) throws SQLException {
+    var ts = resultSet.getTimestamp("created_at");
     return new IamUserRecord(
         resultSet.getString("username"),
         resultSet.getString("kind"),
         resultSet.getString("password_hash"),
-        resultSet.getString("role"));
+        resultSet.getString("role"),
+        ts != null ? ts.toInstant().toString() : null);
   }
 
   private RefreshTokenRecord refreshToken(ResultSet resultSet, int rowNumber) throws SQLException {

@@ -244,7 +244,8 @@ const local: App.I18n.Schema = {
     'webhook-out': 'Webhook Out',
     'webhook-out-delivery-log-detail': 'Delivery Log',
     integrations: 'Integrations',
-    'integration-detail': 'Integration Detail'
+    'integration-detail': 'Integration Detail',
+    system: 'System'
   },
   page: {
     login: {

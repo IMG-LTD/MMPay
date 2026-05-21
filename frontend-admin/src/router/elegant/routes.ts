@@ -245,5 +245,16 @@ export const generatedRoutes: GeneratedRoute[] = [
       hideInMenu: true,
       activeMenu: 'integrations'
     }
+  },
+  {
+    name: 'system',
+    path: '/system',
+    component: 'layout.base$view.system',
+    meta: {
+      title: 'system',
+      i18nKey: 'route.system',
+      icon: 'mdi:cog-outline',
+      order: 8
+    }
   }
 ];
