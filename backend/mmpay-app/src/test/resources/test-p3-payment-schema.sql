@@ -47,6 +47,7 @@ CREATE TABLE payment_intents (
   merchant_id VARCHAR(64) NOT NULL,
   channel_id VARCHAR(64) NOT NULL,
   provider_order_id VARCHAR(128),
+  qr_code_url VARCHAR(2048),
   amount_minor BIGINT NOT NULL,
   currency VARCHAR(8) NOT NULL,
   order_ref VARCHAR(128) NOT NULL,

@@ -174,8 +174,8 @@ class P3PaymentLifecycleContractTest {
 
   private void seedPaymentIntent(String id, String merchantId, String channelId, String status, long amount) {
     jdbcTemplate.update(
-        "INSERT INTO payment_intents VALUES (?, ?, ?, ?, ?, 'CNY', ?, ?, ?, 'default', ?, ?, 0)",
-        id, merchantId, channelId, null, amount, "order-" + id, "idem-" + id, status, ts(), ts());
+        "INSERT INTO payment_intents VALUES (?, ?, ?, ?, ?, ?, 'CNY', ?, ?, ?, 'default', ?, ?, 0)",
+        id, merchantId, channelId, null, null, amount, "order-" + id, "idem-" + id, status, ts(), ts());
   }
 
   private void seedRefund(String id, String intentId, String merchantId, long amount, String status) {

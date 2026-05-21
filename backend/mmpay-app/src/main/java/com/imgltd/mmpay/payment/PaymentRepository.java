@@ -122,6 +122,18 @@ public final class PaymentRepository {
     return requirePaymentIntent(request.paymentIntentId());
   }
 
+  PaymentIntentRow markSubmitted(String id, String providerOrderId, String qrCodeUrl, Instant now) {
+    jdbcTemplate.update(
+        "UPDATE payment_intents SET status = 'submitted', provider_order_id = ?, qr_code_url = ?, "
+            + "updated_at = ?, version = version + 1 WHERE tenant_id = ? AND id = ? AND status = 'pending'",
+        providerOrderId,
+        qrCodeUrl,
+        Timestamp.from(now),
+        TENANT_ID,
+        id);
+    return requirePaymentIntent(id);
+  }
+
   long refundedAmount(String intentId) {
     Long total =
         jdbcTemplate.queryForObject(
@@ -345,6 +357,7 @@ public final class PaymentRepository {
         rs.getString("merchant_id"),
         rs.getString("channel_id"),
         rs.getString("provider_order_id"),
+        rs.getString("qr_code_url"),
         rs.getLong("amount_minor"),
         rs.getString("currency"),
         rs.getString("order_ref"),

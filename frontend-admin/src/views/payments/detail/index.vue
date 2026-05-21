@@ -74,20 +74,20 @@ onMounted(loadIntent);
 
       <NGi span="24 l:8">
         <NCard v-if="intent" :bordered="false" class="card-wrapper">
-          <template #header>支付标识</template>
+          <template #header>支付二维码</template>
           <div class="flex flex-col items-center gap-3 py-2">
             <NQrCode
-              :value="intent.provider_order_id || intent.id"
+              :value="intent.qr_code_url || intent.provider_order_id || intent.id"
               :size="160"
               error-correction-level="M"
             />
             <NText depth="3" class="text-12px text-center break-all">
-              {{ intent.provider_order_id || intent.id }}
+              {{ intent.qr_code_url ? '扫码支付' : (intent.provider_order_id || intent.id) }}
             </NText>
           </div>
         </NCard>
         <NCard v-else :bordered="false" class="card-wrapper">
-          <template #header>支付标识</template>
+          <template #header>支付二维码</template>
           <NSpin :show="loading">
             <NEmpty description="加载中..." />
           </NSpin>

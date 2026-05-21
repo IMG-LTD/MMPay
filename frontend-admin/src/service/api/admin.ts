@@ -70,6 +70,7 @@ export interface PaymentIntent {
   merchant_id: string;
   channel_id: string;
   provider_order_id: string | null;
+  qr_code_url: string | null;
   amount_minor: number;
   currency: string;
   order_ref: string;

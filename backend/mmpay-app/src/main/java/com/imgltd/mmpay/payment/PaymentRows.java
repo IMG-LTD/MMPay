@@ -11,6 +11,7 @@ record PaymentIntentRow(
     String merchantId,
     String channelId,
     String providerOrderId,
+    String qrCodeUrl,
     long amountMinor,
     String currency,
     String orderRef,
