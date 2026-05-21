@@ -87,7 +87,6 @@ async function submitEdit() {
 }
 
 async function confirmDelete(username: string) {
-  if (!window.confirm(`确认删除用户 "${username}"？此操作不可撤销。`)) return;
   errorMessage.value = '';
   successMessage.value = '';
   try {
@@ -167,15 +166,22 @@ onMounted(loadUsers);
                       >
                         编辑
                       </NButton>
-                      <NButton
-                        tertiary
-                        size="small"
-                        type="error"
+                      <NPopconfirm
                         :disabled="user.username === authStore.userInfo.userName"
-                        @click="confirmDelete(user.username)"
+                        @positive-click="confirmDelete(user.username)"
                       >
-                        删除
-                      </NButton>
+                        <template #trigger>
+                          <NButton
+                            tertiary
+                            size="small"
+                            type="error"
+                            :disabled="user.username === authStore.userInfo.userName"
+                          >
+                            删除
+                          </NButton>
+                        </template>
+                        确认删除用户 "{{ user.username }}"？此操作不可撤销。
+                      </NPopconfirm>
                     </NSpace>
                   </td>
                 </tr>

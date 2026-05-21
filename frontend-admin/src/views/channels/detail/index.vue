@@ -154,11 +154,15 @@ onMounted(loadChannel);
             </NSpace>
           </div>
 
-          <NGrid :x-gap="16" :y-gap="12" responsive="screen" item-responsive>
-            <NGi span="24 m:8"><NStatistic label="Provider" :value="channel.provider_code" /></NGi>
-            <NGi span="24 m:8"><NStatistic label="商户" :value="channel.merchant_id" /></NGi>
-            <NGi span="24 m:8"><NStatistic label="凭据指纹" :value="channel.credential_fingerprint || '未生成'" /></NGi>
-          </NGrid>
+          <NDescriptions bordered :column="3" label-placement="top" size="small">
+            <NDescriptionsItem label="Provider">{{ channel.provider_code }}</NDescriptionsItem>
+            <NDescriptionsItem label="商户">{{ channel.merchant_id }}</NDescriptionsItem>
+            <NDescriptionsItem label="凭据指纹">
+              <NText :depth="channel.credential_fingerprint ? 1 : 3" class="break-all text-12px font-mono">
+                {{ channel.credential_fingerprint || '未生成' }}
+              </NText>
+            </NDescriptionsItem>
+          </NDescriptions>
         </div>
       </NSpin>
     </NCard>

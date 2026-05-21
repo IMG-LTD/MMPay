@@ -39,34 +39,60 @@ onMounted(loadIntent);
     <NButton text type="primary" @click="router.back()">返回</NButton>
     <NAlert v-if="errorMessage" type="error" title="加载失败">{{ errorMessage }}</NAlert>
 
-    <NCard :bordered="false" class="card-wrapper">
-      <template #header>支付详情</template>
-      <template #header-extra>
-        <NSpace>
-          <NButton secondary :loading="loading" @click="loadIntent">刷新</NButton>
-          <RouterLink v-if="intent" :to="{ name: 'refund-new', query: { payment_intent_id: intent.id } }">
-            <NButton secondary type="primary">发起退款</NButton>
-          </RouterLink>
-          <NPopconfirm v-if="intent?.status === 'pending'" @positive-click="cancelIntent">
-            <template #trigger><NButton type="warning">取消支付</NButton></template>
-            确认取消该 pending 支付？
-          </NPopconfirm>
-        </NSpace>
-      </template>
-      <NSpin :show="loading">
-        <NDescriptions v-if="intent" bordered :column="2" label-placement="left">
-          <NDescriptionsItem label="ID">{{ intent.id }}</NDescriptionsItem>
-          <NDescriptionsItem label="状态">
-            <NTag :bordered="false" :aria-label="`payment status ${intent.status}`">{{ intent.status }}</NTag>
-          </NDescriptionsItem>
-          <NDescriptionsItem label="商户">{{ intent.merchant_id }}</NDescriptionsItem>
-          <NDescriptionsItem label="通道">{{ intent.channel_id }}</NDescriptionsItem>
-          <NDescriptionsItem label="金额">{{ formatMinor(intent.amount_minor, intent.currency) }}</NDescriptionsItem>
-          <NDescriptionsItem label="Provider Order">{{ intent.provider_order_id || '-' }}</NDescriptionsItem>
-          <NDescriptionsItem label="订单引用">{{ intent.order_ref }}</NDescriptionsItem>
-          <NDescriptionsItem label="更新时间">{{ intent.updated_at }}</NDescriptionsItem>
-        </NDescriptions>
-      </NSpin>
-    </NCard>
+    <NGrid :x-gap="16" :y-gap="16" responsive="screen" item-responsive>
+      <NGi span="24 l:16">
+        <NCard :bordered="false" class="card-wrapper">
+          <template #header>支付详情</template>
+          <template #header-extra>
+            <NSpace>
+              <NButton secondary :loading="loading" @click="loadIntent">刷新</NButton>
+              <RouterLink v-if="intent" :to="{ name: 'refund-new', query: { payment_intent_id: intent.id } }">
+                <NButton secondary type="primary">发起退款</NButton>
+              </RouterLink>
+              <NPopconfirm v-if="intent?.status === 'pending'" @positive-click="cancelIntent">
+                <template #trigger><NButton type="warning">取消支付</NButton></template>
+                确认取消该 pending 支付？
+              </NPopconfirm>
+            </NSpace>
+          </template>
+          <NSpin :show="loading">
+            <NDescriptions v-if="intent" bordered :column="2" label-placement="left">
+              <NDescriptionsItem label="ID">{{ intent.id }}</NDescriptionsItem>
+              <NDescriptionsItem label="状态">
+                <NTag :bordered="false" :aria-label="`payment status ${intent.status}`">{{ intent.status }}</NTag>
+              </NDescriptionsItem>
+              <NDescriptionsItem label="商户">{{ intent.merchant_id }}</NDescriptionsItem>
+              <NDescriptionsItem label="通道">{{ intent.channel_id }}</NDescriptionsItem>
+              <NDescriptionsItem label="金额">{{ formatMinor(intent.amount_minor, intent.currency) }}</NDescriptionsItem>
+              <NDescriptionsItem label="Provider Order">{{ intent.provider_order_id || '-' }}</NDescriptionsItem>
+              <NDescriptionsItem label="订单引用">{{ intent.order_ref }}</NDescriptionsItem>
+              <NDescriptionsItem label="更新时间">{{ intent.updated_at }}</NDescriptionsItem>
+            </NDescriptions>
+          </NSpin>
+        </NCard>
+      </NGi>
+
+      <NGi span="24 l:8">
+        <NCard v-if="intent" :bordered="false" class="card-wrapper">
+          <template #header>支付标识</template>
+          <div class="flex flex-col items-center gap-3 py-2">
+            <NQrCode
+              :value="intent.provider_order_id || intent.id"
+              :size="160"
+              error-correction-level="M"
+            />
+            <NText depth="3" class="text-12px text-center break-all">
+              {{ intent.provider_order_id || intent.id }}
+            </NText>
+          </div>
+        </NCard>
+        <NCard v-else :bordered="false" class="card-wrapper">
+          <template #header>支付标识</template>
+          <NSpin :show="loading">
+            <NEmpty description="加载中..." />
+          </NSpin>
+        </NCard>
+      </NGi>
+    </NGrid>
   </NSpace>
 </template>

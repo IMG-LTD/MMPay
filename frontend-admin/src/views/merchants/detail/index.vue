@@ -163,17 +163,19 @@ onMounted(loadDetail);
             </NSpace>
           </div>
 
-          <NGrid :x-gap="16" :y-gap="12" responsive="screen" item-responsive>
-            <NGi span="24 m:8">
-              <NStatistic label="商户 ID" :value="merchant.id" />
-            </NGi>
-            <NGi span="24 m:8">
-              <NStatistic label="凭据引用" :value="merchant.credential_ref || '未绑定'" />
-            </NGi>
-            <NGi span="24 m:8">
-              <NStatistic label="凭据指纹" :value="merchant.credential_fingerprint || '未生成'" />
-            </NGi>
-          </NGrid>
+          <NDescriptions bordered :column="3" label-placement="top" size="small">
+            <NDescriptionsItem label="商户 ID">
+              <NText code>{{ merchant.id }}</NText>
+            </NDescriptionsItem>
+            <NDescriptionsItem label="凭据引用">
+              {{ merchant.credential_ref || '未绑定' }}
+            </NDescriptionsItem>
+            <NDescriptionsItem label="凭据指纹">
+              <NText :depth="merchant.credential_fingerprint ? 1 : 3" class="break-all text-12px font-mono">
+                {{ merchant.credential_fingerprint || '未生成' }}
+              </NText>
+            </NDescriptionsItem>
+          </NDescriptions>
         </div>
       </NSpin>
     </NCard>
@@ -233,7 +235,7 @@ onMounted(loadDetail);
             </td>
             <td>{{ channel.provider_code }}</td>
             <td><NTag type="success" :bordered="false">{{ channel.status }}</NTag></td>
-            <td><NTag :bordered="false">{{ channel.credential_ref || '未绑定' }}</NTag></td>
+            <td>{{ channel.credential_ref || '未绑定' }}</td>
             <td>{{ channel.credential_fingerprint || '-' }}</td>
           </tr>
         </tbody>

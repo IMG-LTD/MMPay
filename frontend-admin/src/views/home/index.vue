@@ -61,10 +61,14 @@ onMounted(loadDashboard);
       <template #header>业务导航</template>
       <NSpin :show="loading && !dashboard">
         <NEmpty v-if="!dashboard?.navigation?.length" description="暂无导航数据" />
-        <NSpace v-else>
-          <NTag v-for="item in dashboard.navigation" :key="item.key" type="info" :bordered="false">
-            {{ item.label }}
-          </NTag>
+        <NSpace v-else wrap>
+          <RouterLink
+            v-for="item in dashboard.navigation"
+            :key="item.key"
+            :to="{ name: item.key }"
+          >
+            <NButton text type="primary" size="small">{{ item.label }}</NButton>
+          </RouterLink>
         </NSpace>
       </NSpin>
     </NCard>
@@ -73,18 +77,20 @@ onMounted(loadDashboard);
       <NGi v-for="table in visibleTables" :key="table.key" span="24 m:12">
         <NCard :bordered="false" class="card-wrapper">
           <template #header>{{ table.key }}</template>
-          <NTable :bordered="false" :single-line="false" size="small">
-            <thead>
-              <tr>
-                <th v-for="column in table.columns" :key="column">{{ column }}</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr v-for="(row, rowIndex) in table.rows" :key="rowIndex">
-                <td v-for="column in table.columns" :key="column">{{ row[column] ?? '-' }}</td>
-              </tr>
-            </tbody>
-          </NTable>
+          <div class="overflow-x-auto">
+            <NTable :bordered="false" :single-line="false" size="small">
+              <thead>
+                <tr>
+                  <th v-for="column in table.columns" :key="column">{{ column }}</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="(row, rowIndex) in table.rows" :key="rowIndex">
+                  <td v-for="column in table.columns" :key="column">{{ row[column] ?? '-' }}</td>
+                </tr>
+              </tbody>
+            </NTable>
+          </div>
         </NCard>
       </NGi>
     </NGrid>

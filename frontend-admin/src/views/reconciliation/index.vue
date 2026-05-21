@@ -39,35 +39,37 @@ onMounted(loadRuns);
       <template #header-extra><NButton secondary :loading="loading" @click="loadRuns">刷新</NButton></template>
       <NSpin :show="loading">
         <NEmpty v-if="!runs.length" description="暂无对账运行记录" />
-        <NTable v-else :bordered="false" :single-line="false" size="small">
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>日期</th>
-              <th>通道</th>
-              <th>结果</th>
-              <th>匹配</th>
-              <th>确认</th>
-              <th>操作</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="run in runs" :key="run.id">
-              <td><RouterLink :to="{ name: 'reconciliation-detail', params: { id: run.id } }">{{ run.id }}</RouterLink></td>
-              <td>{{ run.run_date }}</td>
-              <td>{{ run.channel_id }}</td>
-              <td><NTag :bordered="false" :aria-label="`reconciliation outcome ${run.outcome}`">{{ run.outcome }}</NTag></td>
-              <td>{{ run.matched_count }} / {{ run.ingest_count }}</td>
-              <td>{{ run.ack_status }}</td>
-              <td>
-                <NPopconfirm v-if="run.ack_status === 'pending'" @positive-click="ackRun(run.id)">
-                  <template #trigger><NButton size="small" type="primary">确认</NButton></template>
-                  确认该对账运行结果？
-                </NPopconfirm>
-              </td>
-            </tr>
-          </tbody>
-        </NTable>
+        <div v-else class="overflow-x-auto">
+          <NTable :bordered="false" :single-line="false" size="small">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>日期</th>
+                <th>通道</th>
+                <th>结果</th>
+                <th>匹配</th>
+                <th>确认</th>
+                <th>操作</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="run in runs" :key="run.id">
+                <td><RouterLink :to="{ name: 'reconciliation-detail', params: { id: run.id } }">{{ run.id }}</RouterLink></td>
+                <td>{{ run.run_date }}</td>
+                <td>{{ run.channel_id }}</td>
+                <td><NTag :bordered="false" :aria-label="`reconciliation outcome ${run.outcome}`">{{ run.outcome }}</NTag></td>
+                <td>{{ run.matched_count }} / {{ run.ingest_count }}</td>
+                <td>{{ run.ack_status }}</td>
+                <td>
+                  <NPopconfirm v-if="run.ack_status === 'pending'" @positive-click="ackRun(run.id)">
+                    <template #trigger><NButton size="small" type="primary">确认</NButton></template>
+                    确认该对账运行结果？
+                  </NPopconfirm>
+                </td>
+              </tr>
+            </tbody>
+          </NTable>
+        </div>
       </NSpin>
     </NCard>
   </NSpace>

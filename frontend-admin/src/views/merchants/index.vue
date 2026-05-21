@@ -68,7 +68,7 @@ onMounted(loadMerchants);
           <NSpin :show="loading">
             <NEmpty v-if="!merchants.length" :description="isAdmin ? '创建你的第一个商户' : '暂无商户，请联系管理员'">
               <template v-if="isAdmin" #extra>
-                <NTag type="info" :bordered="false">使用右上角"新建商户"按钮开始</NTag>
+                <NText depth="3">使用右侧"新建商户"表单开始</NText>
               </template>
             </NEmpty>
             <NTable v-else :bordered="false" :single-line="false" size="small">
@@ -90,11 +90,15 @@ onMounted(loadMerchants);
                   </td>
                   <td>{{ merchant.display_name }}</td>
                   <td><NTag type="success" :bordered="false">{{ merchant.status }}</NTag></td>
-                  <td><NTag :bordered="false">{{ merchant.credential_ref }}</NTag></td>
+                  <td>{{ merchant.credential_ref || '-' }}</td>
                   <td>
-                    <NTag type="info" :bordered="false" :aria-label="`credential fingerprint ${merchant.credential_fingerprint}`">
-                      {{ merchant.credential_fingerprint }}
-                    </NTag>
+                    <NText
+                      class="break-all text-12px font-mono"
+                      :depth="merchant.credential_fingerprint ? 1 : 3"
+                      :aria-label="`credential fingerprint ${merchant.credential_fingerprint}`"
+                    >
+                      {{ merchant.credential_fingerprint || '-' }}
+                    </NText>
                   </td>
                 </tr>
               </tbody>
