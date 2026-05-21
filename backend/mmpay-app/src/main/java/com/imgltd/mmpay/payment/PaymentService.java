@@ -3,14 +3,16 @@ package com.imgltd.mmpay.payment;
 import com.imgltd.mmpay.audit.AuditWriter;
 import com.imgltd.mmpay.credentials.EnvironmentReferenceResolver;
 import com.imgltd.mmpay.credentials.ReferenceResolutionException;
+import com.imgltd.mmpay.merchant.AdminProblemException;
 import com.imgltd.mmpay.merchant.ListResponse;
 import java.time.Clock;
 import java.time.Instant;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.transaction.annotation.Transactional;
 
-public final class PaymentService {
+public class PaymentService {
   private static final String ACCEPTED = "accepted";
   private static final String REJECTED = "rejected";
   private static final int BULK_MAX_EVENTS = 10000;
@@ -38,11 +40,12 @@ public final class PaymentService {
     validateIntentCreate(request, idempotencyKey);
     ChannelCredentialRow channel = repository.requireActiveChannel(request.channelId());
     requireCurrentChannelCredential(channel, actor);
-    audit(actor, "payment_intent.create", "payment_intent", request.orderRef(), rejected("provider_live_disabled"));
     if (!providerLiveCalls) {
+      audit(actor, "payment_intent.create", "payment_intent", request.orderRef(), rejected("provider_live_disabled"));
       throw PaymentProblems.serviceUnavailable(
           PaymentProblems.PROVIDER_LIVE_DISABLED, "provider live calls are disabled");
     }
+    audit(actor, "payment_intent.create", "payment_intent", request.orderRef(), rejected("provider_client_unwired"));
     throw PaymentProblems.serviceUnavailable(
         PaymentProblems.PROVIDER_LIVE_DISABLED, "live provider client is not wired");
   }
@@ -61,6 +64,7 @@ public final class PaymentService {
     return PaymentIntentResponse.from(row);
   }
 
+  @Transactional
   public PaymentIntentResponse acceptCallback(
       String providerCode, ProviderCallbackRequest request, String signatureSha, String actor) {
     boolean inserted = repository.insertProviderEvent(providerCode, request, signatureSha, Instant.now(clock));
@@ -144,8 +148,16 @@ public final class PaymentService {
     try {
       inserted =
           repository.bulkRedispatchDeadLetters(request.integrationId(), from, now, request.eventCount(), now, batchId);
+    } catch (AdminProblemException exception) {
+      String reason =
+          PaymentProblems.STATE_TRANSITION_ILLEGAL.equals(exception.type())
+                  && "bulk_redispatch_in_flight".equals(exception.getMessage())
+              ? "in_flight"
+              : "rejected";
+      audit(actor, "webhook_out.bulk_redispatch", "webhook_integration", request.integrationId(), rejected(reason));
+      throw exception;
     } catch (RuntimeException exception) {
-      audit(actor, "webhook_out.bulk_redispatch", "webhook_integration", request.integrationId(), rejected("in_flight"));
+      audit(actor, "webhook_out.bulk_redispatch", "webhook_integration", request.integrationId(), rejected("internal_error"));
       throw exception;
     }
     int drainSeconds = (int) Math.ceil((double) Math.max(1, inserted) / Math.max(1, rps));

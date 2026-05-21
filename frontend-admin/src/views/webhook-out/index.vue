@@ -5,6 +5,7 @@ import { bulkRedispatch, createWebhookIntegration, fetchDeliveryLogs, type BulkR
 const errorMessage = ref('');
 const successMessage = ref('');
 const loading = ref(false);
+const integrationSubmitting = ref(false);
 const redispatchResult = ref<BulkRedispatchResult | null>(null);
 const deliveryLogs = ref<DeliveryLog[]>([]);
 const integration = reactive({ id: '', display_name: '', target_url: '', secret_ref: '' });
@@ -23,6 +24,8 @@ async function loadDeliveryLogs() {
 }
 
 async function submitIntegration() {
+  if (integrationSubmitting.value) return;
+  integrationSubmitting.value = true;
   errorMessage.value = '';
   successMessage.value = '';
   try {
@@ -30,6 +33,8 @@ async function submitIntegration() {
     successMessage.value = 'Webhook upstream saved';
   } catch (error) {
     errorMessage.value = error instanceof Error ? error.message : 'Webhook integration failed';
+  } finally {
+    integrationSubmitting.value = false;
   }
 }
 
@@ -63,7 +68,7 @@ onMounted(loadDeliveryLogs);
             </NFormItem>
             <NFormItem label="HTTPS 目标"><NInput v-model:value="integration.target_url" placeholder="https://example.com/hooks/mmpay" /></NFormItem>
             <NFormItem label="Secret ref"><NInput v-model:value="integration.secret_ref" placeholder="env://WEBHOOK_SECRET" /></NFormItem>
-            <NButton type="primary" @click="submitIntegration">保存 upstream</NButton>
+            <NButton type="primary" :loading="integrationSubmitting" :disabled="integrationSubmitting" @click="submitIntegration">保存 upstream</NButton>
           </NForm>
         </NCard>
       </NGi>

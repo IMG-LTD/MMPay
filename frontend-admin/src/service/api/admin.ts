@@ -349,16 +349,14 @@ function refreshTokenOnce(): Promise<boolean> {
       });
       if (!res.ok) return false;
       const body = await res.json();
-      if (body?.code !== '0000' || !body?.data?.token) return false;
+      if (body?.code !== '0000' || !body?.data?.token || !body?.data?.refreshToken) return false;
       localStg.set('token', body.data.token);
       localStg.set('refreshToken', body.data.refreshToken);
       return true;
     } catch {
       return false;
     } finally {
-      setTimeout(() => {
-        refreshInflight = null;
-      }, 0);
+      refreshInflight = null;
     }
   })();
   return refreshInflight;

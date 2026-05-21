@@ -56,7 +56,10 @@ public final class LicenseRelay {
       HttpRequest request, String targetId, String requestId, int byteCount, String payloadSha256) {
     try {
       HttpResponse<InputStream> response = httpClient.send(request, HttpResponse.BodyHandlers.ofInputStream());
-      RelayResponseBody body = readBody(response.body());
+      RelayResponseBody body;
+      try (InputStream stream = response.body()) {
+        body = readBody(stream);
+      }
       String errorClass = classify(response.statusCode());
       return new LicenseRelayReceipt(
           targetId,

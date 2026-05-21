@@ -13,7 +13,6 @@ import { clearAuthStorage, getToken } from './shared';
 
 export const useAuthStore = defineStore(SetupStoreId.Auth, () => {
   const route = useRoute();
-  const authStore = useAuthStore();
   const routeStore = useRouteStore();
   const tabStore = useTabStore();
   const { toLogin, redirectFromLogin } = useRouterPush(false);
@@ -38,13 +37,21 @@ export const useAuthStore = defineStore(SetupStoreId.Auth, () => {
   /** Is login */
   const isLogin = computed(() => Boolean(token.value));
 
+  function resetAuthState() {
+    token.value = '';
+    userInfo.userId = '';
+    userInfo.userName = '';
+    userInfo.roles = [];
+    userInfo.buttons = [];
+  }
+
   /** Reset auth store */
   async function resetStore() {
     recordUserId();
 
     clearAuthStorage();
 
-    authStore.$reset();
+    resetAuthState();
 
     if (!route.meta.constant) {
       await toLogin();
