@@ -7,8 +7,9 @@ import java.time.Clock;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import org.springframework.transaction.annotation.Transactional;
 
-public final class MerchantAdminService {
+public class MerchantAdminService {
   private static final String ACCEPTED = "accepted";
   private static final String REJECTED = "rejected";
   private final MerchantAdminRepository repository;
@@ -30,6 +31,7 @@ public final class MerchantAdminService {
     this.clock = clock;
   }
 
+  @Transactional
   public MerchantResponse createMerchant(MerchantCreateRequest request, AuditActor actor) {
     InputValidator.merchantCreate(request);
     var binding = bindOrAudit("merchant", request.id(), request.credentialRef(), actor);
@@ -51,6 +53,7 @@ public final class MerchantAdminService {
     return MerchantResponse.from(repository.requireMerchant(id));
   }
 
+  @Transactional
   public MerchantResponse patchMerchant(String id, MerchantPatchRequest request, AuditActor actor) {
     InputValidator.merchantPatch(request);
     var current = repository.requireMerchant(id);
@@ -61,6 +64,7 @@ public final class MerchantAdminService {
     return MerchantResponse.from(row);
   }
 
+  @Transactional
   public void archiveMerchant(String id, AuditActor actor) {
     repository.archiveMerchant(id, java.time.Instant.now(clock));
     audit(actor, "merchant.delete", "merchant", id, details("id", id, "result", ACCEPTED));
@@ -71,6 +75,7 @@ public final class MerchantAdminService {
     return verifyBinding("merchant", row.id(), row.credentialRef(), row.credentialFingerprint(), actor);
   }
 
+  @Transactional
   public ChannelResponse createChannel(String merchantId, ChannelCreateRequest request, AuditActor actor) {
     InputValidator.channelCreate(request);
     requireProvider(request.providerCode(), actor, request.id());
@@ -93,6 +98,7 @@ public final class MerchantAdminService {
     return ChannelResponse.from(repository.requireChannel(id));
   }
 
+  @Transactional
   public ChannelResponse patchChannel(String id, ChannelPatchRequest request, AuditActor actor) {
     InputValidator.channelPatch(request);
     var current = repository.requireChannel(id);
@@ -103,6 +109,7 @@ public final class MerchantAdminService {
     return ChannelResponse.from(row);
   }
 
+  @Transactional
   public void archiveChannel(String id, AuditActor actor) {
     repository.archiveChannel(id, java.time.Instant.now(clock));
     audit(actor, "channel.delete", "channel", id, details("id", id, "result", ACCEPTED));

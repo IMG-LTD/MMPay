@@ -49,7 +49,7 @@ public class UserAdminController {
       @PathVariable("username") String username,
       @RequestBody UserPatchRequest request,
       Authentication auth) {
-    var user = service.patchUser(username, request);
+    var user = service.patchUser(username, request, auth.getName());
     auditWriter.emit("user", auth.getName(), "iam.user.patch", "user", username,
         Map.of("fields", request.fields()));
     return user;

@@ -45,11 +45,14 @@ public class UserAdminService {
   }
 
   @Transactional
-  public UserResponse patchUser(String username, UserPatchRequest request) {
+  public UserResponse patchUser(String username, UserPatchRequest request, String requestingUser) {
     if (repository.findUser(username).filter(u -> "user".equals(u.kind())).isEmpty()) {
       throw new ResponseStatusException(HttpStatus.NOT_FOUND, "user_not_found");
     }
     if (request.role() != null) {
+      if (username.equals(requestingUser)) {
+        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "cannot_change_own_role");
+      }
       var role = requireRole(request.role());
       repository.updateUserRole(username, role);
     }

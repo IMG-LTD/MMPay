@@ -58,6 +58,7 @@ public class PaymentService {
     return PaymentIntentResponse.from(repository.requirePaymentIntent(id));
   }
 
+  @Transactional
   public PaymentIntentResponse cancelPaymentIntent(String id, String actor) {
     var row = repository.cancelPendingIntent(id, Instant.now(clock));
     audit(actor, "payment_intent.cancel", "payment_intent", id, accepted());

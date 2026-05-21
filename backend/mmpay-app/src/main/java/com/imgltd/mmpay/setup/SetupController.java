@@ -68,8 +68,8 @@ public class SetupController {
       return "setup";
     }
     try {
-      bootstrapService.createAdmin(request);
       tokenService.verify(token);
+      bootstrapService.createAdmin(request);
       return ResponseEntity.status(HttpStatus.FOUND).location(URI.create("/login")).build();
     } catch (SetupAlreadyCompletedException exception) {
       return ResponseEntity.notFound().build();
