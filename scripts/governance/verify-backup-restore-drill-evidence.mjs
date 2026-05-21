@@ -33,10 +33,11 @@ function main() {
   }
 
   const evidenceText = readRequired(evidenceFile, 'backup restore drill evidence missing');
-  rejectPlaceholders(evidenceText, 'backup restore drill evidence');
   const canonical = extractBlock(evidenceText, 'MMPAY BACKUP RESTORE DRILL');
   const ed25519Signature = extractBlock(evidenceText, 'MMPAY DRILL ED25519 SIGNATURE');
   const pgpSignature = extractPgpSignature(evidenceText);
+  rejectPlaceholders(stripSignatureBlocks(evidenceText), 'backup restore drill evidence');
+  rejectPlaceholders(canonical, 'backup restore drill canonical payload');
   const evidence = parseCanonicalJson(canonical);
   const operatorKey = findOperatorKey(parseOperatorKeys(), evidence.operator_key_fingerprint);
 
@@ -63,6 +64,18 @@ function rejectPlaceholders(text, label) {
   if (forbidden.test(text)) {
     fail(`${label} contains placeholder or fake markers`);
   }
+}
+
+function stripSignatureBlocks(text) {
+  return text
+    .replace(
+      /-----BEGIN MMPAY DRILL ED25519 SIGNATURE-----[\s\S]+?-----END MMPAY DRILL ED25519 SIGNATURE-----/g,
+      '-----MMPAY DRILL ED25519 SIGNATURE REDACTED-----'
+    )
+    .replace(
+      /-----BEGIN PGP SIGNATURE-----[\s\S]+?-----END PGP SIGNATURE-----/g,
+      '-----PGP SIGNATURE REDACTED-----'
+    );
 }
 
 function extractBlock(text, blockName) {
