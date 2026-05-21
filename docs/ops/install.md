@@ -85,6 +85,11 @@ docker compose -f deploy/docker-compose.minimal.yml down --volumes --remove-orph
 docker compose -f deploy/docker-compose.minimal.yml up --build --force-recreate
 ```
 
+The immutable `v1.0.0` app image was cut before the Docker quick-start
+datasource patch. For this local Compose path, use a checkout that contains
+`deploy/docker-entrypoint.sh` and the `SPRING_DATASOURCE_*` Compose variables, or
+use a published `v1.0.1` patch image after that tag is available.
+
 If an older failed local database was created before this bootstrap script was
 mounted, reset only the local Compose data and start again:
 

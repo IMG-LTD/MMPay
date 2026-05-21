@@ -69,7 +69,8 @@ describe('P5 release closure contract', () => {
       'docs/ops/runbook.md',
       'docs/governance/deprecation-policy.md',
       'docs/integrations/upstream-evidence-flip-contract.md',
-      'docs/release/v1.0.0-release-notes.md'
+      'docs/release/v1.0.0-release-notes.md',
+      'docs/release/v1.0.1-release-notes.md'
     ];
     for (const file of requiredDocs) {
       assert.equal(exists(file), true, `${file} is required by P5`);
@@ -79,6 +80,7 @@ describe('P5 release closure contract', () => {
     const drill = await read('docs/ops/backup-restore-drill.md');
     const deprecation = await read('docs/governance/deprecation-policy.md');
     const flip = await read('docs/integrations/upstream-evidence-flip-contract.md');
+    const patchNotes = await read('docs/release/v1.0.1-release-notes.md');
 
     assert.match(degraded, /MMPAY_FAIL_OPEN_DEGRADED_UI=true/);
     assert.match(degraded, /api\/admin\/audit\/verify/);
@@ -88,6 +90,10 @@ describe('P5 release closure contract', () => {
     assert.match(deprecation, /sole live adapter/i);
     assert.match(flip, /v1\.0\.0-image-digest-evidence\.md/);
     assert.match(flip, /governance\/mmpay-binding\.yaml/);
+    assert.match(patchNotes, /SPRING_DATASOURCE_URL/);
+    assert.match(patchNotes, /deploy\/docker-entrypoint\.sh/);
+    assert.match(patchNotes, /scripts\/smoke-docker-compose\.sh/);
+    assert.match(patchNotes, /v1\.0\.0 tag remains immutable/i);
   });
 
   it('wires P5 tests and governance checks into local validation', async () => {

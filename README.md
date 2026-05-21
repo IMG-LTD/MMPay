@@ -11,6 +11,11 @@ deployed from this standalone repository.
 workflow for tag `v1.0.0` completed successfully on commit
 `ac19a23b4b297cf8bf83ccf5ba749ad78cc3aa22`.
 
+Post-GA Docker quick-start fixes are documented in
+`docs/release/v1.0.1-release-notes.md`. The `v1.0.0` tag remains immutable; for
+local Docker validation, build from the current checkout or a published
+`v1.0.1` patch tag instead of reusing the old `v1.0.0` app image.
+
 The GA scope includes:
 
 - Backend foundation for setup, RBAC, audit chain, IAM boundaries, and degraded
@@ -67,7 +72,9 @@ missing.
 
 If logs show `Failed to configure a DataSource`, rebuild through Docker Compose
 with `--build --force-recreate`; that message means the app was started without
-the Compose-injected JDBC environment or from an old local image.
+the Compose-injected JDBC environment or from an old local image. The immutable
+`v1.0.0` image was cut before this Docker quick-start patch, so use the current
+checkout or a published `v1.0.1` patch image for this path.
 
 Published v1.0.0 images:
 
