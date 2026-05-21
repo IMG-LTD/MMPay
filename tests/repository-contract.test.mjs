@@ -226,7 +226,7 @@ describe('MMPay open-source framework contract', () => {
     assert.equal(packageJson.devDependencies['@vitejs/plugin-vue'], '6.0.6');
     assert.match(mainTs, /from 'vue'/);
     assert.match(homeView, /MMPay Admin/);
-    assert.match(homeView, /fetch\('\/api\/admin\/dashboard'/);
+    assert.match(homeView, /fetchAdminDashboard\(\)/);
     assert.match(homeView, /Foundation pending/);
     assert.match(routes, /constant: true/);
     assert.match(appEnv, /VITE_APP_DESC=MMPay payment operations console/);

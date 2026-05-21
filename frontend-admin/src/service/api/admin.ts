@@ -185,6 +185,34 @@ export interface LicenseRelayLog {
   dispatched_at: string;
 }
 
+export interface DashboardNavigationItem {
+  key: string;
+  label: string;
+}
+
+export interface DashboardMetric {
+  label: string;
+  value: string;
+}
+
+export type DashboardCell = string | number | boolean | null;
+
+export interface DashboardTable {
+  key: string;
+  columns: string[];
+  rows: Record<string, DashboardCell>[];
+}
+
+export interface Dashboard {
+  navigation: DashboardNavigationItem[];
+  metrics: DashboardMetric[];
+  tables: DashboardTable[];
+}
+
+export function fetchAdminDashboard() {
+  return adminFetch<Dashboard>('/api/admin/dashboard');
+}
+
 export function fetchMerchants() {
   return adminFetch<AdminPage<Merchant>>('/api/admin/merchants');
 }

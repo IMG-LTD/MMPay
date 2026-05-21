@@ -1,17 +1,7 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue';
 import { useAppStore } from '@/store/modules/app';
-
-type NavigationItem = Readonly<{ key: string; label: string }>;
-type MetricCard = Readonly<{ label: string; value: string }>;
-type AdminCell = string | number | boolean | null;
-type AdminRow = Readonly<Record<string, AdminCell>>;
-type AdminTable = Readonly<{ key: string; columns: readonly string[]; rows: readonly AdminRow[] }>;
-type Dashboard = Readonly<{
-  navigation: readonly NavigationItem[];
-  metrics: readonly MetricCard[];
-  tables: readonly AdminTable[];
-}>;
+import { type Dashboard, fetchAdminDashboard } from '@/service/api/admin';
 
 const appStore = useAppStore();
 const loading = ref(false);
@@ -27,13 +17,7 @@ async function loadDashboard() {
   errorMessage.value = '';
 
   try {
-    const response = await fetch('/api/admin/dashboard', { headers: { Accept: 'application/json' } });
-
-    if (!response.ok) {
-      throw new Error(`Dashboard request failed with HTTP ${response.status}`);
-    }
-
-    dashboard.value = (await response.json()) as Dashboard;
+    dashboard.value = await fetchAdminDashboard();
   } catch (error) {
     errorMessage.value = error instanceof Error ? error.message : 'Dashboard request failed';
   } finally {

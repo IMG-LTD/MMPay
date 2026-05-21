@@ -39,7 +39,7 @@ async function main() {
   await requireFile('src/service/api/admin.ts');
 
   assert.match(homeView, /MMPay Admin/);
-  assert.match(homeView, /fetch\('\/api\/admin\/dashboard'/);
+  assert.match(homeView, /fetchAdminDashboard\(\)/);
   assert.match(homeView, /Foundation pending/);
   assert.match(merchantsView, /fetchMerchants/);
   assert.match(merchantsView, /createMerchant/);
