@@ -5,6 +5,23 @@ import { useRouteStore } from '@/store/modules/route';
 import { localStg } from '@/utils/storage';
 import { getRouteName } from '@/router/elegant/transform';
 
+let setupChecked = false;
+
+async function redirectToSetupIfNeeded(): Promise<boolean> {
+  if (setupChecked) return false;
+  setupChecked = true;
+  try {
+    const res = await fetch('/setup', { method: 'HEAD' });
+    if (res.ok) {
+      window.location.href = '/setup';
+      return true;
+    }
+  } catch {
+    // network error — proceed normally
+  }
+  return false;
+}
+
 /**
  * create route guard
  *
@@ -97,6 +114,10 @@ async function initRoute(to: RouteLocationNormalized): Promise<RouteLocationRaw 
     // if the user is not logged in, then switch to the login page
     const loginRoute: RouteKey = 'login';
     const query = getRouteQueryOfLoginRoute(to, routeStore.routeHome);
+
+    // on first navigation, check if setup is still needed
+    const redirected = await redirectToSetupIfNeeded();
+    if (redirected) return null;
 
     const location: RouteLocationRaw = {
       name: loginRoute,

@@ -50,12 +50,12 @@ onMounted(loadIntents);
     <NGrid :x-gap="16" :y-gap="16" responsive="screen" item-responsive>
       <NGi span="24 l:16">
         <NCard :bordered="false" class="card-wrapper">
-          <template #header>支付意图</template>
+          <template #header>支付</template>
           <template #header-extra>
             <NButton :loading="loading" secondary type="primary" @click="loadIntents">刷新</NButton>
           </template>
           <NSpin :show="loading">
-            <NEmpty v-if="!intents.length" description="暂无支付意图" />
+            <NEmpty v-if="!intents.length" description="暂无支付记录" />
             <NTable v-else :bordered="false" :single-line="false" size="small">
               <thead>
                 <tr>
@@ -82,7 +82,7 @@ onMounted(loadIntents);
 
       <NGi span="24 l:8">
         <NCard :bordered="false" class="card-wrapper">
-          <template #header>创建支付意图</template>
+          <template #header>创建支付</template>
           <NForm :model="form" label-placement="top">
             <NFormItem label="通道 ID"><NInput v-model:value="form.channel_id" placeholder="ch_huifu" /></NFormItem>
             <NFormItem label="金额 minor"><NInputNumber v-model:value="form.amount_minor" class="w-full" :min="1" /></NFormItem>

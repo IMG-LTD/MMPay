@@ -37,10 +37,10 @@ onMounted(loadIntent);
 <template>
   <NSpace vertical :size="16">
     <NButton text type="primary" @click="router.back()">返回</NButton>
-    <NAlert v-if="errorMessage" type="error" title="支付意图失败">{{ errorMessage }}</NAlert>
+    <NAlert v-if="errorMessage" type="error" title="加载失败">{{ errorMessage }}</NAlert>
 
     <NCard :bordered="false" class="card-wrapper">
-      <template #header>支付意图详情</template>
+      <template #header>支付详情</template>
       <template #header-extra>
         <NSpace>
           <NButton secondary :loading="loading" @click="loadIntent">刷新</NButton>
@@ -49,7 +49,7 @@ onMounted(loadIntent);
           </RouterLink>
           <NPopconfirm v-if="intent?.status === 'pending'" @positive-click="cancelIntent">
             <template #trigger><NButton type="warning">取消支付</NButton></template>
-            确认取消该 pending 支付意图？
+            确认取消该 pending 支付？
           </NPopconfirm>
         </NSpace>
       </template>
