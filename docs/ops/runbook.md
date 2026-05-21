@@ -1,7 +1,8 @@
 # Runbook
 
-This index covers the v1.0.0 operator surface. It does not replace external
-Huifu, upstream webhook, or vendor license relay evidence collection.
+This index covers the v1.0.0 operator surface and the `v1.0.0-hotfix.1`
+post-GA fixes. It does not replace external Huifu, upstream webhook, or vendor
+license relay evidence collection.
 
 | Topic | Document | Gate |
 | --- | --- | --- |
@@ -15,6 +16,7 @@ Huifu, upstream webhook, or vendor license relay evidence collection.
 | Image digest evidence | `docs/release/image-digest-evidence-template.md` | `bash scripts/governance/verify-image-digest-evidence.sh` |
 | RC cadence | `docs/release/rc-cadence.md` | `bash scripts/release-gate.sh --rc` |
 | GA promotion | `docs/release/v1.0.0-release-notes.md` | `bash scripts/release-gate.sh --ga` |
+| Hotfix release | `docs/release/v1.0.0-hotfix.1-release-notes.md` | `bash scripts/governance/verify-image-digest-evidence.sh` |
 | Deprecation | `docs/governance/deprecation-policy.md` | repository contract tests |
 | Support boundary | `SUPPORT.md` | maintainer review |
 

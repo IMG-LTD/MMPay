@@ -27,7 +27,17 @@ ghcr.io/img-ltd/mmpay-frontend-admin:v1.0.0
 ghcr.io/img-ltd/mmpay-app-debug-symbols:v1.0.0
 ```
 
-For Docker quick-start validation, prefer the current source checkout or a
-published `v1.0.1` patch image. The immutable `v1.0.0` app image predates the
-`SPRING_DATASOURCE_*` Compose wiring and entrypoint guard documented in
-`docs/release/v1.0.1-release-notes.md`.
+The recommended post-GA hotfix tags are:
+
+```text
+ghcr.io/img-ltd/mmpay-app:v1.0.0-hotfix.1
+ghcr.io/img-ltd/mmpay-frontend-admin:v1.0.0-hotfix.1
+ghcr.io/img-ltd/mmpay-app-debug-symbols:v1.0.0-hotfix.1
+```
+
+For Docker quick-start validation, prefer the current source checkout or the
+published `v1.0.0-hotfix.1` images. The immutable `v1.0.0` app image predates
+the `SPRING_DATASOURCE_*` Compose wiring and entrypoint guard documented in
+`docs/release/v1.0.1-release-notes.md`; the `v1.0.0-hotfix.1` image folds in
+that fix together with the audit findings recorded in
+`docs/release/v1.0.0-hotfix.1-release-notes.md`.

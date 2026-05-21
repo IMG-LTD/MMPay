@@ -88,7 +88,9 @@ docker compose -f deploy/docker-compose.minimal.yml up --build --force-recreate
 The immutable `v1.0.0` app image was cut before the Docker quick-start
 datasource patch. For this local Compose path, use a checkout that contains
 `deploy/docker-entrypoint.sh` and the `SPRING_DATASOURCE_*` Compose variables, or
-use a published `v1.0.1` patch image after that tag is available.
+use the published `v1.0.0-hotfix.1` image. The standalone `v1.0.1` patch tag
+documented in `docs/release/v1.0.1-release-notes.md` is preserved for history;
+new deployments should use `v1.0.0-hotfix.1` instead.
 
 If an older failed local database was created before this bootstrap script was
 mounted, reset only the local Compose data and start again:
