@@ -72,7 +72,7 @@
     "@sa/scripts": "workspace:*",
     "@sa/uno-preset": "workspace:*",
     "@soybeanjs/eslint-config-vue": "^0.0.2",
-    "@types/node": "25.7.0",
+    "@types/node": "25.8.0",
     "@types/nprogress": "0.2.3",
     "@vitejs/plugin-vue": "6.0.6",
     "@vitejs/plugin-vue-jsx": "5.1.5",
