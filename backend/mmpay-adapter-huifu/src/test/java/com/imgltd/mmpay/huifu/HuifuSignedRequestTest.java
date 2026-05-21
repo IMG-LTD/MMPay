@@ -1,6 +1,7 @@
 package com.imgltd.mmpay.huifu;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.imgltd.mmpay.adapter.ProviderEvent;
@@ -29,6 +30,10 @@ class HuifuSignedRequestTest {
 
     assertEquals("test-sys-id", signed.envelope().get("sys_id"));
     assertEquals("test-product-id", signed.envelope().get("product_id"));
+    assertEquals("javaSDK_lightning_1.0.5", signed.headers().get("sdk_version"));
+    assertEquals("javaSDK_lightning_1.0.5", signed.headers().get("jpt-sdk_version"));
+    assertEquals("test-sys-id", signed.headers().get("sys_id"));
+    assertEquals("test-sys-id", signed.headers().get("jpt-sys_id"));
     assertEquals("hfps/1.2.0", signed.headers().get("jpt-x-skill-source"));
     assertEquals("test-merchant-id", signed.headers().get("jpt-x-skill-huifu_id"));
     assertEquals("12.34", signed.data().get("trans_amt"));
@@ -60,19 +65,19 @@ class HuifuSignedRequestTest {
     HuifuSandboxCredentials credentials = credentials(keyPair);
     HuifuPaymentRequestFactory factory = new HuifuPaymentRequestFactory(credentials);
 
-    HuifuSignedRequest signed =
-        factory.queryAggregationPayment(
-            LocalDate.of(2026, 5, 18), "202605180002", "20260517", "origin-pay-seq-1");
+    HuifuSignedRequest signed = factory.queryAggregationPayment("20260517", "origin-pay-seq-1");
 
     assertEquals("test-sys-id", signed.envelope().get("sys_id"));
     assertEquals("test-product-id", signed.envelope().get("product_id"));
+    assertEquals("javaSDK_lightning_1.0.5", signed.headers().get("sdk_version"));
+    assertEquals("test-sys-id", signed.headers().get("jpt-sys_id"));
     assertEquals("hfps/1.2.0", signed.headers().get("jpt-x-skill-source"));
     assertEquals("test-merchant-id", signed.headers().get("jpt-x-skill-huifu_id"));
-    assertEquals("20260518", signed.data().get("req_date"));
-    assertEquals("202605180002", signed.data().get("req_seq_id"));
     assertEquals("test-merchant-id", signed.data().get("huifu_id"));
-    assertEquals("20260517", signed.data().get("org_req_date"));
-    assertEquals("origin-pay-seq-1", signed.data().get("org_req_seq_id"));
+    assertEquals("20260517", signed.data().get("req_date"));
+    assertEquals("origin-pay-seq-1", signed.data().get("req_seq_id"));
+    assertNull(signed.data().get("org_req_date"));
+    assertNull(signed.data().get("org_req_seq_id"));
     assertTrue(HuifuRsaSigner.verifyData(signed.data(), credentials.rsaPublicKey(), signed.sign()));
   }
 

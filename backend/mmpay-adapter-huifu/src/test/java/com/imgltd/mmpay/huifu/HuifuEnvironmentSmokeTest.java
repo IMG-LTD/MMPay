@@ -29,8 +29,7 @@ class HuifuEnvironmentSmokeTest {
     ProviderRefundRequest refund = new ProviderRefundRequest("mmpay-env-smoke-refund-1", 101, "env smoke refund");
 
     HuifuSignedRequest create = factory.createAggregationNativePayment(payment, LocalDate.of(2026, 5, 18), "202605180101");
-    HuifuSignedRequest query =
-        factory.queryAggregationPayment(LocalDate.of(2026, 5, 18), "202605180102", "20260518", "202605180101");
+    HuifuSignedRequest query = factory.queryAggregationPayment("20260518", "202605180101");
     HuifuSignedRequest refundRequest =
         factory.refundAggregationPayment(refund, LocalDate.of(2026, 5, 18), "202605180103", "20260518", "202605180101");
 

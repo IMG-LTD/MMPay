@@ -12,6 +12,7 @@ import java.util.Objects;
 
 public final class HuifuPaymentRequestFactory {
   private static final String DEFAULT_TRADE_TYPE = "A_NATIVE";
+  private static final String LIGHTNING_SDK_VERSION = "javaSDK_lightning_1.0.5";
   private static final DateTimeFormatter REQUEST_DATE = DateTimeFormatter.BASIC_ISO_DATE;
 
   private final HuifuSandboxCredentials credentials;
@@ -28,12 +29,8 @@ public final class HuifuPaymentRequestFactory {
   }
 
   public HuifuSignedRequest queryAggregationPayment(
-      LocalDate requestDate,
-      String requestSequenceId,
-      String originalRequestDate,
-      String originalRequestSequenceId) {
-    Map<String, Object> data =
-        originalPaymentData(requestDate, requestSequenceId, originalRequestDate, originalRequestSequenceId);
+      String originalRequestDate, String originalRequestSequenceId) {
+    Map<String, Object> data = queryData(originalRequestDate, originalRequestSequenceId);
     String sign = HuifuRsaSigner.signData(data, credentials.rsaPrivateKey());
     return new HuifuSignedRequest(envelope(data, sign), headers(data), data, sign);
   }
@@ -46,7 +43,7 @@ public final class HuifuPaymentRequestFactory {
       String originalRequestSequenceId) {
     Objects.requireNonNull(request, "request");
     Map<String, Object> data =
-        originalPaymentData(requestDate, requestSequenceId, originalRequestDate, originalRequestSequenceId);
+        refundData(requestDate, requestSequenceId, originalRequestDate, originalRequestSequenceId);
     data.put("ord_amt", formatAmount(request.amountMinor()));
     data.put("remark", request.reason());
     data.put("notify_url", credentials.notifyUrl());
@@ -69,7 +66,16 @@ public final class HuifuPaymentRequestFactory {
     return data;
   }
 
-  private Map<String, Object> originalPaymentData(
+  private Map<String, Object> queryData(
+      String originalRequestDate, String originalRequestSequenceId) {
+    Map<String, Object> data = new LinkedHashMap<>();
+    data.put("huifu_id", credentials.merchantId());
+    data.put("req_date", requireText(originalRequestDate, "originalRequestDate"));
+    data.put("req_seq_id", requireText(originalRequestSequenceId, "originalRequestSequenceId"));
+    return data;
+  }
+
+  private Map<String, Object> refundData(
       LocalDate requestDate,
       String requestSequenceId,
       String originalRequestDate,
@@ -95,6 +101,10 @@ public final class HuifuPaymentRequestFactory {
 
   private Map<String, String> headers(Map<String, Object> data) {
     Map<String, String> headers = new LinkedHashMap<>();
+    headers.put("sdk_version", LIGHTNING_SDK_VERSION);
+    headers.put("jpt-sdk_version", LIGHTNING_SDK_VERSION);
+    headers.put("sys_id", credentials.sysId());
+    headers.put("jpt-sys_id", credentials.sysId());
     headers.put("jpt-x-skill-source", credentials.skillSource());
     headers.put("jpt-x-skill-huifu_id", data.get("huifu_id").toString());
     return headers;
