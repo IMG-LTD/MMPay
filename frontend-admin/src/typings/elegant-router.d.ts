@@ -125,7 +125,7 @@ declare module "@elegant-router/types" {
           multiTab?: boolean;
           fixedIndexInTab?: number;
           query?: Record<string, string>;
-          roles?: import('@elegant-router/types').RouteKey[];
+          roles?: string[];
           order?: number;
           homepage?: boolean;
         };

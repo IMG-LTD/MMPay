@@ -182,7 +182,8 @@ const routeMap: RouteMap = {
   "webhook-out": "/webhook-out",
   "webhook-out-delivery-log-detail": "/webhook-out/delivery-logs/:id",
   "integrations": "/integrations",
-  "integration-detail": "/integrations/:id"
+  "integration-detail": "/integrations/:id",
+  "system": "/system"
 };
 
 /**
