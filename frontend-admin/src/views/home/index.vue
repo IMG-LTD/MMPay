@@ -12,6 +12,24 @@ const gap = computed(() => (appStore.isMobile ? 0 : 16));
 const emptyTables = computed(() => dashboard.value?.tables.filter(table => table.rows.length === 0) ?? []);
 const visibleTables = computed(() => dashboard.value?.tables.filter(table => table.rows.length > 0) ?? []);
 
+const NAV_ROUTE_BY_KEY: Record<string, string> = {
+  merchants: 'merchants',
+  channels: 'merchants',
+  orders: 'payments',
+  refunds: 'refunds',
+  'webhook-logs': 'webhook-out',
+  reconciliation: 'reconciliation',
+  'external-readiness': 'integrations'
+};
+
+const navigableItems = computed(
+  () => dashboard.value?.navigation.filter(item => NAV_ROUTE_BY_KEY[item.key]) ?? []
+);
+
+function routeNameForNav(key: string): string {
+  return NAV_ROUTE_BY_KEY[key];
+}
+
 async function loadDashboard() {
   loading.value = true;
   errorMessage.value = '';
@@ -60,12 +78,12 @@ onMounted(loadDashboard);
     <NCard :bordered="false" class="card-wrapper">
       <template #header>业务导航</template>
       <NSpin :show="loading && !dashboard">
-        <NEmpty v-if="!dashboard?.navigation?.length" description="暂无导航数据" />
+        <NEmpty v-if="!navigableItems.length" description="暂无导航数据" />
         <NSpace v-else wrap>
           <RouterLink
-            v-for="item in dashboard.navigation"
+            v-for="item in navigableItems"
             :key="item.key"
-            :to="{ name: item.key }"
+            :to="{ name: routeNameForNav(item.key) }"
           >
             <NButton text type="primary" size="small">{{ item.label }}</NButton>
           </RouterLink>
