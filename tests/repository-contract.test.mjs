@@ -222,7 +222,7 @@ describe('MMPay open-source framework contract', () => {
     assert.equal(packageJson.dependencies.pinia, '3.0.4');
     assert.equal(packageJson.dependencies['naive-ui'], '2.44.1');
     assert.equal(packageJson.dependencies['@vueuse/core'], '14.3.0');
-    assert.equal(packageJson.devDependencies.vite, '8.0.12');
+    assert.equal(packageJson.devDependencies.vite, '8.0.13');
     assert.equal(packageJson.devDependencies['@vitejs/plugin-vue'], '6.0.6');
     assert.match(mainTs, /from 'vue'/);
     assert.match(homeView, /MMPay Admin/);
@@ -383,7 +383,7 @@ describe('MMPay open-source framework contract', () => {
     const releaseProcess = await readFile(path.join(root, 'docs/release/release-process.md'), 'utf8');
 
     assert.match(workflow, /name: MMPay Images/);
-    assert.match(workflow, /docker\/build-push-action@v6/);
+    assert.match(workflow, /docker\/build-push-action@v7/);
     assert.match(workflow, /file: Dockerfile/);
     assert.match(workflow, /ghcr\.io\/img-ltd\/mmpay-app/);
     assert.match(imageDocs, /ghcr\.io\/img-ltd\/mmpay-app/);
