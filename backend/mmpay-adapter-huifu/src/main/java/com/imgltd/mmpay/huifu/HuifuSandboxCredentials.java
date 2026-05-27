@@ -30,7 +30,7 @@ public record HuifuSandboxCredentials(
     requireText(skillSource, SKILL_SOURCE_ENV);
     requireText(merchantId, MERCHANT_ID_ENV);
     requireText(notifyUrl, NOTIFY_URL_ENV);
-    requireText(webhookEndpointKey, WEBHOOK_ENDPOINT_KEY_ENV);
+    webhookEndpointKey = webhookEndpointKey == null ? "" : webhookEndpointKey;
     sdkRoot = sdkRoot == null ? "" : sdkRoot;
   }
 
@@ -43,7 +43,7 @@ public record HuifuSandboxCredentials(
         envValue(env, SKILL_SOURCE_ENV),
         envValue(env, MERCHANT_ID_ENV),
         envValue(env, NOTIFY_URL_ENV),
-        envValue(env, WEBHOOK_ENDPOINT_KEY_ENV),
+        optionalEnvValue(env, WEBHOOK_ENDPOINT_KEY_ENV),
         optionalEnvValue(env, SDK_ROOT_ENV));
   }
 

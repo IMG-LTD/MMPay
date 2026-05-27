@@ -108,6 +108,26 @@ class HuifuSignedRequestTest {
     assertEquals("RECV_ORD_ID_202605180001", HuifuInboundNotifyVerifier.acknowledge("202605180001"));
   }
 
+  @Test
+  void omitsSkillHuifuIdHeaderWhenDataHasNoHuifuId() throws Exception {
+    KeyPair keyPair = generateKeyPair();
+    HuifuPaymentRequestFactory factory = new HuifuPaymentRequestFactory(credentials(keyPair));
+
+    Map<String, String> headers = factory.headers(Map.of());
+
+    assertEquals("hfps/1.2.0", headers.get("jpt-x-skill-source"));
+    assertNull(headers.get("jpt-x-skill-huifu_id"));
+  }
+
+  @Test
+  void omitsSkillHuifuIdHeaderWhenHuifuIdIsBlank() throws Exception {
+    KeyPair keyPair = generateKeyPair();
+    HuifuPaymentRequestFactory factory = new HuifuPaymentRequestFactory(credentials(keyPair));
+
+    assertNull(factory.headers(Map.of("huifu_id", "")).get("jpt-x-skill-huifu_id"));
+    assertNull(factory.headers(Map.of("huifu_id", "   ")).get("jpt-x-skill-huifu_id"));
+  }
+
   private static HuifuSandboxCredentials credentials(KeyPair keyPair) {
     return new HuifuSandboxCredentials(
         "test-sys-id",

@@ -99,14 +99,17 @@ public final class HuifuPaymentRequestFactory {
     return envelope;
   }
 
-  private Map<String, String> headers(Map<String, Object> data) {
+  Map<String, String> headers(Map<String, Object> data) {
     Map<String, String> headers = new LinkedHashMap<>();
     headers.put("sdk_version", LIGHTNING_SDK_VERSION);
     headers.put("jpt-sdk_version", LIGHTNING_SDK_VERSION);
     headers.put("sys_id", credentials.sysId());
     headers.put("jpt-sys_id", credentials.sysId());
     headers.put("jpt-x-skill-source", credentials.skillSource());
-    headers.put("jpt-x-skill-huifu_id", data.get("huifu_id").toString());
+    Object huifuId = data.get("huifu_id");
+    if (huifuId != null && !huifuId.toString().isBlank()) {
+      headers.put("jpt-x-skill-huifu_id", huifuId.toString());
+    }
     return headers;
   }
 

@@ -68,6 +68,23 @@ class HuifuAdapterContractTest {
     assertTrue(failure.getMessage().contains("HUIFU_SYS_ID"));
   }
 
+  @Test
+  void allowsMissingWebhookEndpointKeyBecauseControlPanelWebhookIsOptional() {
+    Map<String, String> env =
+        Map.of(
+            "HUIFU_SYS_ID", "sys",
+            "HUIFU_PRODUCT_ID", "prod",
+            "HUIFU_RSA_PUBLIC_KEY", "pub",
+            "HUIFU_RSA_PRIVATE_KEY", "priv",
+            "HUIFU_SKILL_SOURCE", "hfps/1.2.0",
+            "HUIFU_MERCHANT_ID", "mid",
+            "HUIFU_NOTIFY_URL", "https://callback.test");
+
+    HuifuSandboxCredentials credentials = HuifuSandboxCredentials.from(env);
+
+    assertEquals("", credentials.webhookEndpointKey());
+  }
+
   private static HuifuCredentialHandles validCredentialHandles() {
     return new HuifuCredentialHandles(
         "kms://huifu/merchant-id", "kms://huifu/rsa-private-key", "kms://huifu/webhook-endpoint-key");
